@@ -1,5 +1,6 @@
 package com.vel5id.hexerei.ritual;
 
+import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.power.AltarPowerManager;
 import com.vel5id.hexerei.power.RelativePowerSource;
 import com.vel5id.hexerei.registry.HexereiBlocks;
@@ -21,10 +22,19 @@ public final class RitualActivation {
     public enum Result { SUCCESS, NO_RECIPE, NO_POWER }
 
     public static Result tryPerform(ServerLevel level, BlockPos center) {
+        // Contract: the center must be a ritual circle block (self-contained for any caller).
+        if (!level.getBlockState(center).is(HexereiBlocks.RITUAL_CIRCLE.get())) {
+            return Result.NO_RECIPE;
+        }
         boolean circleComplete = RitualCircle.isSmallComplete(
                 p -> level.getBlockState(p).is(HexereiBlocks.RITUAL_GLYPH.get()), center);
 
-        AABB box = new AABB(center).inflate(SACRIFICE_RADIUS);
+        // Horizontal reach only — keep the sacrifice on the circle's Y-layer (not in a hole / floating above).
+        double r = SACRIFICE_RADIUS;
+        AABB box = new AABB(center.getX() - r, center.getY(), center.getZ() - r,
+                center.getX() + 1 + r, center.getY() + 1.5, center.getZ() + 1 + r);
+
+        boolean anyMatched = false;
         for (ItemEntity ie : level.getEntitiesOfClass(ItemEntity.class, box,
                 e -> e.isAlive() && !e.getItem().isEmpty())) {
             ItemStack stack = ie.getItem();
@@ -33,30 +43,37 @@ public final class RitualActivation {
             if (match.isEmpty()) {
                 continue;
             }
+            anyMatched = true;
             RitualRecipe recipe = match.get();
-
-            if (recipe.powerCost() > 0) {
-                boolean paid = false;
-                for (RelativePowerSource r : AltarPowerManager.get(level).query(level, center)) {
-                    if (r.source().consumePower(recipe.powerCost())) {
-                        paid = true;
-                        break;
-                    }
-                }
-                if (!paid) {
-                    return Result.NO_POWER;
-                }
+            if (!payPower(level, center, recipe.powerCost())) {
+                continue; // another sacrifice in range might be affordable
             }
-
             stack.shrink(1);
             if (stack.isEmpty()) {
                 ie.discard();
             } else {
                 ie.setItem(stack);
             }
-            recipe.rite().perform(level, center);
+            try {
+                recipe.rite().perform(level, center);
+            } catch (Exception e) {
+                HexereiMod.LOGGER.error("Rite {} failed to perform", recipe.nameKey(), e);
+            }
             return Result.SUCCESS;
         }
-        return Result.NO_RECIPE;
+        return anyMatched ? Result.NO_POWER : Result.NO_RECIPE;
+    }
+
+    /** Atomically debit {@code cost} from the first in-range altar that can pay it. */
+    private static boolean payPower(ServerLevel level, BlockPos center, int cost) {
+        if (cost <= 0) {
+            return true;
+        }
+        for (RelativePowerSource r : AltarPowerManager.get(level).query(level, center)) {
+            if (r.source().consumePower(cost)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

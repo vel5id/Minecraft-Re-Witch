@@ -61,7 +61,15 @@ Drop `build/libs/hexerei-*.jar` into a Forge 1.20.1 (47.4.10) server or client `
   effects on drink). Starter recipes: **Sleeping Draught** (mandrake root + belladonna flower) and
   **Brew of Frailty** (wolfsbane + wormwood).
 
+**Ritual Circles slice**
+- **Ritual Circle** (center marker) + **Ritual Glyph** (flat chalk) blocks. Ring the center with a small
+  circle of 12 glyphs (radius 2), drop a **sacrifice** item, have a powered **altar** in range, then
+  right-click the center to perform a **rite**.
+- **Rite of the Tempest**: small circle + 1 mandrake root + altar power → summons a thunderstorm
+  (consumes the sacrifice and the altar power).
+
 ## Not yet (future slices)
-Throwable/splash brews + dispersal; brew modifiers (potency/duration); more brews; rituals/circles/coven;
-Mandrake/Minedrake live entities; Treefyd; Mutandis seed acquisition; decorative wood/artefact blocks;
-altar artefact bonuses; particles; Wolf Altar. See [`DESIGN-NOTES.md`](./DESIGN-NOTES.md).
+Throwable/splash brews + dispersal; brew modifiers (potency/duration); more brews & rites; chalk item +
+glyph colours; medium/large circles; timed multi-step rites; coven scaling; Mandrake/Minedrake live
+entities; Treefyd; Mutandis seed acquisition; decorative wood/artefact blocks; altar artefact bonuses;
+particles; Wolf Altar. See [`DESIGN-NOTES.md`](./DESIGN-NOTES.md).

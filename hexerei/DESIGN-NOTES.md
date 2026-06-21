@@ -4,6 +4,25 @@ Hexerei is built slice-by-slice. Every numeric value in the code is a deliberate
 documented here per slice — never invented on the fly. Values flagged `[UNVERIFIED]` still need
 in-game confirmation.
 
+# Ritual Circles slice
+
+A **Ritual Circle** center block, ringed by **Ritual Glyph** chalk blocks, performs a **rite** when
+right-clicked: the activation scans the circle, finds a sacrifice item, debits altar power, consumes the
+sacrifice, and runs the rite.
+
+- **Circle geometry** (pure, `RitualCircle`): a small circle is 12 glyphs in a radius-2 ring on the
+  center's Y-layer (offsets `(0,±2),(±1,±2),(±2,±1),(±2,0)`) — unit-tested over a position predicate.
+- **Ritual model** (`RitualRecipe`): required circle + sacrifice item id + altar-power cost + a `Rite`.
+  Matching (`RitualRecipes.match`) is pure. Starter: **Rite of the Tempest** — small circle + 1
+  mandrake root + 100 power → thunderstorm (`setWeatherParameters`).
+- **Activation** (`RitualActivation.tryPerform`, server-only, testable without a player): circle check →
+  nearest sacrifice `ItemEntity` → recipe match → **power consumed first** (so a failed power check leaves
+  the sacrifice intact) → sacrifice consumed → `Rite.perform`. Returns `SUCCESS / NO_RECIPE / NO_POWER`.
+- **Glyph block**: flat 1/16 slab, no collision, requires a sturdy face below, drops itself. **Circle
+  block**: no BlockEntity (the slice's rite is instant). Visuals reuse vanilla textures only.
+- **Verification**: a `GameTest` asserts the raw weather-data flag (`getLevelData().isThundering()`) — NOT
+  `Level.isThundering()`, which reads the *interpolated* thunder level that lags ~90 ticks.
+
 # Witch's Cauldron (brewing core) slice
 
 The cauldron is a `BlockEntity`: fill water (right-click water bucket) → heat from a block in the

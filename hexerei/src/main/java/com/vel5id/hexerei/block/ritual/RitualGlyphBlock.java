@@ -13,7 +13,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** A flat chalk glyph drawn on the ground; needs a sturdy block below and breaks if it loses support. */
 public class RitualGlyphBlock extends Block {
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 1, 16);
+    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 0.5, 16); // matches the flat decal model
 
     public RitualGlyphBlock(Properties properties) {
         super(properties);
