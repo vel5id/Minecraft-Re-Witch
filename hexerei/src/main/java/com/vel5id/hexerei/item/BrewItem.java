@@ -77,9 +77,11 @@ public class BrewItem extends Item {
                 }
             }
         }
-        if (player == null || !player.getAbilities().instabuild) {
-            stack.shrink(1);
+        // In creative the brew isn't consumed, so don't hand out a glass bottle (would dupe bottles).
+        if (player != null && player.getAbilities().instabuild) {
+            return stack;
         }
+        stack.shrink(1);
         ItemStack bottle = new ItemStack(Items.GLASS_BOTTLE);
         if (stack.isEmpty()) {
             return bottle;

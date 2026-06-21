@@ -5,6 +5,7 @@ import com.vel5id.hexerei.brewing.BrewColor;
 import com.vel5id.hexerei.brewing.BrewRecipes;
 import com.vel5id.hexerei.item.BrewItem;
 import com.vel5id.hexerei.power.AltarPowerManager;
+import com.vel5id.hexerei.power.RelativePowerSource;
 import com.vel5id.hexerei.registry.HexereiBlockEntities;
 import com.vel5id.hexerei.registry.HexereiTags;
 import net.minecraft.core.BlockPos;
@@ -105,8 +106,8 @@ public class CauldronBlockEntity extends BlockEntity {
                 if (need <= 0) {
                     be.powered = true;
                 } else if (level instanceof ServerLevel server) {
-                    be.powered = AltarPowerManager.get(server).closest(level, pos)
-                            .map(s -> s.getCurrentPower() >= need).orElse(false);
+                    be.powered = AltarPowerManager.get(server).query(level, pos).stream()
+                            .anyMatch(r -> r.source().getCurrentPower() >= need);
                 } else {
                     be.powered = false;
                 }
@@ -146,7 +147,10 @@ public class CauldronBlockEntity extends BlockEntity {
                 if (stack.isEmpty()) {
                     ie.discard();
                 } else {
+                    // pop the leftover stack back out so it isn't trapped inside the cauldron
                     ie.setItem(stack);
+                    ie.setPos(worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5);
+                    ie.setDeltaMovement(0.0, 0.2, 0.0);
                 }
                 changed = true;
             }
@@ -178,6 +182,21 @@ public class CauldronBlockEntity extends BlockEntity {
         return true;
     }
 
+    public boolean hasWater() {
+        return waterLevel > 0;
+    }
+
+    /** Empty the cauldron — lets a player rinse out a wrong/incomplete brew mix. */
+    public void drain() {
+        waterLevel = 0;
+        ingredients.clear();
+        color = BrewColor.WATER;
+        heatTicks = 0;
+        powered = false;
+        setChanged();
+        sync();
+    }
+
     /** Try to collect the ready brew. Returns the brew item if boiling + powered + power consumed, else null. */
     @Nullable
     public ItemStack collectBrew() {
@@ -185,14 +204,24 @@ public class CauldronBlockEntity extends BlockEntity {
             return null;
         }
         Brew brew = readyBrew();
-        if (brew == null || !isBoiling() || !powered) {
+        if (brew == null || !isBoiling()) {
             return null;
         }
         int need = brew.power();
         if (need > 0) {
-            if (!(level instanceof ServerLevel server)
-                    || AltarPowerManager.get(server).closest(level, worldPosition)
-                            .filter(s -> s.consumePower(need)).isEmpty()) {
+            // consumePower is authoritative (don't gate on the cached `powered` flag, which lags up to 20 ticks);
+            // try each in-range altar in distance order until one can pay the full cost.
+            if (!(level instanceof ServerLevel server)) {
+                return null;
+            }
+            boolean paid = false;
+            for (RelativePowerSource r : AltarPowerManager.get(server).query(level, worldPosition)) {
+                if (r.source().consumePower(need)) {
+                    paid = true;
+                    break;
+                }
+            }
+            if (!paid) {
                 return null;
             }
         }

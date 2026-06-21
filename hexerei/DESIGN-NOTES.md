@@ -4,6 +4,33 @@ Hexerei is built slice-by-slice. Every numeric value in the code is a deliberate
 documented here per slice — never invented on the fly. Values flagged `[UNVERIFIED]` still need
 in-game confirmation.
 
+# Witch's Cauldron (brewing core) slice
+
+The cauldron is a `BlockEntity`: fill water (right-click water bucket) → heat from a block in the
+`hexerei:cauldron_heat_sources` tag below (fire/soul_fire/lava/magma + lit campfires, checked in code)
+→ boils after **100 ticks** → absorbs herb `ItemEntity`s while boiling (multiset-filtered so only
+ingredients that progress toward a recipe are taken) → gated on a nearby altar via
+`AltarPowerManager` → right-click a glass bottle to collect a drinkable `Brew`.
+
+- **Brews are plain data** (`Brew` = id, name key, color, power cost, list of `BrewEffect`s); recipes
+  match on item-id multisets (`BrewRecipes`, pure & unit-tested). Starter brews: Sleeping Draught
+  (mandrake root + belladonna flower, 50 power) and Brew of Frailty (wolfsbane + wormwood, 30 power).
+- **Power**: `requiredPower` = the matched brew's cost; collection tries each in-range altar in
+  distance order and debits the first that can pay the full cost (atomic per-altar). The cached
+  `powered` flag is for display only — `collectBrew` re-checks `consumePower` authoritatively.
+- **Visuals reuse vanilla art** (cauldron model parent `minecraft:block/cauldron`; brew item = vanilla
+  potion overlay + bottle textures, tinted by brew color) — no third-party assets.
+
+### Review-driven decisions (post-implementation adversarial review)
+- **Loot tables**: both cauldron and altar now drop themselves (`loot_tables/blocks/*`) — blocks
+  without a loot table silently drop nothing.
+- **Drain interaction**: right-click an empty bucket to rinse out a wrong/incomplete mix (recovers a
+  water bucket) — avoids a dead-end where a bad mix could only be cleared by breaking the block.
+- **Creative drink**: drinking a brew in creative applies effects but consumes nothing and yields no
+  bottle (was a bottle dupe).
+- **Stack intake**: leftover from a thrown stack is popped back out of the cauldron, not trapped.
+- **No phantom swing** on a full cauldron with a water bucket.
+
 # Herbs (Crops) slice
 
 ## Deliberate design decisions

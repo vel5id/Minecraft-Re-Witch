@@ -47,12 +47,21 @@ Drop `build/libs/hexerei-*.jar` into a Forge 1.20.1 (47.4.10) server or client `
 
 **Herbs (crops) slice**
 - **8 crops** (Belladonna, Mandrake, Water Artichoke, Snowbell, Wormwood, Minedrake, Wolfsbane, Garlic)
-  with per-crop growth stages, light-gated growth, bonemeal, and soil rules.
+  with per-crop growth stages, light-gated growth, bonemeal, and soil rules (farmland only, no stacking).
 - **Seeds & produce** (14 items) — seeds plant the crop; harvest drops produce + seeds (Snowbell → snowball
   +20% Icy Needle; Mindrake/Garlic seed==produce). Mature/immature drop split is implemented.
 - **Altar synergy**: crops feed altar power (4/20 each).
 
+**Witch's Cauldron (brewing core) slice**
+- **Cauldron** block + block-entity: fill with a water bucket, heat from a block below (fire/lava/magma/
+  campfire), boil after ~5 s, then drop herb ingredients in (item-entities are absorbed, tinting the liquid).
+- **Altar-powered**: the forming brew draws on the nearest altar (`getCurrentPower`/`consumePower`) — no
+  altar power, no brew.
+- **Brews**: right-click a ready cauldron with a glass bottle to collect a drinkable **Brew** (applies its
+  effects on drink). Starter recipes: **Sleeping Draught** (mandrake root + belladonna flower) and
+  **Brew of Frailty** (wolfsbane + wormwood).
+
 ## Not yet (future slices)
-Mandrake/Minedrake live entities; Treefyd; Mutandis seed acquisition; brews, distilling, rituals and
-power **consumers**; decorative wood/artefact blocks; altar artefact bonuses; particles; Wolf Altar.
-See [`DESIGN-NOTES.md`](./DESIGN-NOTES.md).
+Throwable/splash brews + dispersal; brew modifiers (potency/duration); more brews; rituals/circles/coven;
+Mandrake/Minedrake live entities; Treefyd; Mutandis seed acquisition; decorative wood/artefact blocks;
+altar artefact bonuses; particles; Wolf Altar. See [`DESIGN-NOTES.md`](./DESIGN-NOTES.md).

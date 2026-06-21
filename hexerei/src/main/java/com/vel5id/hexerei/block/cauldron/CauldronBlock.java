@@ -75,8 +75,30 @@ public class CauldronBlock extends Block implements EntityBlock {
         ItemStack held = player.getItemInHand(hand);
 
         if (held.is(Items.WATER_BUCKET)) {
+            if (be.isFilled()) {
+                return InteractionResult.PASS; // already full — no phantom swing
+            }
             if (!level.isClientSide && be.fillWater() && !player.getAbilities().instabuild) {
                 player.setItemInHand(hand, new ItemStack(Items.BUCKET));
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+
+        if (held.is(Items.BUCKET)) {
+            if (!be.hasWater()) {
+                return InteractionResult.PASS;
+            }
+            if (!level.isClientSide) {
+                be.drain(); // rinse out a wrong/incomplete mix
+                if (!player.getAbilities().instabuild) {
+                    held.shrink(1);
+                    ItemStack waterBucket = new ItemStack(Items.WATER_BUCKET);
+                    if (held.isEmpty()) {
+                        player.setItemInHand(hand, waterBucket);
+                    } else if (!player.getInventory().add(waterBucket)) {
+                        player.drop(waterBucket, false);
+                    }
+                }
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
