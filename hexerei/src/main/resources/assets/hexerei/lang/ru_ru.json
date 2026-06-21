@@ -34,5 +34,9 @@
   "block.hexerei.cauldron": "Ведьмин котёл",
   "item.hexerei.brew": "Зелье",
   "brew.hexerei.sleeping_draught": "Сонное зелье",
-  "brew.hexerei.frailty": "Зелье немощи"
+  "brew.hexerei.frailty": "Зелье немощи",
+
+  "block.hexerei.ritual_glyph": "Ритуальный глиф",
+  "block.hexerei.ritual_circle": "Ритуальный круг",
+  "ritual.hexerei.tempest": "Обряд бури"
 }

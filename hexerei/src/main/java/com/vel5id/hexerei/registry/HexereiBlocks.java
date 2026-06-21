@@ -3,6 +3,8 @@ package com.vel5id.hexerei.registry;
 import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.block.AltarBlock;
 import com.vel5id.hexerei.block.cauldron.CauldronBlock;
+import com.vel5id.hexerei.block.ritual.RitualCircleBlock;
+import com.vel5id.hexerei.block.ritual.RitualGlyphBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -31,4 +33,19 @@ public final class HexereiBlocks {
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()
                     .noOcclusion()));
+
+    public static final RegistryObject<Block> RITUAL_GLYPH = BLOCKS.register("ritual_glyph",
+            () -> new RitualGlyphBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .instabreak()
+                    .noCollission()
+                    .noOcclusion()
+                    .sound(SoundType.SAND)));
+
+    public static final RegistryObject<Block> RITUAL_CIRCLE = BLOCKS.register("ritual_circle",
+            () -> new RitualCircleBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(2.0F)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()));
 }

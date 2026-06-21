@@ -21,6 +21,8 @@ public final class HexereiCreativeTabs {
                     .displayItems((params, output) -> {
                         output.accept(HexereiBlocks.ALTAR.get());
                         output.accept(HexereiBlocks.CAULDRON.get());
+                        output.accept(HexereiBlocks.RITUAL_CIRCLE.get());
+                        output.accept(HexereiBlocks.RITUAL_GLYPH.get());
                         HexereiCrops.SEED_ITEMS.forEach(s -> output.accept(s.get()));
                         output.accept(HexereiItems.BELLADONNA_FLOWER.get());
                         output.accept(HexereiItems.MANDRAKE_ROOT.get());

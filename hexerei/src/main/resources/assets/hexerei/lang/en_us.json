@@ -34,5 +34,9 @@
   "block.hexerei.cauldron": "Witch's Cauldron",
   "item.hexerei.brew": "Brew",
   "brew.hexerei.sleeping_draught": "Sleeping Draught",
-  "brew.hexerei.frailty": "Brew of Frailty"
+  "brew.hexerei.frailty": "Brew of Frailty",
+
+  "block.hexerei.ritual_glyph": "Ritual Glyph",
+  "block.hexerei.ritual_circle": "Ritual Circle",
+  "ritual.hexerei.tempest": "Rite of the Tempest"
 }
