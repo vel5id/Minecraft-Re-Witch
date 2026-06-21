@@ -65,6 +65,8 @@ Drop `build/libs/hexerei-*.jar` into a Forge 1.20.1 (47.4.10) server or client `
 - **Ritual Circle** (center marker) + **Ritual Glyph** (flat chalk) blocks. Ring the center with a small
   circle of 12 glyphs (radius 2), drop a **sacrifice** item, have a powered **altar** in range, then
   right-click the center to perform a **rite**.
+- **Ritual Chalk**: right-click a Ritual Circle with chalk to **auto-draw** the whole glyph circle
+  (or draw single glyphs on other blocks); durability-based, with tooltips explaining the ritual.
 - **Rite of the Tempest**: small circle + 1 mandrake root + altar power → summons a thunderstorm
   (consumes the sacrifice and the altar power).
 

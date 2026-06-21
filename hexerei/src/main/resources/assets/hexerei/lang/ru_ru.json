@@ -38,5 +38,8 @@
 
   "block.hexerei.ritual_glyph": "Ритуальный глиф",
   "block.hexerei.ritual_circle": "Ритуальный круг",
-  "ritual.hexerei.tempest": "Обряд бури"
+  "ritual.hexerei.tempest": "Обряд бури",
+  "item.hexerei.ritual_chalk": "Ритуальный мел",
+  "item.hexerei.ritual_chalk.tip1": "ПКМ по ритуальному кругу — нарисует круг глифов.",
+  "item.hexerei.ritual_chalk.tip2": "Положи жертву и поставь запитанный алтарь рядом, затем активируй круг ПКМ."
 }

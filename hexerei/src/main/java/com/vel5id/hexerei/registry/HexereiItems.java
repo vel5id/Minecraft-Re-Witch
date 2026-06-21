@@ -27,6 +27,9 @@ public final class HexereiItems {
     public static final RegistryObject<Item> RITUAL_CIRCLE = ITEMS.register("ritual_circle",
             () -> new BlockItem(HexereiBlocks.RITUAL_CIRCLE.get(), new Item.Properties()));
 
+    public static final RegistryObject<Item> RITUAL_CHALK = ITEMS.register("ritual_chalk",
+            () -> new com.vel5id.hexerei.item.RitualChalkItem(new Item.Properties().durability(64)));
+
     // Drinkable brew (its specific brew identity lives in NBT, set when collected from a cauldron).
     public static final RegistryObject<Item> BREW = ITEMS.register("brew",
             () -> new BrewItem(new Item.Properties().stacksTo(16)));

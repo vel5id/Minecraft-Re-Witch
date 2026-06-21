@@ -5,7 +5,9 @@ import com.vel5id.hexerei.power.AltarPowerManager;
 import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.registry.HexereiItems;
+import com.vel5id.hexerei.item.RitualChalkItem;
 import com.vel5id.hexerei.ritual.RitualActivation;
+import com.vel5id.hexerei.ritual.RitualCircle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -75,6 +77,29 @@ public class RitualGameTests {
         @Override public float getRange() { return 16f; }
         @Override public int getEnhancementLevel() { return 0; }
         @Override public boolean isPowerInvalid() { return false; }
+    }
+
+    @GameTest(template = "empty", batch = "ritual", timeoutTicks = 100)
+    public void chalkDrawsCircle(GameTestHelper h) {
+        BlockPos center = new BlockPos(18, 2, 18);
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                h.setBlock(center.offset(dx, -1, dz), Blocks.STONE); // floor, no glyphs
+            }
+        }
+        h.setBlock(center, HexereiBlocks.RITUAL_CIRCLE.get());
+        h.runAfterDelay(3, () -> {
+            BlockPos absCenter = h.absolutePos(center);
+            int placed = RitualChalkItem.drawCircleAt(h.getLevel(), absCenter);
+            if (placed != 12) {
+                h.fail("chalk drew " + placed + " glyphs, expected 12");
+            } else if (!RitualCircle.isSmallComplete(
+                    p -> h.getLevel().getBlockState(p).is(HexereiBlocks.RITUAL_GLYPH.get()), absCenter)) {
+                h.fail("circle not complete after chalk draw");
+            } else {
+                h.succeed();
+            }
+        });
     }
 
     @GameTest(template = "empty", batch = "ritual", timeoutTicks = 100)

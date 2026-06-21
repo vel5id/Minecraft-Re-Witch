@@ -38,5 +38,8 @@
 
   "block.hexerei.ritual_glyph": "Ritual Glyph",
   "block.hexerei.ritual_circle": "Ritual Circle",
-  "ritual.hexerei.tempest": "Rite of the Tempest"
+  "ritual.hexerei.tempest": "Rite of the Tempest",
+  "item.hexerei.ritual_chalk": "Ritual Chalk",
+  "item.hexerei.ritual_chalk.tip1": "Right-click a Ritual Circle to draw a glyph circle.",
+  "item.hexerei.ritual_chalk.tip2": "Add a sacrifice and a powered altar nearby, then right-click the circle to perform its rite."
 }
