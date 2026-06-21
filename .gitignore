@@ -1,0 +1,11 @@
+/data/
+.env
+.claude/
+
+# Hexerei scratch/reference (decompiled source, original jars, portable JDK, vineflower) — large, regenerable
+/hexerei-work/
+
+# User-provided source material / reference packs (not part of the mod)
+/for version rework/
+/RU-Mod-Guides/
+/Ars-Magic-a-Blood-Magic-Ru.zip

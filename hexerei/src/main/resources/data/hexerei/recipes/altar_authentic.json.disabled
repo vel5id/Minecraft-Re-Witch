@@ -1,0 +1,13 @@
+{
+  "_comment": "Planned altar recipe — disabled until its ingredients exist. Re-enable (rename to .json) once hexerei:breath_of_the_goddess, hexerei:exhale_of_the_horned_one, and hexerei:witchlog are added.",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "abc", "xyx", "xyx" ],
+  "key": {
+    "a": { "item": "hexerei:breath_of_the_goddess" },
+    "b": { "item": "minecraft:potion" },
+    "c": { "item": "hexerei:exhale_of_the_horned_one" },
+    "x": { "item": "minecraft:stone_bricks" },
+    "y": { "item": "hexerei:witchlog" }
+  },
+  "result": { "item": "hexerei:altar", "count": 3 }
+}

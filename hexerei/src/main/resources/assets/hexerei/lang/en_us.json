@@ -1,0 +1,38 @@
+{
+  "block.hexerei.altar": "Altar",
+  "itemGroup.hexerei": "Hexerei",
+  "hexerei.book.altarpower": "Altar power",
+  "hexerei.gui.altar.power": "Power: %s / %s",
+  "hexerei.rite.missingpowersource": "No altar nearby.",
+  "hexerei.rite.insufficientpower": "Altar has insufficient power.",
+
+  "block.hexerei.belladonna": "Belladonna",
+  "block.hexerei.mandrake": "Mandrake",
+  "block.hexerei.artichoke": "Water Artichoke",
+  "block.hexerei.snowbell": "Snowbell",
+  "block.hexerei.wormwood": "Wormwood",
+  "block.hexerei.mindrake": "Minedrake",
+  "block.hexerei.wolfsbane": "Wolfsbane",
+  "block.hexerei.garlic": "Garlic",
+
+  "item.hexerei.seeds_belladonna": "Belladonna Seeds",
+  "item.hexerei.seeds_mandrake": "Mandrake Seeds",
+  "item.hexerei.seeds_artichoke": "Artichoke Seeds",
+  "item.hexerei.seeds_snowbell": "Snowbell Seeds",
+  "item.hexerei.seeds_wormwood": "Wormwood Seeds",
+  "item.hexerei.seeds_wolfsbane": "Wolfsbane Seeds",
+  "item.hexerei.mindrake_bulb": "Minedrake Bulb",
+  "item.hexerei.garlic": "Garlic",
+
+  "item.hexerei.belladonna_flower": "Belladonna Flower",
+  "item.hexerei.mandrake_root": "Mandrake Root",
+  "item.hexerei.artichoke": "Artichoke",
+  "item.hexerei.wormwood": "Wormwood",
+  "item.hexerei.wolfsbane": "Wolfsbane",
+  "item.hexerei.icy_needle": "Icy Needle",
+
+  "block.hexerei.cauldron": "Witch's Cauldron",
+  "item.hexerei.brew": "Brew",
+  "brew.hexerei.sleeping_draught": "Sleeping Draught",
+  "brew.hexerei.frailty": "Brew of Frailty"
+}

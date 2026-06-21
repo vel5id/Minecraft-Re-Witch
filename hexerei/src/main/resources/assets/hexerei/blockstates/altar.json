@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "joined=false": { "model": "hexerei:block/altar" },
+    "joined=true":  { "model": "hexerei:block/altar_joined" }
+  }
+}

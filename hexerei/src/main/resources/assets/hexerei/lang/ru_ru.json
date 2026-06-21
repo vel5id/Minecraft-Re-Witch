@@ -1,0 +1,38 @@
+{
+  "block.hexerei.altar": "Алтарь",
+  "itemGroup.hexerei": "Hexerei",
+  "hexerei.book.altarpower": "Сила алтаря",
+  "hexerei.gui.altar.power": "Сила: %s / %s",
+  "hexerei.rite.missingpowersource": "Рядом нет алтаря.",
+  "hexerei.rite.insufficientpower": "У алтаря недостаточно силы.",
+
+  "block.hexerei.belladonna": "Белладонна",
+  "block.hexerei.mandrake": "Мандрагора",
+  "block.hexerei.artichoke": "Водный артишок",
+  "block.hexerei.snowbell": "Снежный колокольчик",
+  "block.hexerei.wormwood": "Полынь",
+  "block.hexerei.mindrake": "Майндрейк",
+  "block.hexerei.wolfsbane": "Аконит",
+  "block.hexerei.garlic": "Чеснок",
+
+  "item.hexerei.seeds_belladonna": "Семена белладонны",
+  "item.hexerei.seeds_mandrake": "Семена мандрагоры",
+  "item.hexerei.seeds_artichoke": "Семена артишока",
+  "item.hexerei.seeds_snowbell": "Семена снежного колокольчика",
+  "item.hexerei.seeds_wormwood": "Семена полыни",
+  "item.hexerei.seeds_wolfsbane": "Семена аконита",
+  "item.hexerei.mindrake_bulb": "Луковица майндрейка",
+  "item.hexerei.garlic": "Чеснок",
+
+  "item.hexerei.belladonna_flower": "Цветок белладонны",
+  "item.hexerei.mandrake_root": "Корень мандрагоры",
+  "item.hexerei.artichoke": "Артишок",
+  "item.hexerei.wormwood": "Полынь",
+  "item.hexerei.wolfsbane": "Аконит",
+  "item.hexerei.icy_needle": "Ледяная игла",
+
+  "block.hexerei.cauldron": "Ведьмин котёл",
+  "item.hexerei.brew": "Зелье",
+  "brew.hexerei.sleeping_draught": "Сонное зелье",
+  "brew.hexerei.frailty": "Зелье немощи"
+}
