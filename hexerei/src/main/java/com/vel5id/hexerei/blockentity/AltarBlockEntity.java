@@ -421,7 +421,6 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         if (tl == com.vel5id.hexerei.power.TaintLevel.NONE) return;
 
         long gt = level.getGameTime();
-        // Period (in ticks) between wisp spawns: LOW=6, MEDIUM=4, HIGH=2
         int period = switch (tl) {
             case LOW    -> 6;
             case MEDIUM -> 4;
@@ -430,6 +429,14 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         };
         if (period == 0 || gt % period != 0) return;
 
+        int wisps = switch (tl) {
+            case LOW    -> 1;
+            case MEDIUM -> 2;
+            case HIGH   -> 3;
+            default     -> 0;
+        };
+        int ashes = tl == com.vel5id.hexerei.power.TaintLevel.HIGH ? 1 : 0;
+
         net.minecraft.core.particles.SimpleParticleType wispType = switch (tl) {
             case LOW    -> com.vel5id.hexerei.registry.HexereiParticles.WISP_LOW.get();
             case MEDIUM -> com.vel5id.hexerei.registry.HexereiParticles.WISP_MEDIUM.get();
@@ -437,15 +444,16 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
             default     -> null;
         };
         if (wispType != null) {
-            double px = pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.8;
-            double py = pos.getY() + 1.1;
-            double pz = pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.8;
-            double vy = 0.02 + level.random.nextDouble() * 0.02;
-            level.addParticle(wispType, px, py, pz, 0, vy, 0);
+            for (int i = 0; i < wisps; i++) {
+                double px = pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.8;
+                double py = pos.getY() + 1.1;
+                double pz = pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.8;
+                double vy = 0.02 + level.random.nextDouble() * 0.02;
+                level.addParticle(wispType, px, py, pz, 0, vy, 0);
+            }
         }
 
-        // Ash particles for HIGH taint — fall downward, half the wisp period
-        if (tl == com.vel5id.hexerei.power.TaintLevel.HIGH && gt % 5 == 0) {
+        for (int i = 0; i < ashes; i++) {
             double px = pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 1.4;
             double py = pos.getY() + 1.6;
             double pz = pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 1.4;
