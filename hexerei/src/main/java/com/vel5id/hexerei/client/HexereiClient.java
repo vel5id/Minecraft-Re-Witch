@@ -4,9 +4,14 @@ import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.client.particle.AshParticle;
 import com.vel5id.hexerei.client.particle.WispParticle;
 import com.vel5id.hexerei.item.BrewItem;
+import com.vel5id.hexerei.network.CycleRiteC2SPacket;
+import com.vel5id.hexerei.network.HexereiNetwork;
 import com.vel5id.hexerei.registry.HexereiItems;
 import com.vel5id.hexerei.registry.HexereiParticles;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -30,5 +35,25 @@ public final class HexereiClient {
         event.registerSpriteSet(HexereiParticles.WISP_MEDIUM.get(), WispParticle.MediumProvider::new);
         event.registerSpriteSet(HexereiParticles.WISP_HIGH.get(),   WispParticle.HighProvider::new);
         event.registerSpriteSet(HexereiParticles.ASH.get(),         AshParticle.Provider::new);
+    }
+
+    /** Forge-bus client events (scroll to cycle rite). */
+    @Mod.EventBusSubscriber(modid = HexereiMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    public static final class ForgeClientEvents {
+        private ForgeClientEvents() {}
+
+        @SubscribeEvent
+        public static void onScroll(InputEvent.MouseScrollingEvent event) {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player == null || !mc.player.isShiftKeyDown()) return;
+            ItemStack main = mc.player.getMainHandItem();
+            ItemStack off  = mc.player.getOffhandItem();
+            boolean holdingChalk = main.is(HexereiItems.RITUAL_CHALK.get())
+                                || off.is(HexereiItems.RITUAL_CHALK.get());
+            if (!holdingChalk) return;
+            event.setCanceled(true);
+            int delta = event.getScrollDelta() > 0 ? 1 : -1;
+            HexereiNetwork.CHANNEL.sendToServer(new CycleRiteC2SPacket(delta));
+        }
     }
 }
