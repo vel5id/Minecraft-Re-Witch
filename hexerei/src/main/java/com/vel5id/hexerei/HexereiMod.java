@@ -1,5 +1,6 @@
 package com.vel5id.hexerei;
 
+import com.vel5id.hexerei.network.HexereiNetwork;
 import com.vel5id.hexerei.registry.HexereiBlockEntities;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.registry.HexereiCreativeTabs;
@@ -22,6 +23,7 @@ public final class HexereiMod {
         HexereiItems.ITEMS.register(modBus);
         HexereiBlockEntities.BLOCK_ENTITIES.register(modBus);
         HexereiCreativeTabs.TABS.register(modBus);
+        HexereiNetwork.register();
         LOGGER.info("Hexerei loading");
     }
 }
