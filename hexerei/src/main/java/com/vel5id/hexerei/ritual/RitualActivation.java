@@ -26,8 +26,8 @@ public final class RitualActivation {
         if (!level.getBlockState(center).is(HexereiBlocks.RITUAL_CIRCLE.get())) {
             return Result.NO_RECIPE;
         }
-        boolean circleComplete = RitualCircle.isSmallComplete(
-                p -> level.getBlockState(p).is(HexereiBlocks.RITUAL_GLYPH.get()), center);
+        java.util.function.Predicate<BlockPos> isGlyph =
+                p -> level.getBlockState(p).is(HexereiBlocks.RITUAL_GLYPH.get());
 
         // Horizontal reach only — keep the sacrifice on the circle's Y-layer (not in a hole / floating above).
         double r = SACRIFICE_RADIUS;
@@ -39,7 +39,7 @@ public final class RitualActivation {
                 e -> e.isAlive() && !e.getItem().isEmpty())) {
             ItemStack stack = ie.getItem();
             String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-            Optional<RitualRecipe> match = RitualRecipes.match(circleComplete, id);
+            Optional<RitualRecipe> match = RitualRecipes.match(isGlyph, center, id);
             if (match.isEmpty()) {
                 continue;
             }
