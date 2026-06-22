@@ -36,8 +36,8 @@ public record CycleRiteC2SPacket(int delta) {
             RitualRecipe next = all.get(idx);
             stack.getOrCreateTag().putString("hexerei:rite", next.id());
             player.displayClientMessage(
-                    Component.translatable(next.nameKey())
-                            .append(Component.literal(" · " + next.circleSize().ringPositions(player.blockPosition()).size() + " glyphs")),
+                    Component.translatable("item.hexerei.ritual_chalk.circle",
+                            next.circleSize().ringPositions(player.blockPosition()).size()),
                     true);
         });
         ctx.get().setPacketHandled(true);

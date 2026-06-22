@@ -93,7 +93,8 @@ public class WorldTaintAuraGameTests {
 
         // Register stub power source and inject LOW taint
         BlockPos absCenter = h.absolutePos(centre);
-        AltarPowerManager.get(sl).register(new FixedPowerSource(sl, absCenter));
+        FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
+        AltarPowerManager.get(sl).register(stub);
         ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 20f); // → LOW (15–39)
 
         // Run pulse many times to overcome probabilistic mutations
@@ -105,6 +106,8 @@ public class WorldTaintAuraGameTests {
         boolean foundTainted = anyBlockInRadius(h, centre, HexereiBlocks.TAINTED_GROUND.get());
         // Assert charred_stone did NOT appear (requires HIGH)
         boolean foundCharred = anyBlockInRadius(h, centre, HexereiBlocks.CHARRED_STONE.get());
+
+        AltarPowerManager.get(sl).unregister(stub);
 
         if (!foundTainted) {
             h.fail("LOW taint: expected at least one tainted_ground near altar after 8 pulses, found none");
@@ -134,7 +137,8 @@ public class WorldTaintAuraGameTests {
         }
 
         BlockPos absCenter = h.absolutePos(centre);
-        AltarPowerManager.get(sl).register(new FixedPowerSource(sl, absCenter));
+        FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
+        AltarPowerManager.get(sl).register(stub);
         ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 75f); // → HIGH (≥70)
 
         for (int pulse = 0; pulse < 20; pulse++) {
@@ -143,6 +147,8 @@ public class WorldTaintAuraGameTests {
 
         boolean foundCharred = anyBlockInRadius(h, centre, HexereiBlocks.CHARRED_STONE.get());
         boolean foundTainted = anyBlockInRadius(h, centre, HexereiBlocks.TAINTED_GROUND.get());
+
+        AltarPowerManager.get(sl).unregister(stub);
 
         if (!foundCharred) {
             h.fail("HIGH taint: expected charred_stone after 20 pulses, found none");
@@ -175,7 +181,8 @@ public class WorldTaintAuraGameTests {
         h.setBlock(centre.offset(0, 0, 2), Blocks.POPPY);
 
         BlockPos absCenter = h.absolutePos(centre);
-        AltarPowerManager.get(sl).register(new FixedPowerSource(sl, absCenter));
+        FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
+        AltarPowerManager.get(sl).register(stub);
         // addTaint(40) → MEDIUM (≥40, <70)
         ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 40f);
 
@@ -184,6 +191,8 @@ public class WorldTaintAuraGameTests {
         }
 
         boolean foundWitherRose = anyBlockInRadius(h, centre, Blocks.WITHER_ROSE);
+
+        AltarPowerManager.get(sl).unregister(stub);
 
         if (!foundWitherRose) {
             h.fail("MEDIUM taint: expected at least one WITHER_ROSE after 20 pulses, found none");
@@ -207,7 +216,8 @@ public class WorldTaintAuraGameTests {
         h.setBlock(centre.offset(0, 0, 2), Blocks.POPPY);
 
         BlockPos absCenter = h.absolutePos(centre);
-        AltarPowerManager.get(sl).register(new FixedPowerSource(sl, absCenter));
+        FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
+        AltarPowerManager.get(sl).register(stub);
         // addTaint(20) → LOW (15–39), below MEDIUM threshold
         ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 20f);
 
@@ -216,6 +226,8 @@ public class WorldTaintAuraGameTests {
         }
 
         boolean foundWitherRose = anyBlockInRadius(h, centre, Blocks.WITHER_ROSE);
+
+        AltarPowerManager.get(sl).unregister(stub);
 
         if (foundWitherRose) {
             h.fail("LOW taint: WITHER_ROSE must not appear (requires MEDIUM+), but was found");
@@ -240,7 +252,8 @@ public class WorldTaintAuraGameTests {
         }
 
         BlockPos absCenter = h.absolutePos(centre);
-        AltarPowerManager.get(sl).register(new FixedPowerSource(sl, absCenter));
+        FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
+        AltarPowerManager.get(sl).register(stub);
         // Deliberately add NO taint — level stays NONE
 
         for (int pulse = 0; pulse < 10; pulse++) {
@@ -249,6 +262,8 @@ public class WorldTaintAuraGameTests {
 
         boolean foundTainted = anyBlockInRadius(h, centre, HexereiBlocks.TAINTED_GROUND.get());
         boolean foundCharred = anyBlockInRadius(h, centre, HexereiBlocks.CHARRED_STONE.get());
+
+        AltarPowerManager.get(sl).unregister(stub);
 
         if (foundTainted || foundCharred) {
             h.fail("NONE taint: unexpected mutations (tainted=" + foundTainted + " charred=" + foundCharred + ")");

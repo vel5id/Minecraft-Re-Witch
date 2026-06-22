@@ -24,8 +24,9 @@ public class ChunkTaintData extends SavedData {
         long k = pos.toLong();
         float cur = taint.getOrDefault(k, 0f);
         float next = Math.min(100f, cur + amount);
+        float delta = next - cur;
         taint.put(k, next);
-        floor.put(k, Math.min(100f, floor.getOrDefault(k, 0f) + amount * 0.1f));
+        floor.merge(k, delta * 0.1f, Float::sum);
         setDirty();
     }
 
