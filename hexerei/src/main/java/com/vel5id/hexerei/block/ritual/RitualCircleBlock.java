@@ -30,7 +30,6 @@ public class RitualCircleBlock extends Block {
         }
         ServerLevel sl = (ServerLevel) level;
 
-        // Burst: sound + staggered PORTAL particles along glyph ring (1 per tick)
         level.playSound(null, pos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 0.8f, 1.8f);
         List<BlockPos> ring = RitualCircle.smallRing(pos);
         for (int i = 0; i < 20; i++) {

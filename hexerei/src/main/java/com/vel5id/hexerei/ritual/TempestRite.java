@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
-import java.util.Random;
 
 /** Summons a thunderstorm. */
 public final class TempestRite implements Rite {
@@ -28,16 +27,13 @@ public final class TempestRite implements Rite {
         // clearTime=0, weatherTime=duration, raining=true, thundering=true
         level.setWeatherParameters(0, durationTicks, true, true);
 
-        // Sound
         level.playSound(null, center, SoundEvents.WITHER_DEATH,
                 SoundSource.BLOCKS, 0.6f, 0.5f);
 
-        // 60× WITCH particles burst from center
         level.sendParticles(ParticleTypes.WITCH,
                 center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
                 60, 1.5, 0.5, 1.5, 0.1);
 
-        // 8× ENCHANT at random glyph ring positions
         List<BlockPos> ring = RitualCircle.smallRing(center);
         java.util.Collections.shuffle(ring);
         for (int i = 0; i < Math.min(8, ring.size()); i++) {
@@ -47,8 +43,7 @@ public final class TempestRite implements Rite {
                     1, 0, 0, 0, 0);
         }
 
-        // 3–5 random blocks inside circle radius → charred_stone
-        Random rng = new Random(level.getGameTime());
+        var rng = level.getRandom();
         int charred = 0;
         for (int dx = -2; dx <= 2 && charred < 5; dx++) {
             for (int dz = -2; dz <= 2 && charred < 5; dz++) {
@@ -62,7 +57,6 @@ public final class TempestRite implements Rite {
             }
         }
 
-        // Add world taint
         ChunkPos cp = new ChunkPos(center);
         ChunkTaintData.get(level).addTaint(cp, 25f);
         HexereiNetwork.sendTaintSync(level, cp);
