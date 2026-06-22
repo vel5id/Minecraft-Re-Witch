@@ -42,13 +42,12 @@ public final class WorldTaintAura {
 
             BlockPos center = src.getLocation();
             TaintLevel tl = taintData.getLevel(new ChunkPos(center));
-            if (tl == TaintLevel.NONE) continue;
+            if (tl.ordinal() < TaintLevel.LOW.ordinal()) continue;
 
             int grassCount  = 0;
             int flowerCount = 0;
             int stoneCount  = 0;
 
-            outer:
             for (int dx = -RADIUS; dx <= RADIUS; dx++) {
                 for (int dz = -RADIUS; dz <= RADIUS; dz++) {
                     for (int dy = -1; dy <= 1; dy++) {

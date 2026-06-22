@@ -154,6 +154,77 @@ public class WorldTaintAuraGameTests {
     }
 
     /**
+     * MEDIUM taint: DANDELION and POPPY must mutate to WITHER_ROSE (prob 20 %, max 2 per pulse).
+     *
+     * <p>We place 4 flowers (2 dandelions + 2 poppies) and run 20 pulses.
+     * P(zero mutations after 20 × 4 independent 20 % chances) = 0.8^80 ≈ 1.4×10⁻⁸ — negligible.</p>
+     *
+     * <p>We also verify that at LOW taint (below MEDIUM threshold) the same flowers are
+     * NOT mutated — guarding against false positives from the ordinal guard change.</p>
+     */
+    @GameTest(template = "empty", batch = "taint_aura", timeoutTicks = 100)
+    public void mediumTaint_flowersBecomWitchersRose(GameTestHelper h) {
+        ServerLevel sl = h.getLevel();
+
+        BlockPos centre = new BlockPos(18, 2, 18);
+
+        // Place 2 dandelions and 2 poppies within radius 5
+        h.setBlock(centre.offset(1, 0, 0), Blocks.DANDELION);
+        h.setBlock(centre.offset(2, 0, 0), Blocks.DANDELION);
+        h.setBlock(centre.offset(0, 0, 1), Blocks.POPPY);
+        h.setBlock(centre.offset(0, 0, 2), Blocks.POPPY);
+
+        BlockPos absCenter = h.absolutePos(centre);
+        AltarPowerManager.get(sl).register(new FixedPowerSource(sl, absCenter));
+        // addTaint(40) → MEDIUM (≥40, <70)
+        ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 40f);
+
+        for (int pulse = 0; pulse < 20; pulse++) {
+            WorldTaintAura.pulse(sl);
+        }
+
+        boolean foundWitherRose = anyBlockInRadius(h, centre, Blocks.WITHER_ROSE);
+
+        if (!foundWitherRose) {
+            h.fail("MEDIUM taint: expected at least one WITHER_ROSE after 20 pulses, found none");
+        } else {
+            h.succeed();
+        }
+    }
+
+    /**
+     * LOW taint: flowers (DANDELION / POPPY) must NOT mutate to WITHER_ROSE (requires MEDIUM+).
+     */
+    @GameTest(template = "empty", batch = "taint_aura", timeoutTicks = 100)
+    public void lowTaint_flowersNotMutated(GameTestHelper h) {
+        ServerLevel sl = h.getLevel();
+
+        BlockPos centre = new BlockPos(18, 2, 18);
+
+        h.setBlock(centre.offset(1, 0, 0), Blocks.DANDELION);
+        h.setBlock(centre.offset(2, 0, 0), Blocks.DANDELION);
+        h.setBlock(centre.offset(0, 0, 1), Blocks.POPPY);
+        h.setBlock(centre.offset(0, 0, 2), Blocks.POPPY);
+
+        BlockPos absCenter = h.absolutePos(centre);
+        AltarPowerManager.get(sl).register(new FixedPowerSource(sl, absCenter));
+        // addTaint(20) → LOW (15–39), below MEDIUM threshold
+        ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 20f);
+
+        for (int pulse = 0; pulse < 20; pulse++) {
+            WorldTaintAura.pulse(sl);
+        }
+
+        boolean foundWitherRose = anyBlockInRadius(h, centre, Blocks.WITHER_ROSE);
+
+        if (foundWitherRose) {
+            h.fail("LOW taint: WITHER_ROSE must not appear (requires MEDIUM+), but was found");
+        } else {
+            h.succeed();
+        }
+    }
+
+    /**
      * NONE taint: pulse must NOT mutate any block regardless of block type.
      */
     @GameTest(template = "empty", batch = "taint_aura", timeoutTicks = 100)
