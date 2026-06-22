@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side":   "hexerei:block/altar",
+    "bottom": "hexerei:block/altar_top",
+    "top":    "hexerei:block/altar_high"
+  }
+}

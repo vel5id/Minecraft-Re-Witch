@@ -1,6 +1,12 @@
 {
   "variants": {
-    "joined=false": { "model": "hexerei:block/altar" },
-    "joined=true":  { "model": "hexerei:block/altar_joined" }
+    "joined=false,taint_level=0": { "model": "hexerei:block/altar" },
+    "joined=false,taint_level=1": { "model": "hexerei:block/altar_taint_1" },
+    "joined=false,taint_level=2": { "model": "hexerei:block/altar_taint_2" },
+    "joined=false,taint_level=3": { "model": "hexerei:block/altar_taint_3" },
+    "joined=true,taint_level=0":  { "model": "hexerei:block/altar_joined" },
+    "joined=true,taint_level=1":  { "model": "hexerei:block/altar_taint_1" },
+    "joined=true,taint_level=2":  { "model": "hexerei:block/altar_taint_2" },
+    "joined=true,taint_level=3":  { "model": "hexerei:block/altar_taint_3" }
   }
 }

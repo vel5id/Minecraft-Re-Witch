@@ -76,6 +76,18 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
             be.power = maxScaled;
             be.sync();
         }
+
+        // Sync taint level to blockstate every 40 ticks (core only)
+        if (be.ticks % 40 == 0 && be.isCore() && level instanceof net.minecraft.server.level.ServerLevel sl) {
+            net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(pos);
+            com.vel5id.hexerei.power.TaintLevel tl = com.vel5id.hexerei.power.ChunkTaintData.get(sl).getLevel(cp);
+            int taintLvl = tl.ordinal();
+            BlockState cur = level.getBlockState(pos);
+            if (cur.getBlock() instanceof com.vel5id.hexerei.block.AltarBlock && cur.getValue(com.vel5id.hexerei.block.AltarBlock.TAINT_LEVEL) != taintLvl) {
+                level.setBlock(pos, cur.setValue(com.vel5id.hexerei.block.AltarBlock.TAINT_LEVEL, taintLvl), 3);
+                com.vel5id.hexerei.network.HexereiNetwork.sendTaintSync(sl, cp);
+            }
+        }
     }
 
     public void revalidateAndUpdate() {
@@ -393,5 +405,21 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
     @Override
     public void handleUpdateTag(CompoundTag tag) {
         load(tag);
+    }
+
+    public void clientTick(Level level, BlockPos pos, BlockState state) {
+        if (!level.isClientSide) return;
+        net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(
+                net.minecraftforge.api.distmarker.Dist.CLIENT,
+                () -> () -> doClientParticleTick(level, pos));
+    }
+
+    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    private void doClientParticleTick(Level level, BlockPos pos) {
+        com.vel5id.hexerei.power.TaintLevel tl =
+                com.vel5id.hexerei.client.ClientTaintCache.getLevel(new net.minecraft.world.level.ChunkPos(pos));
+        if (tl == com.vel5id.hexerei.power.TaintLevel.NONE) return;
+        // Particle emission is wired in Task 5 after HexereiParticles is registered.
+        // This method is the hook; leave body empty until then.
     }
 }

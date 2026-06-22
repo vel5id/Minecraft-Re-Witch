@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -24,15 +25,16 @@ import javax.annotation.Nullable;
 
 public class AltarBlock extends Block implements EntityBlock {
     public static final BooleanProperty ALTAR_JOINED = BooleanProperty.create("joined");
+    public static final IntegerProperty TAINT_LEVEL = IntegerProperty.create("taint_level", 0, 3);
 
     public AltarBlock(Properties props) {
         super(props);
-        registerDefaultState(stateDefinition.any().setValue(ALTAR_JOINED, false));
+        registerDefaultState(stateDefinition.any().setValue(ALTAR_JOINED, false).setValue(TAINT_LEVEL, 0));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ALTAR_JOINED);
+        builder.add(ALTAR_JOINED, TAINT_LEVEL);
     }
 
     @Override
@@ -49,12 +51,11 @@ public class AltarBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (type != HexereiBlockEntities.ALTAR.get()) return null;
         if (level.isClientSide) {
-            return null;
+            return (lvl, pos, st, be) -> ((AltarBlockEntity) be).clientTick(lvl, pos, st);
         }
-        return type == HexereiBlockEntities.ALTAR.get()
-                ? (lvl, pos, st, be) -> AltarBlockEntity.serverTick(lvl, pos, st, (AltarBlockEntity) be)
-                : null;
+        return (lvl, pos, st, be) -> AltarBlockEntity.serverTick(lvl, pos, st, (AltarBlockEntity) be);
     }
 
     @Override
