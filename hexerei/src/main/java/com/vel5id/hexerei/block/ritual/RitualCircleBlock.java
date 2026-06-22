@@ -1,7 +1,9 @@
 package com.vel5id.hexerei.block.ritual;
 
 import com.vel5id.hexerei.ritual.RitualActivation;
+import com.vel5id.hexerei.ritual.RitualCircle;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,6 +14,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+
+import java.util.List;
 
 /** The center of a ritual circle; right-click to attempt the ritual. */
 public class RitualCircleBlock extends Block {
@@ -24,7 +28,22 @@ public class RitualCircleBlock extends Block {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
-        RitualActivation.Result result = RitualActivation.tryPerform((ServerLevel) level, pos);
+        ServerLevel sl = (ServerLevel) level;
+
+        // Burst: sound + staggered PORTAL particles along glyph ring (1 per tick)
+        level.playSound(null, pos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 0.8f, 1.8f);
+        List<BlockPos> ring = RitualCircle.smallRing(pos);
+        for (int i = 0; i < 20; i++) {
+            final BlockPos rp = ring.get(i % ring.size());
+            final int delay = i;
+            sl.getServer().tell(new net.minecraft.server.TickTask(delay, () ->
+                sl.sendParticles(ParticleTypes.PORTAL,
+                        rp.getX() + 0.5, rp.getY() + 0.1, rp.getZ() + 0.5,
+                        1, 0.1, 0.1, 0.1, 0.05)
+            ));
+        }
+
+        RitualActivation.Result result = RitualActivation.tryPerform(sl, pos);
         if (result == RitualActivation.Result.SUCCESS) {
             level.playSound(null, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.BLOCKS, 0.6F, 1.2F);
         } else {
