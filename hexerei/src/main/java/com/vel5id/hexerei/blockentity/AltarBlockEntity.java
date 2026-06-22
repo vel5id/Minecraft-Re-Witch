@@ -419,7 +419,37 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         com.vel5id.hexerei.power.TaintLevel tl =
                 com.vel5id.hexerei.client.ClientTaintCache.getLevel(new net.minecraft.world.level.ChunkPos(pos));
         if (tl == com.vel5id.hexerei.power.TaintLevel.NONE) return;
-        // Particle emission is wired in Task 5 after HexereiParticles is registered.
-        // This method is the hook; leave body empty until then.
+
+        long gt = level.getGameTime();
+        // Period (in ticks) between wisp spawns: LOW=6, MEDIUM=4, HIGH=2
+        int period = switch (tl) {
+            case LOW    -> 6;
+            case MEDIUM -> 4;
+            case HIGH   -> 2;
+            default     -> 0;
+        };
+        if (period == 0 || gt % period != 0) return;
+
+        net.minecraft.core.particles.SimpleParticleType wispType = switch (tl) {
+            case LOW    -> com.vel5id.hexerei.registry.HexereiParticles.WISP_LOW.get();
+            case MEDIUM -> com.vel5id.hexerei.registry.HexereiParticles.WISP_MEDIUM.get();
+            case HIGH   -> com.vel5id.hexerei.registry.HexereiParticles.WISP_HIGH.get();
+            default     -> null;
+        };
+        if (wispType != null) {
+            double px = pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.8;
+            double py = pos.getY() + 1.1;
+            double pz = pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.8;
+            double vy = 0.02 + level.random.nextDouble() * 0.02;
+            level.addParticle(wispType, px, py, pz, 0, vy, 0);
+        }
+
+        // Ash particles for HIGH taint — fall downward, half the wisp period
+        if (tl == com.vel5id.hexerei.power.TaintLevel.HIGH && gt % 5 == 0) {
+            double px = pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 1.4;
+            double py = pos.getY() + 1.6;
+            double pz = pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 1.4;
+            level.addParticle(com.vel5id.hexerei.registry.HexereiParticles.ASH.get(), px, py, pz, 0, 0, 0);
+        }
     }
 }
