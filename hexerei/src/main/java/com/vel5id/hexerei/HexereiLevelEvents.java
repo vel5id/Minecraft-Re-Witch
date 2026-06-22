@@ -22,6 +22,9 @@ public final class HexereiLevelEvents {
         if (gt % 1200 == 0) {           // every 60s: decay taint
             ChunkTaintData.get(sl).decayTick();
         }
+        if (gt % 200 == 0) {
+            // WorldTaintAura pulse — implemented in Task 6
+        }
     }
 
     @SubscribeEvent
