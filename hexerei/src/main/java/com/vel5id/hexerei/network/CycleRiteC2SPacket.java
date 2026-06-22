@@ -32,7 +32,7 @@ public record CycleRiteC2SPacket(int delta) {
             for (int i = 0; i < all.size(); i++) {
                 if (all.get(i).id().equals(current)) { idx = i; break; }
             }
-            idx = Math.floorMod(idx + pkt.delta(), all.size());
+            idx = cycleIndex(idx, pkt.delta(), all.size());
             RitualRecipe next = all.get(idx);
             stack.getOrCreateTag().putString("hexerei:rite", next.id());
             player.displayClientMessage(
@@ -41,5 +41,10 @@ public record CycleRiteC2SPacket(int delta) {
                     true);
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    /** Wraps {@code current + delta} into [0, size) using {@link Math#floorMod}. */
+    public static int cycleIndex(int current, int delta, int size) {
+        return Math.floorMod(current + delta, size);
     }
 }

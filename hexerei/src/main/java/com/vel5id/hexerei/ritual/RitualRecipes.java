@@ -1,6 +1,9 @@
 package com.vel5id.hexerei.ritual;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +22,20 @@ public final class RitualRecipes {
 
     public static final Map<String, RitualRecipe> BY_ID = ALL.stream()
             .collect(Collectors.toUnmodifiableMap(RitualRecipe::id, r -> r));
+
+    /**
+     * Resolves a {@link RitualRecipe} from an item's NBT tag, or returns the first recipe as default.
+     * This is the pure-logic layer called by {@code RitualChalkItem.getSelectedRecipe(ItemStack)}.
+     *
+     * @param tag the stack's compound tag, or {@code null} when absent
+     */
+    public static RitualRecipe fromTag(@Nullable CompoundTag tag) {
+        if (tag != null) {
+            RitualRecipe r = BY_ID.get(tag.getString("hexerei:rite"));
+            if (r != null) return r;
+        }
+        return ALL.isEmpty() ? null : ALL.get(0);
+    }
 
     public static Optional<RitualRecipe> match(Predicate<BlockPos> isGlyph, BlockPos center, String sacrificeId) {
         for (RitualRecipe r : ALL) {

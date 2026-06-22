@@ -81,12 +81,7 @@ public class RitualChalkItem extends Item {
 
     /** Returns the currently selected rite from the item's NBT, or the first recipe as default. */
     public static RitualRecipe getSelectedRecipe(ItemStack stack) {
-        if (stack.hasTag()) {
-            String id = stack.getTag().getString("hexerei:rite");
-            RitualRecipe r = RitualRecipes.BY_ID.get(id);
-            if (r != null) return r;
-        }
-        return RitualRecipes.ALL.isEmpty() ? null : RitualRecipes.ALL.get(0);
+        return RitualRecipes.fromTag(stack.hasTag() ? stack.getOrCreateTag() : null);
     }
 
     /** Place the small glyph ring around {@code center} where each cell is air over a sturdy block. Returns the count placed. */
