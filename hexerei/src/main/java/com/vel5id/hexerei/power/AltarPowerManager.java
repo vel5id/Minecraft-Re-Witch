@@ -60,4 +60,9 @@ public final class AltarPowerManager {
         List<RelativePowerSource> all = query(level, from);
         return all.isEmpty() ? Optional.empty() : Optional.of(all.get(0).source());
     }
+
+    /** Returns an unmodifiable view of all registered power sources for this level. */
+    public java.util.List<IPowerSource> allSources() {
+        return java.util.Collections.unmodifiableList(sources);
+    }
 }

@@ -3,6 +3,7 @@ package com.vel5id.hexerei;
 import com.vel5id.hexerei.network.HexereiNetwork;
 import com.vel5id.hexerei.network.TaintSyncS2CPacket;
 import com.vel5id.hexerei.power.ChunkTaintData;
+import com.vel5id.hexerei.ritual.WorldTaintAura;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.event.TickEvent;
@@ -23,7 +24,7 @@ public final class HexereiLevelEvents {
             ChunkTaintData.get(sl).decayTick();
         }
         if (gt % 200 == 0) {
-            // WorldTaintAura pulse — implemented in Task 6
+            WorldTaintAura.pulse(sl);
         }
     }
 
