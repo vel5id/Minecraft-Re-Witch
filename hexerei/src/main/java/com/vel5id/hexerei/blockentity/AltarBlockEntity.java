@@ -422,9 +422,9 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
 
         long gt = level.getGameTime();
         int period = switch (tl) {
-            case LOW    -> 6;
-            case MEDIUM -> 4;
-            case HIGH   -> 2;
+            case LOW    -> 20;
+            case MEDIUM -> 20;
+            case HIGH   -> 10;
             default     -> 0;
         };
         if (period == 0 || gt % period != 0) return;
