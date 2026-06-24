@@ -1,16 +1,23 @@
 package com.vel5id.hexerei.client;
 
 import com.vel5id.hexerei.HexereiMod;
+import com.vel5id.hexerei.blockentity.CauldronBlockEntity;
+import com.vel5id.hexerei.brewing.BrewColor;
 import com.vel5id.hexerei.client.particle.AshParticle;
+import com.vel5id.hexerei.client.particle.CauldronBubbleParticle;
+import com.vel5id.hexerei.client.particle.CauldronSteamParticle;
 import com.vel5id.hexerei.client.particle.WispParticle;
 import com.vel5id.hexerei.item.BrewItem;
 import com.vel5id.hexerei.network.CycleRiteC2SPacket;
 import com.vel5id.hexerei.network.HexereiNetwork;
+import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.registry.HexereiItems;
 import com.vel5id.hexerei.registry.HexereiMenus;
 import com.vel5id.hexerei.registry.HexereiParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
@@ -26,15 +33,25 @@ public final class HexereiClient {
     private HexereiClient() {}
 
     @SubscribeEvent
-    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        // Tint the brew's liquid overlay (layer0 / tintindex 0) by its brew color.
-        event.register((stack, tintIndex) -> tintIndex == 0 ? 0xFF000000 | BrewItem.color(stack) : 0xFFFFFFFF,
-                HexereiItems.BREW.get());
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            MenuScreens.register(HexereiMenus.CHARM_POUCH.get(), CharmPouchScreen::new);
+            // Per-brew model selection: one item, 6 textures, picked by the catalog index in NBT.
+            ItemProperties.register(HexereiItems.BREW.get(),
+                    new ResourceLocation(HexereiMod.MODID, "brew"),
+                    (stack, level, entity, seed) -> BrewItem.modelIndex(stack) / 10.0f);
+        });
     }
 
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> MenuScreens.register(HexereiMenus.CHARM_POUCH.get(), CharmPouchScreen::new));
+    public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+        // Tint the cauldron's interior liquid quad (tintindex 0) by the brewing color the BE computes.
+        event.register((state, level, pos, tintIndex) -> {
+            if (tintIndex != 0 || level == null || pos == null) {
+                return -1;
+            }
+            return level.getBlockEntity(pos) instanceof CauldronBlockEntity be ? be.getColor() : BrewColor.WATER;
+        }, HexereiBlocks.CAULDRON.get());
     }
 
     @SubscribeEvent
@@ -43,6 +60,8 @@ public final class HexereiClient {
         event.registerSpriteSet(HexereiParticles.WISP_MEDIUM.get(), WispParticle.MediumProvider::new);
         event.registerSpriteSet(HexereiParticles.WISP_HIGH.get(),   WispParticle.HighProvider::new);
         event.registerSpriteSet(HexereiParticles.ASH.get(),         AshParticle.Provider::new);
+        event.registerSpriteSet(HexereiParticles.CAULDRON_BUBBLE.get(), CauldronBubbleParticle.Provider::new);
+        event.registerSpriteSet(HexereiParticles.CAULDRON_STEAM.get(),  CauldronSteamParticle.Provider::new);
     }
 
     /** Forge-bus client events (scroll to cycle rite). */

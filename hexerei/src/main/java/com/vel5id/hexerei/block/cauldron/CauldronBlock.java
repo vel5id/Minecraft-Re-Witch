@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -31,8 +33,18 @@ public class CauldronBlock extends Block implements EntityBlock {
     private static final VoxelShape SHAPE =
             Shapes.join(Shapes.block(), Block.box(2, 4, 2, 14, 16, 14), BooleanOp.ONLY_FIRST);
 
+    // Derived from the BlockEntity (waterLevel/heatTicks) — pure functions, so the model can't desync.
+    public static final BooleanProperty FILLED = BooleanProperty.create("filled");
+    public static final BooleanProperty BOILING = BooleanProperty.create("boiling");
+
     public CauldronBlock(Properties properties) {
         super(properties);
+        registerDefaultState(stateDefinition.any().setValue(FILLED, false).setValue(BOILING, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FILLED, BOILING);
     }
 
     @Override
@@ -59,12 +71,13 @@ public class CauldronBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide) {
+        if (type != HexereiBlockEntities.CAULDRON.get()) {
             return null;
         }
-        return type == HexereiBlockEntities.CAULDRON.get()
-                ? (lvl, pos, st, be) -> CauldronBlockEntity.serverTick(lvl, pos, st, (CauldronBlockEntity) be)
-                : null;
+        if (level.isClientSide) {
+            return (lvl, pos, st, be) -> ((CauldronBlockEntity) be).clientTick(lvl, pos, st);
+        }
+        return (lvl, pos, st, be) -> CauldronBlockEntity.serverTick(lvl, pos, st, (CauldronBlockEntity) be);
     }
 
     @Override

@@ -54,4 +54,16 @@ public final class Brews {
     public static Brew byId(String id) {
         return BY_ID.get(id);
     }
+
+    /** 1-based position of a brew id in catalog order, or 0 if unknown — drives the item-model override predicate. */
+    public static int indexOf(String id) {
+        int i = 1;
+        for (String key : BY_ID.keySet()) {
+            if (key.equals(id)) {
+                return i;
+            }
+            i++;
+        }
+        return 0;
+    }
 }

@@ -1,1 +1,16 @@
-{ "variants": { "": { "model": "hexerei:block/cauldron" } } }
+{
+  "variants": {
+    "filled=false,boiling=false": {
+      "model": "hexerei:block/cauldron"
+    },
+    "filled=true,boiling=false": {
+      "model": "hexerei:block/cauldron_filled"
+    },
+    "filled=false,boiling=true": {
+      "model": "hexerei:block/cauldron"
+    },
+    "filled=true,boiling=true": {
+      "model": "hexerei:block/cauldron_boiling"
+    }
+  }
+}

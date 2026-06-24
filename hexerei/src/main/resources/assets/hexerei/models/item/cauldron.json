@@ -1,1 +1,3 @@
-{ "parent": "hexerei:block/cauldron" }
+{
+  "parent": "hexerei:block/cauldron"
+}

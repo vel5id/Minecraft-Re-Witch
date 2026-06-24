@@ -267,7 +267,54 @@ public class CauldronBlockEntity extends BlockEntity {
 
     private void sync() {
         if (level != null && !level.isClientSide) {
+            syncState();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    /** Reconcile the blockstate FILLED/BOILING booleans to the BE's numeric truth (server-only). */
+    private void syncState() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        BlockState st = getBlockState();
+        if (!(st.getBlock() instanceof com.vel5id.hexerei.block.cauldron.CauldronBlock)) {
+            return;
+        }
+        boolean wantFilled = isFilled();
+        boolean wantBoiling = isBoiling();
+        if (st.getValue(com.vel5id.hexerei.block.cauldron.CauldronBlock.FILLED) != wantFilled
+                || st.getValue(com.vel5id.hexerei.block.cauldron.CauldronBlock.BOILING) != wantBoiling) {
+            level.setBlock(worldPosition,
+                    st.setValue(com.vel5id.hexerei.block.cauldron.CauldronBlock.FILLED, wantFilled)
+                      .setValue(com.vel5id.hexerei.block.cauldron.CauldronBlock.BOILING, wantBoiling), 3);
+        }
+    }
+
+    /** Client-only ambient particles while boiling — bubbles tinted by the brew color, plus rising steam. */
+    public void clientTick(Level level, BlockPos pos, BlockState state) {
+        if (!isBoiling()) {
+            return;
+        }
+        long gt = level.getGameTime();
+        var rnd = level.random;
+        if (gt % 4L == 0L) {
+            float[] c = CauldronVisuals.rgb(color);
+            int n = rnd.nextInt(3);
+            for (int i = 0; i < n; i++) {
+                double px = pos.getX() + 0.30 + rnd.nextDouble() * 0.40;
+                double pz = pos.getZ() + 0.30 + rnd.nextDouble() * 0.40;
+                double py = pos.getY() + 0.80;
+                level.addParticle(com.vel5id.hexerei.registry.HexereiParticles.CAULDRON_BUBBLE.get(),
+                        px, py, pz, c[0], c[1], c[2]);
+            }
+        }
+        if (gt % 10L == 0L) {
+            double px = pos.getX() + 0.5 + (rnd.nextDouble() - 0.5) * 0.5;
+            double pz = pos.getZ() + 0.5 + (rnd.nextDouble() - 0.5) * 0.5;
+            double py = pos.getY() + 0.95;
+            level.addParticle(com.vel5id.hexerei.registry.HexereiParticles.CAULDRON_STEAM.get(),
+                    px, py, pz, 0.0, 0.03 + rnd.nextDouble() * 0.02, 0.0);
         }
     }
 

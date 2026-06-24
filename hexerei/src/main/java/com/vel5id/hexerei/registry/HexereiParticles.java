@@ -17,4 +17,8 @@ public final class HexereiParticles {
     public static final RegistryObject<SimpleParticleType> WISP_MEDIUM = PARTICLES.register("wisp_medium", () -> new SimpleParticleType(false));
     public static final RegistryObject<SimpleParticleType> WISP_HIGH   = PARTICLES.register("wisp_high",   () -> new SimpleParticleType(false));
     public static final RegistryObject<SimpleParticleType> ASH         = PARTICLES.register("ash",         () -> new SimpleParticleType(false));
+
+    // Cauldron boiling: bubbles (tinted by brew color) + steam (visible at distance -> overrideLimiter true).
+    public static final RegistryObject<SimpleParticleType> CAULDRON_BUBBLE = PARTICLES.register("cauldron_bubble", () -> new SimpleParticleType(false));
+    public static final RegistryObject<SimpleParticleType> CAULDRON_STEAM  = PARTICLES.register("cauldron_steam",  () -> new SimpleParticleType(true));
 }

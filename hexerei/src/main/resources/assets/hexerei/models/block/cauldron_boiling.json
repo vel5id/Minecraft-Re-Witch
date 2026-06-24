@@ -5,7 +5,8 @@
     "side": "hexerei:block/cauldron_side",
     "top": "hexerei:block/cauldron_top",
     "bottom": "hexerei:block/cauldron_bottom",
-    "inside": "hexerei:block/cauldron_inside"
+    "inside": "hexerei:block/cauldron_inside",
+    "liquid": "hexerei:block/cauldron_liquid_boiling"
   },
   "elements": [
     {
@@ -158,6 +159,24 @@
         },
         "down": {
           "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        13,
+        2
+      ],
+      "to": [
+        14,
+        13,
+        14
+      ],
+      "faces": {
+        "up": {
+          "texture": "#liquid",
+          "tintindex": 0
         }
       }
     }

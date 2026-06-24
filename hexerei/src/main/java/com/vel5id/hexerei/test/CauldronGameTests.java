@@ -1,6 +1,7 @@
 package com.vel5id.hexerei.test;
 
 import com.vel5id.hexerei.HexereiMod;
+import com.vel5id.hexerei.block.cauldron.CauldronBlock;
 import com.vel5id.hexerei.blockentity.CauldronBlockEntity;
 import com.vel5id.hexerei.brewing.Brews;
 import com.vel5id.hexerei.item.BrewItem;
@@ -145,6 +146,54 @@ public class CauldronGameTests {
                 h.succeed();
             }
         });
+    }
+
+    /** fillWater() must set the FILLED blockstate boolean (server-authoritative model selector). */
+    @GameTest(template = "empty", batch = "cauldron", timeoutTicks = 100)
+    public void cauldronFillSetsFilledState(GameTestHelper h) {
+        BlockPos caul = new BlockPos(18, 2, 18);
+        h.setBlock(caul, HexereiBlocks.CAULDRON.get());
+        ((CauldronBlockEntity) h.getBlockEntity(caul)).fillWater();
+        net.minecraft.world.level.block.state.BlockState st = h.getBlockState(caul);
+        if (!st.getValue(CauldronBlock.FILLED)) {
+            h.fail("fillWater should set FILLED=true");
+        } else if (st.getValue(CauldronBlock.BOILING)) {
+            h.fail("a just-filled cauldron must not be boiling");
+        } else {
+            h.succeed();
+        }
+    }
+
+    /** A heated, filled cauldron flips the BOILING blockstate boolean after the boil delay. */
+    @GameTest(template = "empty", batch = "cauldron", timeoutTicks = 200)
+    public void cauldronBoilSetsBoilingState(GameTestHelper h) {
+        BlockPos caul = new BlockPos(18, 2, 18);
+        h.setBlock(caul, HexereiBlocks.CAULDRON.get());
+        h.setBlock(caul.below(), Blocks.MAGMA_BLOCK);
+        ((CauldronBlockEntity) h.getBlockEntity(caul)).fillWater();
+        h.runAfterDelay(120, () -> {
+            if (!h.getBlockState(caul).getValue(CauldronBlock.BOILING)) {
+                h.fail("heated full cauldron should set BOILING after ~5s");
+            } else {
+                h.succeed();
+            }
+        });
+    }
+
+    /** drain() must clear both FILLED and BOILING. */
+    @GameTest(template = "empty", batch = "cauldron", timeoutTicks = 100)
+    public void cauldronDrainClearsStates(GameTestHelper h) {
+        BlockPos caul = new BlockPos(18, 2, 18);
+        h.setBlock(caul, HexereiBlocks.CAULDRON.get());
+        CauldronBlockEntity be = (CauldronBlockEntity) h.getBlockEntity(caul);
+        be.fillWater();
+        be.drain();
+        net.minecraft.world.level.block.state.BlockState st = h.getBlockState(caul);
+        if (st.getValue(CauldronBlock.FILLED) || st.getValue(CauldronBlock.BOILING)) {
+            h.fail("drain should clear FILLED and BOILING");
+        } else {
+            h.succeed();
+        }
     }
 
     /** Minimal in-range power source for the deterministic collect test. */

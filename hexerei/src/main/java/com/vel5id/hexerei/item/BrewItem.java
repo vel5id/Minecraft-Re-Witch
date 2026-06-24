@@ -47,10 +47,18 @@ public class BrewItem extends Item {
         return tag != null ? Brews.byId(tag.getString(BREW_ID)) : null;
     }
 
-    /** Liquid tint for the colored-potion overlay (tintindex 0). */
+    /** Liquid tint — no longer wired to a render tint; kept for cauldron blend / future GUI use. // FUTURE */
     public static int color(ItemStack stack) {
         Brew brew = brewOf(stack);
         return brew != null ? brew.color() : BrewColor.WATER;
+    }
+
+    /** 0 when no/unknown brew NBT, else the 1..N catalog index — drives the per-brew item-model override. */
+    public static int modelIndex(ItemStack stack) {
+        if (!stack.hasTag()) {
+            return 0;
+        }
+        return Brews.indexOf(stack.getTag().getString(BREW_ID));
     }
 
     @Override

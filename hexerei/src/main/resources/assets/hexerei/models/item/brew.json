@@ -1,7 +1,44 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/potion_overlay",
-    "layer1": "minecraft:item/potion"
-  }
+    "layer0": "hexerei:item/brew/brew_empty"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "hexerei:brew": 0.1
+      },
+      "model": "hexerei:item/brew/sleeping_draught"
+    },
+    {
+      "predicate": {
+        "hexerei:brew": 0.2
+      },
+      "model": "hexerei:item/brew/frailty"
+    },
+    {
+      "predicate": {
+        "hexerei:brew": 0.3
+      },
+      "model": "hexerei:item/brew/witchs_sight"
+    },
+    {
+      "predicate": {
+        "hexerei:brew": 0.4
+      },
+      "model": "hexerei:item/brew/bloodwort_tonic"
+    },
+    {
+      "predicate": {
+        "hexerei:brew": 0.5
+      },
+      "model": "hexerei:item/brew/hags_swiftness"
+    },
+    {
+      "predicate": {
+        "hexerei:brew": 0.6
+      },
+      "model": "hexerei:item/brew/withering_bile"
+    }
+  ]
 }
