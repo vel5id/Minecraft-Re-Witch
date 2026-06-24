@@ -25,11 +25,11 @@ public final class HexereiItems {
     public static final RegistryObject<Item> CAULDRON = ITEMS.register("cauldron",
             () -> new BlockItem(HexereiBlocks.CAULDRON.get(), new Item.Properties()));
 
-    public static final RegistryObject<Item> RITUAL_GLYPH = ITEMS.register("ritual_glyph",
-            () -> new BlockItem(HexereiBlocks.RITUAL_GLYPH.get(), new Item.Properties()));
+    public static final RegistryObject<Item> RUNE = ITEMS.register("rune",
+            () -> new BlockItem(HexereiBlocks.RUNE.get(), new Item.Properties()));
 
-    public static final RegistryObject<Item> RITUAL_CIRCLE = ITEMS.register("ritual_circle",
-            () -> new BlockItem(HexereiBlocks.RITUAL_CIRCLE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> RITUAL_SIGIL = ITEMS.register("ritual_sigil",
+            () -> new BlockItem(HexereiBlocks.RITUAL_SIGIL.get(), new Item.Properties()));
 
     public static final RegistryObject<Item> RITUAL_CHALK = ITEMS.register("ritual_chalk",
             () -> new com.vel5id.hexerei.item.RitualChalkItem(new Item.Properties().durability(64)));

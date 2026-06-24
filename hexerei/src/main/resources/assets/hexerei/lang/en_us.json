@@ -40,8 +40,8 @@
   "brew.hexerei.hags_swiftness": "Hag's Swiftness",
   "brew.hexerei.withering_bile": "Withering Bile",
 
-  "block.hexerei.ritual_glyph": "Ritual Glyph",
-  "block.hexerei.ritual_circle": "Ritual Circle",
+  "block.hexerei.rune": "Rune",
+  "block.hexerei.ritual_sigil": "Ritual Sigil",
   "ritual.hexerei.tempest": "Rite of the Tempest",
   "ritual.hexerei.verdant": "Rite of Verdant Growth",
   "ritual.hexerei.bound_beast": "Rite of the Bound Beast",
@@ -52,6 +52,8 @@
   "item.hexerei.ritual_chalk.circle.small": "Small circle · %d glyphs",
   "item.hexerei.ritual_chalk.circle.medium": "Large circle · %d glyphs",
   "item.hexerei.ritual_chalk.tip2": "[Shift+Scroll] Change rite",
+  "item.hexerei.ritual_chalk.tip3": "[Right-click sigil] Draw & bind",
+  "hexerei.ritual.destroy_first": "Destroy the circle first",
 
   "item.hexerei.charm_pouch": "Charm Pouch",
   "item.hexerei.ward_charm": "Ward Charm",

@@ -1,6 +1,6 @@
 {
   "name": "Начертание круга",
-  "icon": "hexerei:ritual_circle",
+  "icon": "hexerei:ritual_sigil",
   "category": "hexerei:rituals",
   "pages": [
     {
@@ -14,7 +14,7 @@
     },
     {
       "type": "patchouli:crafting",
-      "recipe": "hexerei:ritual_circle"
+      "recipe": "hexerei:ritual_sigil"
     },
     {
       "type": "patchouli:text",

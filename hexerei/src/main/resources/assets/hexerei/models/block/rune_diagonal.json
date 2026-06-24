@@ -1,0 +1,16 @@
+{
+  "parent": "block/thin_block",
+  "textures": {
+    "particle": "hexerei:block/rune_diagonal",
+    "rune": "hexerei:block/rune_diagonal"
+  },
+  "elements": [
+    {
+      "from": [2, 0, 2],
+      "to": [14, 1, 14],
+      "faces": {
+        "up": { "texture": "#rune", "tintindex": -1 }
+      }
+    }
+  ]
+}

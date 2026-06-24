@@ -22,8 +22,8 @@ public final class HexereiCreativeTabs {
                         output.accept(HexereiItems.GRIMOIRE.get()); // guide book first, like a manual at the top
                         output.accept(HexereiBlocks.ALTAR.get());
                         output.accept(HexereiBlocks.CAULDRON.get());
-                        output.accept(HexereiBlocks.RITUAL_CIRCLE.get());
-                        output.accept(HexereiBlocks.RITUAL_GLYPH.get());
+                        output.accept(HexereiBlocks.RITUAL_SIGIL.get());
+                        output.accept(HexereiBlocks.RUNE.get());
                         output.accept(HexereiBlocks.TAINTED_GROUND.get());
                         output.accept(HexereiBlocks.CHARRED_STONE.get());
                         output.accept(HexereiItems.RITUAL_CHALK.get());

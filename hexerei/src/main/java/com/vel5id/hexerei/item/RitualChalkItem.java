@@ -1,5 +1,6 @@
 package com.vel5id.hexerei.item;
 
+import com.vel5id.hexerei.blockentity.RitualSigilBlockEntity;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.ritual.RitualCircle;
 import com.vel5id.hexerei.ritual.RitualRecipe;
@@ -18,11 +19,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-/** Ritual Chalk: right-click a Ritual Circle center to draw glyphs for the selected rite. */
+/** Ritual Chalk: right-click a Ritual Sigil to draw the selected rite's rune ring and bind it. */
 public class RitualChalkItem extends Item {
     public RitualChalkItem(Properties properties) {
         super(properties);
@@ -35,36 +37,64 @@ public class RitualChalkItem extends Item {
         Player player = ctx.getPlayer();
         InteractionHand hand = ctx.getHand();
 
-        if (level.getBlockState(clicked).is(HexereiBlocks.RITUAL_CIRCLE.get())) {
+        if (level.getBlockState(clicked).is(HexereiBlocks.RITUAL_SIGIL.get())) {
             if (!level.isClientSide) {
-                ItemStack stack = ctx.getItemInHand();
-                RitualRecipe rite = getSelectedRecipe(stack);
-                List<BlockPos> ring = (rite != null)
-                        ? rite.circleSize().ringPositions(clicked)
-                        : RitualCircle.smallRing(clicked);
-                for (BlockPos ringPos : ring) {
-                    if (canPlaceGlyph(level, ringPos)) {
-                        level.setBlock(ringPos, HexereiBlocks.RITUAL_GLYPH.get().defaultBlockState(), 3);
-                        damage(ctx, player, hand);
-                        level.playSound(null, ringPos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.7F, 1.3F);
-                        break;
-                    }
-                }
+                drawAndBind(ctx, level, clicked, player, hand);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        // otherwise draw a single glyph on top of the clicked block
-        BlockPos above = clicked.above();
-        if (canPlaceGlyph(level, above)) {
-            if (!level.isClientSide) {
-                level.setBlock(above, HexereiBlocks.RITUAL_GLYPH.get().defaultBlockState(), 3);
-                damage(ctx, player, hand);
-                level.playSound(null, above, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.7F, 1.3F);
-            }
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        }
+        // Runes only exist as part of a sigil ring — no off-sigil free-draw fallback.
         return InteractionResult.PASS;
+    }
+
+    /**
+     * Plain right-click on a sigil: draw all ring runes for the selected rite and bind the rite to
+     * the sigil's BlockEntity. A same rite+size redraw acts as repair (re-places any missing runes,
+     * no warning); a different rite/size is rejected with an action-bar message.
+     */
+    private void drawAndBind(UseOnContext ctx, Level level, BlockPos sigilPos, @Nullable Player player, InteractionHand hand) {
+        RitualRecipe rite = getSelectedRecipe(ctx.getItemInHand());
+        if (rite == null) {
+            return;
+        }
+
+        RitualSigilBlockEntity be = sigilEntity(level, sigilPos);
+
+        // GUARD: a bound sigil rejects any draw whose (riteId, size) differs from the bound pair.
+        if (be != null && be.isBound()
+                && (!be.boundRiteId().equals(rite.id()) || be.boundSize() != rite.circleSize())) {
+            if (player != null) {
+                player.displayClientMessage(Component.translatable("hexerei.ritual.destroy_first"), true);
+            }
+            level.playSound(null, sigilPos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.4F, 0.8F);
+            return;
+        }
+
+        // Draw every missing ring cell in one use (repair when same rite+size).
+        boolean placedAny = false;
+        for (BlockPos ringPos : rite.circleSize().ringPositions(sigilPos)) {
+            if (canPlaceGlyph(level, ringPos)) {
+                level.setBlock(ringPos, HexereiBlocks.RUNE.get().defaultBlockState(), 3);
+                placedAny = true;
+            }
+        }
+        if (placedAny) {
+            damage(ctx, player, hand);
+            level.playSound(null, sigilPos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.7F, 1.3F);
+        }
+
+        // Bind once the ring is complete; partial draws stay unbound and re-drawable.
+        if (be != null && !be.isBound()
+                && rite.circleSize().isComplete(p -> level.getBlockState(p).is(HexereiBlocks.RUNE.get()), sigilPos)) {
+            be.bind(rite.id(), rite.circleSize());
+        }
+    }
+
+    @Nullable
+    private static RitualSigilBlockEntity sigilEntity(Level level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        return be instanceof RitualSigilBlockEntity sigil ? sigil : null;
     }
 
     @Override
@@ -77,6 +107,7 @@ public class RitualChalkItem extends Item {
                     rite.circleSize().ringPositions(BlockPos.ZERO).size()).withStyle(ChatFormatting.DARK_GRAY));
         }
         tooltip.add(Component.translatable("item.hexerei.ritual_chalk.tip2").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.hexerei.ritual_chalk.tip3").withStyle(ChatFormatting.GRAY));
     }
 
     /** Returns the currently selected rite from the item's NBT, or the first recipe as default. */
@@ -89,7 +120,7 @@ public class RitualChalkItem extends Item {
         int placed = 0;
         for (BlockPos ring : RitualCircle.smallRing(center)) {
             if (canPlaceGlyph(level, ring)) {
-                level.setBlock(ring, HexereiBlocks.RITUAL_GLYPH.get().defaultBlockState(), 3);
+                level.setBlock(ring, HexereiBlocks.RUNE.get().defaultBlockState(), 3);
                 placed++;
             }
         }

@@ -40,8 +40,8 @@
   "brew.hexerei.hags_swiftness": "Прыть ведьмы",
   "brew.hexerei.withering_bile": "Иссушающая желчь",
 
-  "block.hexerei.ritual_glyph": "Ритуальный глиф",
-  "block.hexerei.ritual_circle": "Ритуальный круг",
+  "block.hexerei.rune": "Руна",
+  "block.hexerei.ritual_sigil": "Ритуальный сигил",
   "ritual.hexerei.tempest": "Обряд бури",
   "ritual.hexerei.verdant": "Обряд буйного роста",
   "ritual.hexerei.bound_beast": "Обряд связанного зверя",
@@ -52,6 +52,8 @@
   "item.hexerei.ritual_chalk.circle.small": "Малый круг · %d глифов",
   "item.hexerei.ritual_chalk.circle.medium": "Большой круг · %d глифов",
   "item.hexerei.ritual_chalk.tip2": "[Shift+Скролл] Сменить обряд",
+  "item.hexerei.ritual_chalk.tip3": "[ПКМ по сигилу] Нарисовать и связать",
+  "hexerei.ritual.destroy_first": "Разрушьте круг",
 
   "item.hexerei.charm_pouch": "Мешочек амулетов",
   "item.hexerei.ward_charm": "Оберег",

@@ -3,6 +3,7 @@ package com.vel5id.hexerei.registry;
 import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.blockentity.AltarBlockEntity;
 import com.vel5id.hexerei.blockentity.CauldronBlockEntity;
+import com.vel5id.hexerei.blockentity.RitualSigilBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -21,4 +22,8 @@ public final class HexereiBlockEntities {
     public static final RegistryObject<BlockEntityType<CauldronBlockEntity>> CAULDRON =
             BLOCK_ENTITIES.register("cauldron",
                     () -> BlockEntityType.Builder.of(CauldronBlockEntity::new, HexereiBlocks.CAULDRON.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<RitualSigilBlockEntity>> RITUAL_SIGIL =
+            BLOCK_ENTITIES.register("ritual_sigil",
+                    () -> BlockEntityType.Builder.of(RitualSigilBlockEntity::new, HexereiBlocks.RITUAL_SIGIL.get()).build(null));
 }

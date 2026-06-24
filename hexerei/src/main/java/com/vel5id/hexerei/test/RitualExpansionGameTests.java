@@ -37,13 +37,13 @@ public class RitualExpansionGameTests {
 
     private static void buildSmall(GameTestHelper h, BlockPos center, int glyphCount) {
         floor(h, center, 2);
-        h.setBlock(center, HexereiBlocks.RITUAL_CIRCLE.get());
+        h.setBlock(center, HexereiBlocks.RITUAL_SIGIL.get());
         place(h, RitualCircle.smallRing(center), glyphCount);
     }
 
     private static void buildMedium(GameTestHelper h, BlockPos center, int glyphCount) {
         floor(h, center, 3);
-        h.setBlock(center, HexereiBlocks.RITUAL_CIRCLE.get());
+        h.setBlock(center, HexereiBlocks.RITUAL_SIGIL.get());
         place(h, RitualCircle.mediumRing(center), glyphCount);
     }
 
@@ -61,7 +61,7 @@ public class RitualExpansionGameTests {
             if (placed >= glyphCount) {
                 break;
             }
-            h.setBlock(p, HexereiBlocks.RITUAL_GLYPH.get());
+            h.setBlock(p, HexereiBlocks.RUNE.get());
             placed++;
         }
     }

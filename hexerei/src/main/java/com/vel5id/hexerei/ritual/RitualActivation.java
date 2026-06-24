@@ -22,12 +22,12 @@ public final class RitualActivation {
     public enum Result { SUCCESS, NO_RECIPE, NO_POWER }
 
     public static Result tryPerform(ServerLevel level, BlockPos center) {
-        // Contract: the center must be a ritual circle block (self-contained for any caller).
-        if (!level.getBlockState(center).is(HexereiBlocks.RITUAL_CIRCLE.get())) {
+        // Contract: the center must be a ritual sigil block (self-contained for any caller).
+        if (!level.getBlockState(center).is(HexereiBlocks.RITUAL_SIGIL.get())) {
             return Result.NO_RECIPE;
         }
         java.util.function.Predicate<BlockPos> isGlyph =
-                p -> level.getBlockState(p).is(HexereiBlocks.RITUAL_GLYPH.get());
+                p -> level.getBlockState(p).is(HexereiBlocks.RUNE.get());
 
         // Horizontal reach only — keep the sacrifice on the circle's Y-layer (not in a hole / floating above).
         double r = SACRIFICE_RADIUS;

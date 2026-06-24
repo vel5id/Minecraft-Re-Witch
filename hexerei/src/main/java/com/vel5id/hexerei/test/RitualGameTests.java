@@ -35,13 +35,13 @@ public class RitualGameTests {
                 h.setBlock(center.offset(dx, -1, dz), Blocks.STONE); // sturdy floor under glyphs
             }
         }
-        h.setBlock(center, HexereiBlocks.RITUAL_CIRCLE.get());
+        h.setBlock(center, HexereiBlocks.RITUAL_SIGIL.get());
         int placed = 0;
         for (int[] o : RING) {
             if (placed >= glyphCount) {
                 break;
             }
-            h.setBlock(center.offset(o[0], 0, o[1]), HexereiBlocks.RITUAL_GLYPH.get());
+            h.setBlock(center.offset(o[0], 0, o[1]), HexereiBlocks.RUNE.get());
             placed++;
         }
     }
@@ -87,14 +87,14 @@ public class RitualGameTests {
                 h.setBlock(center.offset(dx, -1, dz), Blocks.STONE); // floor, no glyphs
             }
         }
-        h.setBlock(center, HexereiBlocks.RITUAL_CIRCLE.get());
+        h.setBlock(center, HexereiBlocks.RITUAL_SIGIL.get());
         h.runAfterDelay(3, () -> {
             BlockPos absCenter = h.absolutePos(center);
             int placed = RitualChalkItem.drawCircleAt(h.getLevel(), absCenter);
             if (placed != 12) {
                 h.fail("chalk drew " + placed + " glyphs, expected 12");
             } else if (!RitualCircle.isSmallComplete(
-                    p -> h.getLevel().getBlockState(p).is(HexereiBlocks.RITUAL_GLYPH.get()), absCenter)) {
+                    p -> h.getLevel().getBlockState(p).is(HexereiBlocks.RUNE.get()), absCenter)) {
                 h.fail("circle not complete after chalk draw");
             } else {
                 h.succeed();
