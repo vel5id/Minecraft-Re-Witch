@@ -1,0 +1,12 @@
+{
+  "name": "Обряд бури",
+  "icon": "hexerei:mandrake_root",
+  "category": "hexerei:rituals",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:mandrake_root",
+      "text": "Обряд бури — малый круг, один корень мандрагоры в жертву и 100 силы алтаря призывают грозу. Срабатывание выжигает землю и пятнает её порчей."
+    }
+  ]
+}

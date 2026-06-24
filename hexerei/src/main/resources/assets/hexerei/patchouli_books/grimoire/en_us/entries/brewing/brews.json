@@ -1,0 +1,41 @@
+{
+  "name": "Recipes of the Cauldron",
+  "icon": "hexerei:brew",
+  "category": "hexerei:brewing",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "A finished brew matches on the exact set of herbs you add, and draws altar power to complete. These are the recipes the cauldron knows."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:brew",
+      "text": "Sleeping Draught — Mandrake Root + Belladonna Flower. Costs 50 power, and grants Slowness II and Blindness."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:brew",
+      "text": "Brew of Frailty — Wolfsbane + Wormwood. Costs 30 power, and grants Weakness II and Mining Fatigue."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:brew",
+      "text": "Witch's Sight — Icy Needle + Water Artichoke. Costs 40 power, and grants Night Vision and Water Breathing."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:brew",
+      "text": "Bloodwort Tonic — Mandrake Root + Wolfsbane. Costs 60 power, and grants Strength and Resistance."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:brew",
+      "text": "Hag's Swiftness — Water Artichoke + Wormwood. Costs 40 power, and grants Speed II and Jump Boost."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:brew",
+      "text": "Withering Bile — Belladonna Flower + Icy Needle. Costs 30 power, and grants Poison II and Wither."
+    }
+  ]
+}

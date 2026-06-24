@@ -1,0 +1,12 @@
+{
+  "name": "Water Artichoke",
+  "icon": "hexerei:artichoke",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:artichoke",
+      "text": "Water Artichoke is planted on water. It is edible and very filling, and brews into draughts of sight and swiftness."
+    }
+  ]
+}

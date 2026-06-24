@@ -73,7 +73,7 @@ public class RitualChalkItem extends Item {
         if (rite != null) {
             tooltip.add(Component.translatable("item.hexerei.ritual_chalk.rite",
                     Component.translatable(rite.nameKey())).withStyle(ChatFormatting.LIGHT_PURPLE));
-            tooltip.add(Component.translatable("item.hexerei.ritual_chalk.circle",
+            tooltip.add(Component.translatable(rite.circleSize().circleLabelKey(),
                     rite.circleSize().ringPositions(BlockPos.ZERO).size()).withStyle(ChatFormatting.DARK_GRAY));
         }
         tooltip.add(Component.translatable("item.hexerei.ritual_chalk.tip2").withStyle(ChatFormatting.GRAY));

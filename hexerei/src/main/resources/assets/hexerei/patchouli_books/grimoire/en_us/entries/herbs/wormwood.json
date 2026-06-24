@@ -1,0 +1,12 @@
+{
+  "name": "Wormwood",
+  "icon": "hexerei:wormwood",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:wormwood",
+      "text": "Wormwood grows as a tall stalk, stacking upward. Bitter and potent, it sours brews toward weakness and decay."
+    }
+  ]
+}

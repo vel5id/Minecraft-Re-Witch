@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:book"
+    },
+    {
+      "item": "hexerei:mandrake_root"
+    }
+  ],
+  "result": {
+    "item": "hexerei:grimoire"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Rite of the Tempest",
+  "icon": "hexerei:mandrake_root",
+  "category": "hexerei:rituals",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:mandrake_root",
+      "text": "Rite of the Tempest — a small circle, one Mandrake Root as the sacrifice, and 100 altar power summon a thunderstorm. The activation scorches the ground and stains the land with taint."
+    }
+  ]
+}

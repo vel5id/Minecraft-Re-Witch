@@ -1,5 +1,6 @@
 package com.vel5id.hexerei;
 
+import com.vel5id.hexerei.item.CharmTickHandler;
 import com.vel5id.hexerei.network.HexereiNetwork;
 import com.vel5id.hexerei.network.TaintSyncS2CPacket;
 import com.vel5id.hexerei.power.ChunkTaintData;
@@ -25,6 +26,9 @@ public final class HexereiLevelEvents {
         }
         if (gt % 200 == 0) {
             WorldTaintAura.pulse(sl);
+        }
+        if (gt % 20 == 0) {             // every 1s: drain/recharge/apply carried charms
+            CharmTickHandler.tick(sl);
         }
     }
 

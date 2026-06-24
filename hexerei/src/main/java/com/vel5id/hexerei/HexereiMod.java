@@ -5,6 +5,7 @@ import com.vel5id.hexerei.registry.HexereiBlockEntities;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.registry.HexereiCreativeTabs;
 import com.vel5id.hexerei.registry.HexereiItems;
+import com.vel5id.hexerei.registry.HexereiMenus;
 import com.vel5id.hexerei.registry.HexereiParticles;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,6 +27,7 @@ public final class HexereiMod {
         HexereiBlockEntities.BLOCK_ENTITIES.register(modBus);
         HexereiCreativeTabs.TABS.register(modBus);
         HexereiParticles.PARTICLES.register(modBus);
+        HexereiMenus.MENUS.register(modBus);
         HexereiNetwork.register();
         MinecraftForge.EVENT_BUS.register(HexereiLevelEvents.class);
         LOGGER.info("Hexerei loading");

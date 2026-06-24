@@ -1,0 +1,21 @@
+{
+  "name": "The Hedge-Witch's Altar",
+  "icon": "hexerei:altar",
+  "category": "hexerei:altars",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The altar is the heart of every working.$(br2)Simply place the altar block and it forms its multiblock automatically — there is no GUI ritual to perform. Surround it with living nature, and it gathers power."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:altar",
+      "text": "Right-click the altar to see its current and maximum power. After adding or removing nearby nature blocks, right-click again so it rescans and updates its capacity."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "hexerei:altar_placeholder"
+    }
+  ],
+  "priority": true
+}

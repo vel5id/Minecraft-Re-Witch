@@ -1,0 +1,16 @@
+{
+  "name": "Tilling the Witch-Garden",
+  "icon": "hexerei:mandrake_root",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Witch-herbs are planted on tilled farmland, like vanilla crops, and will not stack. They need light level 9 to grow, and bonemeal hastens them."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Two herbs break the rules: Water Artichoke is planted on water, and Wormwood grows tall, stacking upward as it matures."
+    }
+  ],
+  "priority": true
+}

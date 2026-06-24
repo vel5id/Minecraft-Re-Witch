@@ -1,0 +1,20 @@
+{
+  "name": "The Witch's Cauldron",
+  "icon": "hexerei:cauldron",
+  "category": "hexerei:brewing",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Fill the cauldron with a water bucket, then light a fire beneath it — flame, lava, magma, or a lit campfire. After it boils, it is ready to brew."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "hexerei:cauldron"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Toss herbs into the boiling water as dropped items; only ingredients that advance a recipe are drawn in. Right-click with a glass bottle to collect the brew, or an empty bucket to rinse a spoiled mix back to water."
+    }
+  ],
+  "priority": true
+}

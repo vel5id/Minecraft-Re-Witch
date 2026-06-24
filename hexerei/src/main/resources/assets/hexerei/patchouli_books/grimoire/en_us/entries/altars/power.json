@@ -1,0 +1,15 @@
+{
+  "name": "Drawing Power",
+  "icon": "hexerei:altar",
+  "category": "hexerei:altars",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Power comes from the natural blocks around the altar — each crop lends a little, flowers a little more. Brews and rites spend this power, and a working that cannot pay is refused before it consumes anything."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Stored power recharges slowly over time. The altar only recounts its surroundings when placed or right-clicked, so revisit it after reshaping the garden."
+    }
+  ]
+}

@@ -7,13 +7,16 @@ import com.vel5id.hexerei.item.BrewItem;
 import com.vel5id.hexerei.network.CycleRiteC2SPacket;
 import com.vel5id.hexerei.network.HexereiNetwork;
 import com.vel5id.hexerei.registry.HexereiItems;
+import com.vel5id.hexerei.registry.HexereiMenus;
 import com.vel5id.hexerei.registry.HexereiParticles;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -27,6 +30,11 @@ public final class HexereiClient {
         // Tint the brew's liquid overlay (layer0 / tintindex 0) by its brew color.
         event.register((stack, tintIndex) -> tintIndex == 0 ? 0xFF000000 | BrewItem.color(stack) : 0xFFFFFFFF,
                 HexereiItems.BREW.get());
+    }
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> MenuScreens.register(HexereiMenus.CHARM_POUCH.get(), CharmPouchScreen::new));
     }
 
     @SubscribeEvent

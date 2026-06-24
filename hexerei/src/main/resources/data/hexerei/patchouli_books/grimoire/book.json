@@ -1,0 +1,8 @@
+{
+  "name": "item.hexerei.grimoire",
+  "landing_text": "hexerei.book.grimoire.landing",
+  "model": "patchouli:book_brown",
+  "show_progress": false,
+  "use_resource_pack": true,
+  "version": 1
+}

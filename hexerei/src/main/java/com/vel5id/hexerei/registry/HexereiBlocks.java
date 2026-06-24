@@ -48,4 +48,17 @@ public final class HexereiBlocks {
                     .strength(2.0F)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()));
+
+    public static final RegistryObject<Block> TAINTED_GROUND = BLOCKS.register("tainted_ground",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(0.6F)
+                    .sound(SoundType.GRAVEL)));
+
+    public static final RegistryObject<Block> CHARRED_STONE = BLOCKS.register("charred_stone",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(1.5F)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()));
 }

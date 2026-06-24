@@ -8,6 +8,7 @@ import com.vel5id.hexerei.registry.HexereiItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -19,10 +20,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /** A drinkable brew. Its identity (a {@link Brew} id) lives in NBT; on drink it applies the brew's effects. */
 public class BrewItem extends Item {
@@ -96,5 +99,34 @@ public class BrewItem extends Item {
     public Component getName(ItemStack stack) {
         Brew brew = brewOf(stack);
         return brew != null ? Component.translatable(brew.nameKey()) : super.getName(stack);
+    }
+
+    /** Lists the brew's effects like a vanilla potion tooltip (name [+ potency] + duration, category-colored). */
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        Brew brew = brewOf(stack);
+        if (brew == null) {
+            super.appendHoverText(stack, level, tooltip, flag);
+            return;
+        }
+        for (BrewEffect e : brew.effects()) {
+            MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(e.effectId()));
+            if (effect == null) {
+                continue; // unknown effect id — skip rather than render a broken line
+            }
+            MutableComponent line = Component.translatable(effect.getDescriptionId());
+            if (e.amplifier() > 0) {
+                line = Component.translatable("potion.withAmplifier", line,
+                        Component.translatable("potion.potency." + e.amplifier()));
+            }
+            line = Component.translatable("potion.withDuration", line, formatDuration(e.durationTicks()));
+            tooltip.add(line.withStyle(effect.getCategory().getTooltipFormatting()));
+        }
+    }
+
+    /** m:ss from ticks (20 ticks/second), matching vanilla potion duration display. */
+    private static Component formatDuration(int ticks) {
+        int seconds = ticks / 20;
+        return Component.literal(String.format("%d:%02d", seconds / 60, seconds % 60));
     }
 }

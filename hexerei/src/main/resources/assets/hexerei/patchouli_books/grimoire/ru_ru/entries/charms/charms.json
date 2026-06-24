@@ -1,0 +1,22 @@
+{
+  "name": "Три амулета",
+  "icon": "hexerei:ward_charm",
+  "category": "hexerei:charms",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:ward_charm",
+      "text": "Оберег — даёт постоянное сопротивление, пока в нём есть заряд. Надёжный щит."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:bloodlust_charm",
+      "text": "Кровавый амулет — даёт силу, но лишь когда у вас три сердца или меньше. Ставка берсерка."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:hexbane_charm",
+      "text": "Амулет-проклятие — насылает слабость на враждебных существ в пяти блоках. Порча ближнего боя."
+    }
+  ]
+}

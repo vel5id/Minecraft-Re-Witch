@@ -1,0 +1,25 @@
+{
+  "name": "Laying a Circle",
+  "icon": "hexerei:ritual_circle",
+  "category": "hexerei:rituals",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "A Ritual Circle centre block, ringed by Ritual Glyph chalk marks, performs a rite. A small circle is twelve glyphs in a ring two blocks out, on the centre's level; each glyph needs solid ground beneath it."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:ritual_chalk",
+      "text": "Shift+Scroll while holding the chalk to cycle the selected rite; its tooltip shows the rite and the glyph count. Right-click the centre block to draw the whole ring at once."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "hexerei:ritual_circle"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "To perform: complete the circle, drop the sacrifice item inside, and have a powered altar in range. Right-click the centre — the altar is debited first, then the sacrifice consumed, then the rite runs."
+    }
+  ],
+  "priority": true
+}

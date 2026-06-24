@@ -24,7 +24,8 @@ class BrewRecipesTest {
     }
 
     @Test void wrongComboDoesNotMatch() {
-        assertTrue(BrewRecipes.match(List.of("hexerei:mandrake_root", "hexerei:wolfsbane")).isEmpty());
+        // mandrake_root + wormwood is not a recipe (they never co-occur in any multiset)
+        assertTrue(BrewRecipes.match(List.of("hexerei:mandrake_root", "hexerei:wormwood")).isEmpty());
     }
 
     @Test void canAcceptProgressesTowardRecipe() {
@@ -33,8 +34,8 @@ class BrewRecipesTest {
     }
 
     @Test void canAcceptRejectsCrossRecipeAndOverfill() {
-        // mandrake + wolfsbane share no recipe
-        assertFalse(BrewRecipes.canAccept(List.of("hexerei:mandrake_root"), "hexerei:wolfsbane"));
+        // mandrake + wormwood share no recipe
+        assertFalse(BrewRecipes.canAccept(List.of("hexerei:mandrake_root"), "hexerei:wormwood"));
         // recipe already complete; adding a 3rd exceeds the multiset
         assertFalse(BrewRecipes.canAccept(List.of("hexerei:mandrake_root", "hexerei:belladonna_flower"), "hexerei:mandrake_root"));
     }

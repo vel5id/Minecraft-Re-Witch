@@ -114,6 +114,39 @@ public class CauldronGameTests {
         });
     }
 
+    /** New brew (Witch's Sight) brews end-to-end from the two formerly-orphan crops (icy_needle + artichoke). */
+    @GameTest(template = "empty", batch = "cauldron", timeoutTicks = 200)
+    public void cauldronBrewsWitchsSight(GameTestHelper h) {
+        BlockPos caul = new BlockPos(18, 2, 18);
+        h.setBlock(caul, HexereiBlocks.CAULDRON.get());
+        h.setBlock(caul.below(), Blocks.MAGMA_BLOCK);
+        ((CauldronBlockEntity) h.getBlockEntity(caul)).fillWater();
+        FakeAltar fake = new FakeAltar(h.getLevel(), h.absolutePos(caul), 1000f);
+        AltarPowerManager.get(h.getLevel()).register(fake);
+        h.runAfterDelay(110, () -> {
+            spawnIngredient(h, caul, HexereiItems.ICY_NEEDLE.get());
+            spawnIngredient(h, caul, HexereiItems.ARTICHOKE.get());
+        });
+        h.runAfterDelay(150, () -> {
+            CauldronBlockEntity be = (CauldronBlockEntity) h.getBlockEntity(caul);
+            if (be == null || be.readyBrew() != Brews.WITCHS_SIGHT) {
+                h.fail("cauldron did not match Witch's Sight; ready=" + (be == null ? "null" : be.readyBrew()));
+                return;
+            }
+            ItemStack brew = be.collectBrew();
+            if (brew == null) {
+                h.fail("collectBrew failed despite available power");
+            } else if (BrewItem.brewOf(brew) != Brews.WITCHS_SIGHT) {
+                h.fail("wrong brew collected: " + BrewItem.brewOf(brew));
+            } else if (Math.abs(fake.power - 960f) > 0.01f) {
+                h.fail("expected 40 power consumed (1000->960); got " + fake.power);
+            } else {
+                AltarPowerManager.get(h.getLevel()).unregister(fake);
+                h.succeed();
+            }
+        });
+    }
+
     /** Minimal in-range power source for the deterministic collect test. */
     private static final class FakeAltar implements IPowerSource {
         private final Level level;

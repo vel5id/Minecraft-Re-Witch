@@ -1,0 +1,12 @@
+{
+  "name": "Снежный колокольчик",
+  "icon": "minecraft:snowball",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:snowball",
+      "text": "Снежный колокольчик при сборе даёт снежки, а изредка — острую ледяную иглу, реагент для варки."
+    }
+  ]
+}

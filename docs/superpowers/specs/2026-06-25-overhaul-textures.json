@@ -1,0 +1,1242 @@
+[
+  {
+    "id": "cauldron_side",
+    "path": "assets/hexerei/textures/block/cauldron_side.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft block texture, 32x32 pixel art, side of a heavy cast-iron witch's cauldron, dark blackened riveted iron with subtle vertical seams and a slight belly curve, faint green-tarnished highlights, two small forged handle lugs hinted at the upper edge, even lighting, fills the square edge to edge, tileable horizontally, no background",
+    "subsystem": "cauldron"
+  },
+  {
+    "id": "cauldron_top",
+    "path": "assets/hexerei/textures/block/cauldron_top.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft block texture, 32x32 pixel art, top rim of a cast-iron witch's cauldron seen from above, thick dark iron ring with a hollow black interior opening in the center, rivets along the rim, worn metal, even lighting, fills the square, no background",
+    "subsystem": "cauldron"
+  },
+  {
+    "id": "cauldron_bottom",
+    "path": "assets/hexerei/textures/block/cauldron_bottom.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft block texture, 32x32 pixel art, underside of a cast-iron cauldron, dark blackened iron, soot-stained center where fire scorches it, faint concentric forge marks, even lighting, fills the square, no background",
+    "subsystem": "cauldron"
+  },
+  {
+    "id": "cauldron_inside",
+    "path": "assets/hexerei/textures/block/cauldron_inside.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft block texture, 32x32 pixel art, inner wall of an empty iron cauldron, dark sooty curved metal, slightly lighter than the outside, faint vertical drip stains, even lighting, fills the square, no background",
+    "subsystem": "cauldron"
+  },
+  {
+    "id": "cauldron_liquid_still",
+    "path": "assets/hexerei/textures/block/cauldron_liquid_still.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft block texture, 32x32 pixel art, calm flat liquid surface for a potion brew, smooth grayscale-to-light neutral mid-gray tones so it can be color-tinted in engine, very subtle round meniscus near the edges and a faint specular glint, fills the square, no background",
+    "subsystem": "cauldron"
+  },
+  {
+    "id": "cauldron_liquid_boiling",
+    "path": "assets/hexerei/textures/block/cauldron_liquid_boiling.png",
+    "width": 32,
+    "height": 64,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft block texture animation strip, two stacked 32x32 frames (32 wide by 64 tall), a roiling boiling potion surface in neutral grayscale for in-engine color tint, top frame small round bubbles rising with light ripples, bottom frame the bubbles shifted and bursting with brighter foam specks, consistent neutral mid-gray base in both frames, seamless two-frame loop, no background",
+    "subsystem": "cauldron"
+  },
+  {
+    "id": "cauldron_bubble",
+    "path": "assets/hexerei/textures/particle/cauldron_bubble.png",
+    "width": 8,
+    "height": 8,
+    "remove_bg": true,
+    "pixel_grid": 8,
+    "prompt": "Minecraft particle sprite, 8x8 pixel art, a single small round potion bubble, soft white-gray rim with a translucent lighter center and a tiny top highlight, neutral tones for in-engine color tint, transparent background",
+    "subsystem": "cauldron"
+  },
+  {
+    "id": "cauldron_steam",
+    "path": "assets/hexerei/textures/particle/cauldron_steam.png",
+    "width": 8,
+    "height": 8,
+    "remove_bg": true,
+    "pixel_grid": 8,
+    "prompt": "Minecraft particle sprite, 8x8 pixel art, a soft wisp of pale steam, fluffy semi-transparent gray-white cloud puff with feathered edges, transparent background",
+    "subsystem": "cauldron"
+  },
+  {
+    "id": "brew_sleeping_draught",
+    "path": "assets/hexerei/textures/item/brew/sleeping_draught.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, small round witch's potion bottle with a cork stopper, glass filled with deep indigo-violet liquid, a soft swirling spiral of pale lilac inside suggesting sleep, faint moon-blue glints on the glass, chunky 32px grid, ~16 color palette, crisp outline, transparent background, centered",
+    "subsystem": "brews"
+  },
+  {
+    "id": "brew_frailty",
+    "path": "assets/hexerei/textures/item/brew/frailty.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, small round witch's potion bottle with a cork stopper, glass filled with murky sickly olive-green liquid, a few dull bubbles and a thin scummy film at the top suggesting weakness, dull desaturated palette, chunky 32px grid, ~16 color palette, crisp outline, transparent background, centered",
+    "subsystem": "brews"
+  },
+  {
+    "id": "brew_witchs_sight",
+    "path": "assets/hexerei/textures/item/brew/witchs_sight.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, small round witch's potion bottle with a cork stopper, glowing luminous teal-cyan liquid, a single pale eye motif faintly visible inside the glass, soft cyan glow halo around the bottle, mystical, chunky 32px grid, ~16 color palette, crisp outline, transparent background, centered",
+    "subsystem": "brews"
+  },
+  {
+    "id": "brew_bloodwort_tonic",
+    "path": "assets/hexerei/textures/item/brew/bloodwort_tonic.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, small round witch's potion bottle with a cork stopper, rich deep crimson-red liquid like fresh blood, a warm scarlet highlight on the glass, a tiny dark red leaf or root sprig hinted inside, chunky 32px grid, ~16 color palette, crisp outline, transparent background, centered",
+    "subsystem": "brews"
+  },
+  {
+    "id": "brew_hags_swiftness",
+    "path": "assets/hexerei/textures/item/brew/hags_swiftness.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, small round witch's potion bottle with a cork stopper, vivid bright yellow-green liquid, fizzing energetic bubbles and tiny upward speed streaks inside, lively saturated palette, chunky 32px grid, ~16 color palette, crisp outline, transparent background, centered",
+    "subsystem": "brews"
+  },
+  {
+    "id": "brew_withering_bile",
+    "path": "assets/hexerei/textures/item/brew/withering_bile.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, small round witch's potion bottle with a cork stopper, oily black-green sludge liquid, sickly toxic glow, thin wisps of dark vapor rising from the neck, ominous, chunky 32px grid, ~16 color palette, crisp outline, transparent background, centered",
+    "subsystem": "brews"
+  },
+  {
+    "id": "brew_empty",
+    "path": "assets/hexerei/textures/item/brew/brew_empty.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, small round empty witch's potion bottle with a cork stopper, clear pale-grey glass with faint blue-water highlights, no colored liquid, simple and neutral, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "brews"
+  },
+  {
+    "id": "ritual_chalk",
+    "path": "assets/hexerei/textures/item/ritual_chalk.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon of a short stick of chalk held diagonally, white-to-pale-blue chalk with a worn rounded tip and faint dust, a thin paper wrapper band near the base, chunky 32px pixel grid, ~16 colour palette, crisp dark outline, transparent background, item-icon framing",
+    "subsystem": "ritual"
+  },
+  {
+    "id": "ritual_sigil",
+    "path": "assets/hexerei/textures/block/ritual_sigil.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art top-down ritual sigil drawn in white chalk on dark slate-grey stone, a central pentacle inside a double ring with small star points, faint purple glow on the lines, fills the whole tile edge-to-edge, 32px pixel grid, ~16 colour palette, opaque no background transparency",
+    "subsystem": "ritual"
+  },
+  {
+    "id": "rune_end",
+    "path": "assets/hexerei/textures/block/rune_end.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art top-down small chalk rune terminus on dark slate-grey stone, a single short white chalk stroke ending in a small glyph dot, centred, faint purple tint, fills the tile, 32px grid, ~16 colours, opaque",
+    "subsystem": "ritual"
+  },
+  {
+    "id": "rune_line",
+    "path": "assets/hexerei/textures/block/rune_line.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art top-down straight chalk line crossing the tile vertically on dark slate-grey stone, white chalk with faint purple glow and tiny tick marks, edge-to-edge so it tiles seamlessly with neighbours, 32px grid, ~16 colours, opaque",
+    "subsystem": "ritual"
+  },
+  {
+    "id": "rune_corner",
+    "path": "assets/hexerei/textures/block/rune_corner.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art top-down white chalk line bending ninety degrees from the top edge to the right edge on dark slate-grey stone, smooth chalk corner with faint purple glow, lines reach the two tile edges for seamless tiling, 32px grid, ~16 colours, opaque",
+    "subsystem": "ritual"
+  },
+  {
+    "id": "rune_t",
+    "path": "assets/hexerei/textures/block/rune_t.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art top-down white chalk T-junction on dark slate-grey stone, three chalk arms reaching the top, right and bottom edges meeting at a small central glyph node, faint purple glow, seamless tiling at the three edges, 32px grid, ~16 colours, opaque",
+    "subsystem": "ritual"
+  },
+  {
+    "id": "rune_cross",
+    "path": "assets/hexerei/textures/block/rune_cross.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art top-down white chalk four-way cross on dark slate-grey stone, four arms reaching all four edges with a small star glyph at the centre, faint purple glow, seamless tiling on every edge, 32px grid, ~16 colours, opaque",
+    "subsystem": "ritual"
+  },
+  {
+    "id": "rune_diagonal",
+    "path": "assets/hexerei/textures/block/rune_diagonal.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art top-down white chalk diagonal stroke running from the top-right corner toward the tile centre on dark slate-grey stone, thin dashed chalk line with faint purple glow on a dark field so it overlays a base rune, 32px grid, ~16 colours, opaque",
+    "subsystem": "ritual"
+  },
+  {
+    "id": "bone_charm",
+    "path": "assets/hexerei/textures/item/bone_charm.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon: a small protective charm of pale bleached bone fragments bound with grey twine into a loop, a single dark rune scratched on the largest piece, soft off-white palette ~14 colors, chunky 32px pixel grid, transparent background, slight top-left lighting, flat handheld-item style",
+    "subsystem": "altar"
+  },
+  {
+    "id": "wax_poppet",
+    "path": "assets/hexerei/textures/item/wax_poppet.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon: a crude humanoid poppet doll of pale cream wax with stubby arms, a single straight-pin head and a faint stitched seam, muted ivory and tan palette ~12 colors, chunky 32px pixel grid, transparent background, gentle top lighting, flat handheld-item style",
+    "subsystem": "altar"
+  },
+  {
+    "id": "obsidian_skull",
+    "path": "assets/hexerei/textures/item/obsidian_skull.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon: a small carved skull of glossy black obsidian with faceted sharp edges and dim violet light glowing in the eye sockets, near-black purple-tinged palette ~16 colors with one bright magenta accent, chunky 32px pixel grid, transparent background, hard rim highlight top-left, ominous flat handheld-item style",
+    "subsystem": "altar"
+  },
+  {
+    "id": "belladonna_stage_0",
+    "path": "assets/hexerei/textures/block/belladonna_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "belladonna_stage_1",
+    "path": "assets/hexerei/textures/block/belladonna_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, deadly nightshade, dark green leaves, drooping purple bell flowers, glossy black berries, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "belladonna_stage_2",
+    "path": "assets/hexerei/textures/block/belladonna_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, deadly nightshade, dark green leaves, drooping purple bell flowers, glossy black berries, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "belladonna_stage_3",
+    "path": "assets/hexerei/textures/block/belladonna_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, deadly nightshade, dark green leaves, drooping purple bell flowers, glossy black berries, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "belladonna_stage_4",
+    "path": "assets/hexerei/textures/block/belladonna_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready deadly nightshade, dark green leaves, drooping purple bell flowers, glossy black berries, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_belladonna",
+    "path": "assets/hexerei/textures/item/seeds_belladonna.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, seeds/propagule for belladonna (deadly nightshade), small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mandrake_stage_0",
+    "path": "assets/hexerei/textures/block/mandrake_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mandrake_stage_1",
+    "path": "assets/hexerei/textures/block/mandrake_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, leafy green rosette with a hint of a humanoid root at the base, dull yellow berries, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mandrake_stage_2",
+    "path": "assets/hexerei/textures/block/mandrake_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, leafy green rosette with a hint of a humanoid root at the base, dull yellow berries, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mandrake_stage_3",
+    "path": "assets/hexerei/textures/block/mandrake_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, leafy green rosette with a hint of a humanoid root at the base, dull yellow berries, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mandrake_stage_4",
+    "path": "assets/hexerei/textures/block/mandrake_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready leafy green rosette with a hint of a humanoid root at the base, dull yellow berries, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_mandrake",
+    "path": "assets/hexerei/textures/item/seeds_mandrake.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, seeds/propagule for mandrake (leafy green rosette with a hint of a humanoid root at the base), small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "artichoke_stage_0",
+    "path": "assets/hexerei/textures/block/artichoke_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "artichoke_stage_1",
+    "path": "assets/hexerei/textures/block/artichoke_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, water plant with broad blue-green serrated leaves and a central spiky green artichoke head, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "artichoke_stage_2",
+    "path": "assets/hexerei/textures/block/artichoke_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, water plant with broad blue-green serrated leaves and a central spiky green artichoke head, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "artichoke_stage_3",
+    "path": "assets/hexerei/textures/block/artichoke_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, water plant with broad blue-green serrated leaves and a central spiky green artichoke head, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "artichoke_stage_4",
+    "path": "assets/hexerei/textures/block/artichoke_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready water plant with broad blue-green serrated leaves and a central spiky green artichoke head, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_artichoke",
+    "path": "assets/hexerei/textures/item/seeds_artichoke.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, seeds/propagule for artichoke (water plant with broad blue-green serrated leaves and a central spiky green artichoke head), small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hellebore_stage_0",
+    "path": "assets/hexerei/textures/block/hellebore_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hellebore_stage_1",
+    "path": "assets/hexerei/textures/block/hellebore_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, winter rose, frost-blue and white five-petal flowers, dark serrated leaves, faint frost rime, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hellebore_stage_2",
+    "path": "assets/hexerei/textures/block/hellebore_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, winter rose, frost-blue and white five-petal flowers, dark serrated leaves, faint frost rime, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hellebore_stage_3",
+    "path": "assets/hexerei/textures/block/hellebore_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, winter rose, frost-blue and white five-petal flowers, dark serrated leaves, faint frost rime, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hellebore_stage_4",
+    "path": "assets/hexerei/textures/block/hellebore_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready winter rose, frost-blue and white five-petal flowers, dark serrated leaves, faint frost rime, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_hellebore",
+    "path": "assets/hexerei/textures/item/seeds_hellebore.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, seeds/propagule for hellebore (winter rose), small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wormwood_stage_0",
+    "path": "assets/hexerei/textures/block/wormwood_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wormwood_stage_1",
+    "path": "assets/hexerei/textures/block/wormwood_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, tall silvery-green feathery wormwood with small yellow flower clusters at the top, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wormwood_stage_2",
+    "path": "assets/hexerei/textures/block/wormwood_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, tall silvery-green feathery wormwood with small yellow flower clusters at the top, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wormwood_stage_3",
+    "path": "assets/hexerei/textures/block/wormwood_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, tall silvery-green feathery wormwood with small yellow flower clusters at the top, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wormwood_stage_4",
+    "path": "assets/hexerei/textures/block/wormwood_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready tall silvery-green feathery wormwood with small yellow flower clusters at the top, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_wormwood",
+    "path": "assets/hexerei/textures/item/seeds_wormwood.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, seeds/propagule for wormwood (tall silvery-green feathery wormwood with small yellow flower clusters at the top), small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mindrake_stage_0",
+    "path": "assets/hexerei/textures/block/mindrake_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mindrake_stage_1",
+    "path": "assets/hexerei/textures/block/mindrake_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, small dark thorny plant with a glowing pale-violet bulb at the base, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mindrake_stage_2",
+    "path": "assets/hexerei/textures/block/mindrake_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, small dark thorny plant with a glowing pale-violet bulb at the base, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mindrake_stage_3",
+    "path": "assets/hexerei/textures/block/mindrake_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, small dark thorny plant with a glowing pale-violet bulb at the base, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mindrake_stage_4",
+    "path": "assets/hexerei/textures/block/mindrake_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready small dark thorny plant with a glowing pale-violet bulb at the base, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_mindrake_bulb",
+    "path": "assets/hexerei/textures/item/mindrake_bulb.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, seeds/propagule for mindrake (small dark thorny plant with a glowing pale-violet bulb at the base), small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wolfsbane_stage_0",
+    "path": "assets/hexerei/textures/block/wolfsbane_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wolfsbane_stage_1",
+    "path": "assets/hexerei/textures/block/wolfsbane_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 7, partial height, tall stalk with deep indigo hooded monkshood flowers up the stem, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wolfsbane_stage_2",
+    "path": "assets/hexerei/textures/block/wolfsbane_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 7, partial height, tall stalk with deep indigo hooded monkshood flowers up the stem, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wolfsbane_stage_3",
+    "path": "assets/hexerei/textures/block/wolfsbane_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 7, partial height, tall stalk with deep indigo hooded monkshood flowers up the stem, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wolfsbane_stage_4",
+    "path": "assets/hexerei/textures/block/wolfsbane_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 4 of 7, partial height, tall stalk with deep indigo hooded monkshood flowers up the stem, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wolfsbane_stage_5",
+    "path": "assets/hexerei/textures/block/wolfsbane_stage_5.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 5 of 7, partial height, tall stalk with deep indigo hooded monkshood flowers up the stem, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wolfsbane_stage_6",
+    "path": "assets/hexerei/textures/block/wolfsbane_stage_6.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 6 of 7, partial height, tall stalk with deep indigo hooded monkshood flowers up the stem, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "wolfsbane_stage_7",
+    "path": "assets/hexerei/textures/block/wolfsbane_stage_7.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready tall stalk with deep indigo hooded monkshood flowers up the stem, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_wolfsbane",
+    "path": "assets/hexerei/textures/item/seeds_wolfsbane.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, seeds/propagule for wolfsbane (tall stalk with deep indigo hooded monkshood flowers up the stem), small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "garlic_stage_0",
+    "path": "assets/hexerei/textures/block/garlic_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "garlic_stage_1",
+    "path": "assets/hexerei/textures/block/garlic_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 5, partial height, low green garlic shoots with a white papery bulb partly exposed at the soil, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "garlic_stage_2",
+    "path": "assets/hexerei/textures/block/garlic_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 5, partial height, low green garlic shoots with a white papery bulb partly exposed at the soil, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "garlic_stage_3",
+    "path": "assets/hexerei/textures/block/garlic_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 5, partial height, low green garlic shoots with a white papery bulb partly exposed at the soil, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "garlic_stage_4",
+    "path": "assets/hexerei/textures/block/garlic_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 4 of 5, partial height, low green garlic shoots with a white papery bulb partly exposed at the soil, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "garlic_stage_5",
+    "path": "assets/hexerei/textures/block/garlic_stage_5.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready low green garlic shoots with a white papery bulb partly exposed at the soil, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_garlic",
+    "path": "assets/hexerei/textures/item/garlic.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, seeds/propagule for garlic (low green garlic shoots with a white papery bulb partly exposed at the soil), small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_belladonna_flower",
+    "path": "assets/hexerei/textures/item/belladonna_flower.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a single drooping purple belladonna bell flower with a glossy black berry, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_mandrake_root",
+    "path": "assets/hexerei/textures/item/mandrake_root.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a gnarled humanoid mandrake root, pale tan with wispy hair-roots and a tiny face, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_wormwood",
+    "path": "assets/hexerei/textures/item/wormwood.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a sprig of silvery-green feathery wormwood with tiny yellow flowers, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_wolfsbane",
+    "path": "assets/hexerei/textures/item/wolfsbane.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a cut stalk of deep indigo hooded monkshood (wolfsbane) flowers, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_artichoke",
+    "path": "assets/hexerei/textures/item/artichoke.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a single spiky green artichoke head, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_icy_needle",
+    "path": "assets/hexerei/textures/item/icy_needle.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a sharp frost-blue crystalline needle with a faint cold rime glow, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "crowseye_stage_0",
+    "path": "assets/hexerei/textures/block/crowseye_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "crowseye_stage_1",
+    "path": "assets/hexerei/textures/block/crowseye_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, single whorl of four broad leaves with one glossy black berry at the centre (herb-paris), side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "crowseye_stage_2",
+    "path": "assets/hexerei/textures/block/crowseye_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, single whorl of four broad leaves with one glossy black berry at the centre (herb-paris), side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "crowseye_stage_3",
+    "path": "assets/hexerei/textures/block/crowseye_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, single whorl of four broad leaves with one glossy black berry at the centre (herb-paris), side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "crowseye_stage_4",
+    "path": "assets/hexerei/textures/block/crowseye_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready single whorl of four broad leaves with one glossy black berry at the centre (herb-paris), side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_crowseye",
+    "path": "assets/hexerei/textures/item/seeds_crowseye.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, crowseye seeds, small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "celandine_stage_0",
+    "path": "assets/hexerei/textures/block/celandine_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "celandine_stage_1",
+    "path": "assets/hexerei/textures/block/celandine_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, slender stems, small four-petal bright-yellow celandine flowers, lobed green leaves, orange-sap motif, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "celandine_stage_2",
+    "path": "assets/hexerei/textures/block/celandine_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, slender stems, small four-petal bright-yellow celandine flowers, lobed green leaves, orange-sap motif, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "celandine_stage_3",
+    "path": "assets/hexerei/textures/block/celandine_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, slender stems, small four-petal bright-yellow celandine flowers, lobed green leaves, orange-sap motif, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "celandine_stage_4",
+    "path": "assets/hexerei/textures/block/celandine_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready slender stems, small four-petal bright-yellow celandine flowers, lobed green leaves, orange-sap motif, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_celandine",
+    "path": "assets/hexerei/textures/item/seeds_celandine.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, celandine seeds, small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hops_stage_0",
+    "path": "assets/hexerei/textures/block/hops_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hops_stage_1",
+    "path": "assets/hexerei/textures/block/hops_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, tall climbing hops bine with papery green cone hops hanging near the top, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hops_stage_2",
+    "path": "assets/hexerei/textures/block/hops_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, tall climbing hops bine with papery green cone hops hanging near the top, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hops_stage_3",
+    "path": "assets/hexerei/textures/block/hops_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, tall climbing hops bine with papery green cone hops hanging near the top, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "hops_stage_4",
+    "path": "assets/hexerei/textures/block/hops_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready tall climbing hops bine with papery green cone hops hanging near the top, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_hops",
+    "path": "assets/hexerei/textures/item/seeds_hops.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, hops seeds, small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "sandwort_stage_0",
+    "path": "assets/hexerei/textures/block/sandwort_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny sprout, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "sandwort_stage_1",
+    "path": "assets/hexerei/textures/block/sandwort_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 1 of 4, partial height, low cushion of tiny needle-leaves with small white star flowers (sandwort), side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "sandwort_stage_2",
+    "path": "assets/hexerei/textures/block/sandwort_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 2 of 4, partial height, low cushion of tiny needle-leaves with small white star flowers (sandwort), side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "sandwort_stage_3",
+    "path": "assets/hexerei/textures/block/sandwort_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing, stage 3 of 4, partial height, low cushion of tiny needle-leaves with small white star flowers (sandwort), side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "sandwort_stage_4",
+    "path": "assets/hexerei/textures/block/sandwort_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature harvest-ready low cushion of tiny needle-leaves with small white star flowers (sandwort), side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_sandwort",
+    "path": "assets/hexerei/textures/item/seeds_sandwort.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, sandwort seeds, small handful of seeds, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mistletoe_stage_0",
+    "path": "assets/hexerei/textures/block/mistletoe_stage_0.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, freshly-sprouted tiny mistletoe sprig clinging to wood, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mistletoe_stage_1",
+    "path": "assets/hexerei/textures/block/mistletoe_stage_1.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing mistletoe stage 1 of 4, paired oval evergreen leaves clinging to wood, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mistletoe_stage_2",
+    "path": "assets/hexerei/textures/block/mistletoe_stage_2.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing mistletoe stage 2 of 4, paired oval evergreen leaves clinging to wood, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mistletoe_stage_3",
+    "path": "assets/hexerei/textures/block/mistletoe_stage_3.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, growing mistletoe stage 3 of 4, paired oval evergreen leaves clinging to wood, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mistletoe_stage_4",
+    "path": "assets/hexerei/textures/block/mistletoe_stage_4.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art crop cross-sprite, transparent background, mature clump of paired oval evergreen leaves with white pearl berries clinging to wood, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "seed_seeds_mistletoe",
+    "path": "assets/hexerei/textures/item/seeds_mistletoe.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, mistletoe seeds (sticky white berries), small cluster, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_crowseye_berry",
+    "path": "assets/hexerei/textures/item/crowseye_berry.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a single glossy black crow's-eye (herb-paris) berry on a short green stalk, poisonous look, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_celandine",
+    "path": "assets/hexerei/textures/item/celandine.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a sprig of bright-yellow four-petal celandine flowers with lobed leaves and a drop of orange sap, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_hops",
+    "path": "assets/hexerei/textures/item/hops.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a papery green hops cone (strobile) with overlapping bracts, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_sandwort",
+    "path": "assets/hexerei/textures/item/sandwort.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a small cushion sprig of needle-leaves topped with a tiny white star flower, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_mistletoe_sprig",
+    "path": "assets/hexerei/textures/item/mistletoe_sprig.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a sprig of paired oval evergreen mistletoe leaves with two white pearl berries, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "produce_glowing_spore",
+    "path": "assets/hexerei/textures/item/glowing_spore.png",
+    "width": 64,
+    "height": 64,
+    "remove_bg": true,
+    "pixel_grid": 32,
+    "prompt": "Minecraft pixel-art item icon, a small luminous pale-violet glowing spore cluster with a soft halo, chunky 32px grid, ~16 colors, crisp outline, transparent background, centered",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mushroom_zevanty",
+    "path": "assets/hexerei/textures/block/zevanty.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art mushroom cross-sprite, transparent background, pale-violet glowing mushroom cap with luminous gills and a soft inner light, slender stalk, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mushroom_puffball",
+    "path": "assets/hexerei/textures/block/puffball.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art mushroom cross-sprite, transparent background, round off-white puffball mushroom on a short stalk, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "mushroom_webcap",
+    "path": "assets/hexerei/textures/block/webcap.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": true,
+    "pixel_grid": 16,
+    "prompt": "Minecraft pixel-art mushroom cross-sprite, transparent background, rusty-orange domed webcap mushroom with a faint web-veil pattern on a slender stalk, side-view billboard, ~16-color palette, chunky pixels",
+    "subsystem": "herbs"
+  },
+  {
+    "id": "blood_moss",
+    "path": "assets/hexerei/textures/block/blood_moss.png",
+    "width": 32,
+    "height": 32,
+    "remove_bg": false,
+    "pixel_grid": 32,
+    "prompt": "Minecraft block texture, 32x32 pixel art top-down carpet face of blood moss, deep red and dark crimson soft mossy ground cover with tiny darker red speckles and a few sickly black tufts, fills the square edge to edge, tileable, no background",
+    "subsystem": "herbs"
+  }
+]

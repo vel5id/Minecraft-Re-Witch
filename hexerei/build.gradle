@@ -112,14 +112,11 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    // Put repositories for dependencies here
-    // ForgeGradle automatically adds the Forge maven and Maven Central for you
-
-    // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
-    // flatDir {
-    //     dir 'libs'
-    // }
+    // Patchouli (in-game guide book) is published here.
+    maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com"
+    }
 }
 
 dependencies {
@@ -129,6 +126,9 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Patchouli — in-game guide book engine. Pinned to the exact build the server already runs.
+    implementation fg.deobf("vazkii.patchouli:Patchouli:1.20.1-84.1-FORGE")
 
     // Pure-logic unit tests (no Minecraft runtime). MC classes come from the forge dep above.
     testImplementation platform('org.junit:junit-bom:5.10.2')

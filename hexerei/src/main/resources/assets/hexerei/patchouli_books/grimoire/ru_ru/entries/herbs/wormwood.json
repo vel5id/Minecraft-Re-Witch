@@ -1,0 +1,12 @@
+{
+  "name": "Полынь",
+  "icon": "hexerei:wormwood",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:wormwood",
+      "text": "Полынь растёт высоким стеблем, наращиваясь вверх. Горькая и сильная, она склоняет зелья к слабости и увяданию."
+    }
+  ]
+}

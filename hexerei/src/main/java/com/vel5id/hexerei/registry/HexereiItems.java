@@ -2,6 +2,10 @@ package com.vel5id.hexerei.registry;
 
 import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.item.BrewItem;
+import com.vel5id.hexerei.item.CharmDefs;
+import com.vel5id.hexerei.item.CharmItem;
+import com.vel5id.hexerei.item.CharmPouchItem;
+import com.vel5id.hexerei.item.GrimoireItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -30,6 +34,12 @@ public final class HexereiItems {
     public static final RegistryObject<Item> RITUAL_CHALK = ITEMS.register("ritual_chalk",
             () -> new com.vel5id.hexerei.item.RitualChalkItem(new Item.Properties().durability(64)));
 
+    public static final RegistryObject<Item> TAINTED_GROUND = ITEMS.register("tainted_ground",
+            () -> new BlockItem(HexereiBlocks.TAINTED_GROUND.get(), new Item.Properties()));
+
+    public static final RegistryObject<Item> CHARRED_STONE = ITEMS.register("charred_stone",
+            () -> new BlockItem(HexereiBlocks.CHARRED_STONE.get(), new Item.Properties()));
+
     // Drinkable brew (its specific brew identity lives in NBT, set when collected from a cauldron).
     public static final RegistryObject<Item> BREW = ITEMS.register("brew",
             () -> new BrewItem(new Item.Properties().stacksTo(16)));
@@ -49,4 +59,18 @@ public final class HexereiItems {
     public static final RegistryObject<Item> ARTICHOKE = ITEMS.register("artichoke",
             () -> new Item(new Item.Properties().food(
                     new FoodProperties.Builder().nutrition(20).saturationMod(0.0F).build())));
+
+    // --- combat charms (carried in a charm pouch; per-charm charge lives in NBT, see CharmItem) ---
+    public static final RegistryObject<Item> CHARM_POUCH = ITEMS.register("charm_pouch",
+            () -> new CharmPouchItem(new Item.Properties()));
+    public static final RegistryObject<Item> WARD_CHARM = ITEMS.register("ward_charm",
+            () -> new CharmItem(new Item.Properties(), CharmDefs.WARD));
+    public static final RegistryObject<Item> BLOODLUST_CHARM = ITEMS.register("bloodlust_charm",
+            () -> new CharmItem(new Item.Properties(), CharmDefs.BLOODLUST));
+    public static final RegistryObject<Item> HEXBANE_CHARM = ITEMS.register("hexbane_charm",
+            () -> new CharmItem(new Item.Properties(), CharmDefs.HEXBANE));
+
+    // The in-game guide book (opens the Patchouli "grimoire" book).
+    public static final RegistryObject<Item> GRIMOIRE = ITEMS.register("grimoire",
+            () -> new GrimoireItem(new Item.Properties()));
 }

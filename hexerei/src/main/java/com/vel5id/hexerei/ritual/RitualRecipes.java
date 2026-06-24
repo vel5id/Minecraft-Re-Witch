@@ -1,7 +1,9 @@
 package com.vel5id.hexerei.ritual;
 
+import com.vel5id.hexerei.registry.HexereiItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -18,7 +20,29 @@ public final class RitualRecipes {
             "hexerei:tempest", CircleSize.SMALL, "hexerei:mandrake_root", 100,
             new TempestRite(12000), "ritual.hexerei.tempest");
 
-    public static final List<RitualRecipe> ALL = List.of(TEMPEST);
+    // White-magic growth. Sacrifice is artichoke (not mandrake) so it doesn't collide with Tempest's match.
+    public static final RitualRecipe VERDANT = new RitualRecipe(
+            "hexerei:verdant", CircleSize.SMALL, "hexerei:artichoke", 60,
+            new VerdantRite(), "ritual.hexerei.verdant");
+
+    // The generic ritual-crafting bridge: drops 8 ritual chalk. Future charm-crafting reuses SpawnItemRite.
+    public static final RitualRecipe MANIFEST_CHALK = new RitualRecipe(
+            "hexerei:manifest_chalk", CircleSize.SMALL, "hexerei:wormwood", 40,
+            new SpawnItemRite(() -> new ItemStack(HexereiItems.RITUAL_CHALK.get(), 8)),
+            "ritual.hexerei.manifest_chalk");
+
+    public static final RitualRecipe BOUND_BEAST = new RitualRecipe(
+            "hexerei:bound_beast", CircleSize.SMALL, "hexerei:wolfsbane", 120,
+            new BoundBeastRite(), "ritual.hexerei.bound_beast");
+
+    public static final RitualRecipe WANING_MOON = new RitualRecipe(
+            "hexerei:waning_moon", CircleSize.MEDIUM, "hexerei:belladonna_flower", 150,
+            new WaningMoonRite(), "ritual.hexerei.waning_moon");
+
+    // Order = chalk scroll order: gentle/cheap first, expensive/aggressive last. TEMPEST stays index 0
+    // to preserve the saved-NBT default and existing GameTest expectations.
+    public static final List<RitualRecipe> ALL =
+            List.of(TEMPEST, VERDANT, MANIFEST_CHALK, BOUND_BEAST, WANING_MOON);
 
     public static final Map<String, RitualRecipe> BY_ID = ALL.stream()
             .collect(Collectors.toUnmodifiableMap(RitualRecipe::id, r -> r));

@@ -1,0 +1,12 @@
+{
+  "name": "Mindrake",
+  "icon": "hexerei:mindrake_bulb",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:mindrake_bulb",
+      "text": "Mindrake yields a single bulb that serves as both seed and harvest — plant it again to grow more."
+    }
+  ]
+}

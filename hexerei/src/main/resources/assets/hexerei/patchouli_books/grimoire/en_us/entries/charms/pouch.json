@@ -1,0 +1,17 @@
+{
+  "name": "The Charm Pouch",
+  "icon": "hexerei:charm_pouch",
+  "category": "hexerei:charms",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Charm Pouch holds up to three combat charms. Right-click to open it and slot your charms; while the pouch rides anywhere in your inventory, those charms work passively. The bar on the pouch shows their combined charge."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:charm_pouch",
+      "text": "Charms are not free. An active charm spends its charge each second; stand near a powered altar to refill it — the altar pays for the recharge. A drained charm falls dormant until you charge it again."
+    }
+  ],
+  "priority": true
+}

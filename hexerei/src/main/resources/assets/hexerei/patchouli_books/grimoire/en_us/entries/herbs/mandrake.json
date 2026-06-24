@@ -1,0 +1,12 @@
+{
+  "name": "Mandrake",
+  "icon": "hexerei:mandrake_root",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:mandrake_root",
+      "text": "Mandrake — its root is the most iconic Hexerei ingredient. The screaming mandrake creature is a tale for another day; for now the plant simply yields its root."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Водяной артишок",
+  "icon": "hexerei:artichoke",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:artichoke",
+      "text": "Водяной артишок сажают на воду. Он съедобен и очень сытен, а в котле идёт на зелья зрения и проворства."
+    }
+  ]
+}

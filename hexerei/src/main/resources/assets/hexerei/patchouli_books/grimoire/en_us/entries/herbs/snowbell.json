@@ -1,0 +1,12 @@
+{
+  "name": "Snowbell",
+  "icon": "minecraft:snowball",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:snowball",
+      "text": "Snowbell drops snowballs when harvested, and now and then a sharp Icy Needle — a brewing reagent."
+    }
+  ]
+}

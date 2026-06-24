@@ -1,0 +1,12 @@
+{
+  "name": "Белладонна",
+  "icon": "hexerei:belladonna_flower",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:belladonna_flower",
+      "text": "Белладонна — посейте семена на грядку; зрелое растение даёт цветок белладонны и новые семена. Основной ингредиент для варки."
+    }
+  ]
+}

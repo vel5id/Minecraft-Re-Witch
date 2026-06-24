@@ -1,0 +1,22 @@
+{
+  "name": "The Three Charms",
+  "icon": "hexerei:ward_charm",
+  "category": "hexerei:charms",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:ward_charm",
+      "text": "Ward Charm — grants Resistance at all times while it holds charge. A steady shield."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:bloodlust_charm",
+      "text": "Bloodlust Charm — grants Strength, but only when you are at three hearts or fewer. A berserker's gamble."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:hexbane_charm",
+      "text": "Hexbane Charm — curses hostile mobs within five blocks with Weakness. A melee-range hex."
+    }
+  ]
+}

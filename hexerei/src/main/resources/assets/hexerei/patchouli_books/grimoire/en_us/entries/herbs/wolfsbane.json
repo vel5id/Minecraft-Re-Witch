@@ -1,0 +1,12 @@
+{
+  "name": "Wolfsbane",
+  "icon": "hexerei:wolfsbane",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:wolfsbane",
+      "text": "Wolfsbane is the slowest herb to mature. A classic poison, it lends bite to frailty and bloodwort brews."
+    }
+  ]
+}

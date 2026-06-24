@@ -1,0 +1,12 @@
+{
+  "name": "Волчий аконит",
+  "icon": "hexerei:wolfsbane",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:wolfsbane",
+      "text": "Волчий аконит созревает дольше всех трав. Классический яд, он добавляет остроты зельям немощи и кровохлёбки."
+    }
+  ]
+}

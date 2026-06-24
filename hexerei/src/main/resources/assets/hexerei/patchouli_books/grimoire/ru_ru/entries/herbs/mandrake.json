@@ -1,0 +1,12 @@
+{
+  "name": "Мандрагора",
+  "icon": "hexerei:mandrake_root",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:mandrake_root",
+      "text": "Мандрагора — её корень самый знаковый ингредиент Hexerei. Кричащая тварь-мандрагора — рассказ на потом; пока растение просто даёт корень."
+    }
+  ]
+}

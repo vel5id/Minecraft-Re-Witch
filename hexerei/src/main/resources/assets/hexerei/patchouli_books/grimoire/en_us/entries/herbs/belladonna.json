@@ -1,0 +1,12 @@
+{
+  "name": "Belladonna",
+  "icon": "hexerei:belladonna_flower",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:belladonna_flower",
+      "text": "Belladonna — sow the seeds on farmland; a mature plant drops a Belladonna Flower and more seeds. A staple brewing ingredient."
+    }
+  ]
+}

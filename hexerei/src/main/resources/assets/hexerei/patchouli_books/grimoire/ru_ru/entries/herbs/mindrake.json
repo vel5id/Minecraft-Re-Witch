@@ -1,0 +1,12 @@
+{
+  "name": "Мендрагора",
+  "icon": "hexerei:mindrake_bulb",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:mindrake_bulb",
+      "text": "Мендрагора даёт одну луковицу, что служит и семенем, и урожаем — посадите её снова, чтобы вырастить ещё."
+    }
+  ]
+}

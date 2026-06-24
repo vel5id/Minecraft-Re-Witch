@@ -19,10 +19,13 @@ public final class HexereiCreativeTabs {
                     .title(Component.translatable("itemGroup.hexerei"))
                     .icon(() -> new ItemStack(HexereiBlocks.ALTAR.get()))
                     .displayItems((params, output) -> {
+                        output.accept(HexereiItems.GRIMOIRE.get()); // guide book first, like a manual at the top
                         output.accept(HexereiBlocks.ALTAR.get());
                         output.accept(HexereiBlocks.CAULDRON.get());
                         output.accept(HexereiBlocks.RITUAL_CIRCLE.get());
                         output.accept(HexereiBlocks.RITUAL_GLYPH.get());
+                        output.accept(HexereiBlocks.TAINTED_GROUND.get());
+                        output.accept(HexereiBlocks.CHARRED_STONE.get());
                         output.accept(HexereiItems.RITUAL_CHALK.get());
                         HexereiCrops.SEED_ITEMS.forEach(s -> output.accept(s.get()));
                         output.accept(HexereiItems.BELLADONNA_FLOWER.get());
@@ -31,6 +34,11 @@ public final class HexereiCreativeTabs {
                         output.accept(HexereiItems.WORMWOOD.get());
                         output.accept(HexereiItems.WOLFSBANE.get());
                         output.accept(HexereiItems.ICY_NEEDLE.get());
+                        // combat charms + their pouch
+                        output.accept(HexereiItems.CHARM_POUCH.get());
+                        output.accept(HexereiItems.WARD_CHARM.get());
+                        output.accept(HexereiItems.BLOODLUST_CHARM.get());
+                        output.accept(HexereiItems.HEXBANE_CHARM.get());
                         // one filled brew per starter recipe, for creative access
                         output.accept(com.vel5id.hexerei.item.BrewItem.of(com.vel5id.hexerei.brewing.Brews.SLEEPING_DRAUGHT));
                         output.accept(com.vel5id.hexerei.item.BrewItem.of(com.vel5id.hexerei.brewing.Brews.FRAILTY));

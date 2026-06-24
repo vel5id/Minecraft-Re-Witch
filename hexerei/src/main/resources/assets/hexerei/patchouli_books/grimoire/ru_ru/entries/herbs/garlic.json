@@ -1,0 +1,12 @@
+{
+  "name": "Чеснок",
+  "icon": "hexerei:garlic",
+  "category": "hexerei:herbs",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "hexerei:garlic",
+      "text": "Чеснок — и семя, и урожай. Скромная защита от тьмы — и заодно припас для кухни."
+    }
+  ]
+}
