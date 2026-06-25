@@ -1,3 +1,6 @@
 {
-  "parent": "hexerei:block/blood_moss"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hexerei:item/blood_moss"
+  }
 }
