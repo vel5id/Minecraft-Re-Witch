@@ -260,3 +260,26 @@ single bloodstream every later slice converts onto; it does **not** yet change i
 - Persistence: Forge **Capabilities** (`HexereiCapabilities`) — chunk attachment persists with the chunk,
   player attachment copied on respawn. `[UNVERIFIED]` runtime attach/persist — covered by compile + NBT
   round-trip unit tests; in-world GameTest/dedicated-server smoke still pending.
+
+# Phase 2-3 migration — Slice A: Reagent → Act (`soul/`)
+
+Additive pure-logic foundation for rituals/brews reading the vector model. No live code touched.
+
+- **`ReagentDescriptor`** {domain, reciprocity, binding, defilement, magnitude} → `toAct()` is a
+  single-domain `Act` (weight 1.0). **`ActAssembler.assemble`** sums reagents via `Act.sum`.
+- **`ReagentRegistry`** seed values (all `[UNVERIFIED]`, first pass; datapack-driven source is a later slice).
+  `reciprocity<0` = a take (debt); `defilement` = profaning the deadly/poisonous. Magnitude ≈ ritual weight.
+
+  | item | domain | recip | bind | defile | mag | rationale |
+  |---|---|---|---|---|---|---|
+  | mandrake_root / mindrake_bulb | THRESHOLD | −0.30 | 0 | 0.10–0.15 | 1.0 | screaming root, between worlds |
+  | belladonna_flower / wolfsbane / crowseye_berry | DEATH | 0 | 0 | 0.20 | 0.5–0.6 | deadly poisons |
+  | wormwood | THRESHOLD | 0 | 0 | 0.05 | 0.5 | bitter, dream |
+  | celandine | FOREST | +0.20 | 0 | 0 | 0.5 | cleansing (an offering) |
+  | hops | FOREST | 0 | 0 | 0 | 0.5 | sedative |
+  | mistletoe_sprig | FOREST | −0.20 | 0 | 0.05 | 0.6 | parasite (a small take) |
+  | sandwort | STONE | 0 | +0.10 | 0 | 0.5 | resistance |
+  | garlic | THRESHOLD | 0 | +0.20 | 0 | 0.5 | ward (binding) |
+  | artichoke / hellebore / icy_needle | WATER | 0 | 0 | 0–0.05 | 0.4–0.5 | water & frost |
+  | glowing_spore | THRESHOLD | 0 | 0 | 0 | 0.4 | luminous fungal |
+  | blood_moss | DEATH | 0 | 0 | 0.10 | 0.6 | crimson |
