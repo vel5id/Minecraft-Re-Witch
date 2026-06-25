@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "hexerei:block/mistletoe_stage_1"
+  }
+}

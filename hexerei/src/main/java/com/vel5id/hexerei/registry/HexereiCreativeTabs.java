@@ -34,6 +34,17 @@ public final class HexereiCreativeTabs {
                         output.accept(HexereiItems.WORMWOOD.get());
                         output.accept(HexereiItems.WOLFSBANE.get());
                         output.accept(HexereiItems.ICY_NEEDLE.get());
+                        // slice H produce + decoration/mushroom blocks
+                        output.accept(HexereiItems.CROWSEYE_BERRY.get());
+                        output.accept(HexereiItems.CELANDINE.get());
+                        output.accept(HexereiItems.HOPS.get());
+                        output.accept(HexereiItems.SANDWORT.get());
+                        output.accept(HexereiItems.MISTLETOE_SPRIG.get());
+                        output.accept(HexereiItems.GLOWING_SPORE.get());
+                        output.accept(HexereiBlocks.BLOOD_MOSS.get());
+                        output.accept(HexereiBlocks.ZEVANTY.get());
+                        output.accept(HexereiBlocks.PUFFBALL.get());
+                        output.accept(HexereiBlocks.WEBCAP.get());
                         // combat charms + their pouch
                         output.accept(HexereiItems.CHARM_POUCH.get());
                         output.accept(HexereiItems.WARD_CHARM.get());

@@ -77,6 +77,56 @@ ingredients that progress toward a recipe are taken) → gated on a nearby altar
 - **Artichoke food** `nutrition 20, saturation 0.0` fills the whole hunger bar — very high; may retune.
 - **Artichoke water placement** — registered as a water plant; `ItemNameBlockItem` placement on water surface needs in-game verification.
 
+# Herbs & Mushrooms overhaul slice
+
+Adds 6 new herbs + 3 mushrooms, renames `snowbell` → `hellebore`, and regenerates all crop textures
+(the 98-PNG batch lands into the manifest paths separately; this slice is code + data + JSON only).
+
+## Deliberate design decisions
+- **`snowbell` → `hellebore` rename at the id level** (field `SNOWBELL`→`HELLEBORE`, id `snowbell`→
+  `hellebore`, blockstate/stage-model/seed-item assets, and both lang files — "Hellebore" / "Морозник").
+  The **internal `snowbell` boolean** on `WitchCropBlock`/`CropDrops` is **kept** (not renamed) — it is
+  the non-user-visible "+20% bonus drop" flag, now documented as *the hellebore bonus-drop flag*.
+  Renaming it would churn `CropDrops`/`WitchCropBlock` for zero player-facing gain.
+- **Hellebore drops unchanged** ([DECISION-HELLEBORE-DROP] Option A): mature produce stays vanilla
+  `minecraft:snowball` + 20% `icy_needle`. `icy_needle` is already a brew ingredient, so re-theming
+  would break two recipes for no mechanical gain. Only the two icons are regenerated (frost-rose look).
+- **4 new farmland crops via the existing `crop(...)` helper** — no new classes:
+  `crowseye` (poison/blinding berry), `celandine` (cleansing flower), `hops` (sedative, `wormwood=true`
+  so it reuses the two-tall self-stacking behaviour), `sandwort` (`big=false` ⇒ bonemeal +1, resistance
+  reagent). All are `maxAge=4` (5 stages), drop via `WitchCropBlock.getDrops` (no loot JSON), and
+  auto-contribute 4/20 altar power via the `instanceof WitchCropBlock` branch.
+- **`MistletoeBlock extends WitchCropBlock`** ([DECISION-MISTLETOE]) overrides only `mayPlaceOn` to
+  `BlockTags.LOGS || BlockTags.LEAVES` (parasitic on wood, not farmland). Registered via a parallel
+  `cropSubclass(...)` helper (the stock `crop(...)` hard-codes `new WitchCropBlock`), and added to
+  `CROP_BLOCKS`/`SEED_ITEMS`/`SEED_BY_CROP` so the creative tab + 4/20 altar synergy still fire.
+  **v1 = on-top-of-wood placement** (inherited supported-below survival); true side-hanging is a follow-up.
+- **`BloodMossBlock extends CarpetBlock`** ([DECISION-BLOODMOSS]) — a flat 1px ground-cover decoration,
+  **not** a staged crop (a cross-billboard would read wrong for "moss"). **Non-spreading v1**
+  (deterministic, no GameTest burden); taint-gated spread is a follow-up. Drops itself via a loot JSON
+  (it does not override `getDrops`). Registered as a plain `BlockItem` (a decoration, not a seed).
+- **`WitchMushroomBlock extends BushBlock`** ([DECISION-MUSHROOMS]) — one shared class for all three
+  mushrooms. Vanilla-mushroom behaviour: small-mushroom shape `box(5,0,5,11,6,11)`, place on solid top,
+  survive only where `getRawBrightness < 13` OR full sky access. **No growth stages** (single cross
+  sprite, no `_stage_N`), **no huge variant** (bonemeal does nothing) v1. A per-instance `glow` flag;
+  `ZEVANTY` sets `.lightLevel(s->8)`. Each drops itself via a loot JSON; `zevanty` has a 2nd loot pool
+  for **25% `glowing_spore`** (data, not code).
+- **6 new produce items + `glowing_spore`** are plain non-edible `Item`s (brew reagents — recipes are
+  designed in the brews overhaul, not here). Produce + mushroom/moss `BlockItem`s are added explicitly
+  to the creative tab (the `SEED_ITEMS` loop only covers seeds).
+- **Assets reference the manifest texture paths verbatim** so the incoming batch PNGs line up:
+  crop stage models parent `minecraft:block/crop` (`crop` = `hexerei:block/<name>_stage_N`); mushroom
+  models parent `minecraft:block/cross`; blood moss parents `minecraft:block/carpet` (`wool`); seeds +
+  produce parent `minecraft:item/generated`; mushroom item icons use the block sprite as `layer0`.
+
+## Known `[UNVERIFIED]`
+- **Blood moss altar power 4/20** — wired into `resolveDynamic` reusing the reserved `EMBER_MOSS`
+  moss-tier idea; the value is a placeholder pending in-game balance.
+- **Mushrooms get no altar power** (they are reagents, not nature-power blocks) — by decision, revisit
+  if cave-farm power matters.
+- **Sandwort plants on farmland** ([DECISION-SANDWORT-SOIL]) for v1 (no per-crop sand soil enum); a
+  `sand`-placement variant is a follow-up.
+
 # Altar slice
 
 ## Deliberate design decisions

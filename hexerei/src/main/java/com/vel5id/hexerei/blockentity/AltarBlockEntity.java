@@ -311,6 +311,8 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
             e = AltarPowerTable.FLOWER;          // 4/30 for small flowers
         } else if (b instanceof com.vel5id.hexerei.block.crop.WitchCropBlock) {
             e = AltarPowerTable.CROP;            // 4/20 for Hexerei herb crops
+        } else if (bs.is(com.vel5id.hexerei.registry.HexereiBlocks.BLOOD_MOSS.get())) {
+            e = AltarPowerTable.CROP;            // 4/20 for blood moss (reuses the reserved moss-tier; [UNVERIFIED] balance)
         } else if (b instanceof FlowerBlock || b instanceof CropBlock) {
             e = AltarPowerTable.CATCHALL;        // 2/4
         }

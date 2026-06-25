@@ -62,6 +62,30 @@ public final class HexereiItems {
             () -> new Item(new Item.Properties().food(
                     new FoodProperties.Builder().nutrition(20).saturationMod(0.0F).build())));
 
+    // --- slice H: new herb/mushroom produce (non-edible brew reagents; brews designed in overhaul-brews) ---
+    public static final RegistryObject<Item> CROWSEYE_BERRY = ITEMS.register("crowseye_berry",
+            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> CELANDINE = ITEMS.register("celandine",
+            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> HOPS = ITEMS.register("hops",
+            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SANDWORT = ITEMS.register("sandwort",
+            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> MISTLETOE_SPRIG = ITEMS.register("mistletoe_sprig",
+            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> GLOWING_SPORE = ITEMS.register("glowing_spore",
+            () -> new Item(new Item.Properties()));
+
+    // --- slice H: BlockItems for the decoration + mushroom blocks (these blocks ARE the reagents) ---
+    public static final RegistryObject<Item> BLOOD_MOSS = ITEMS.register("blood_moss",
+            () -> new BlockItem(HexereiBlocks.BLOOD_MOSS.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ZEVANTY = ITEMS.register("zevanty",
+            () -> new BlockItem(HexereiBlocks.ZEVANTY.get(), new Item.Properties()));
+    public static final RegistryObject<Item> PUFFBALL = ITEMS.register("puffball",
+            () -> new BlockItem(HexereiBlocks.PUFFBALL.get(), new Item.Properties()));
+    public static final RegistryObject<Item> WEBCAP = ITEMS.register("webcap",
+            () -> new BlockItem(HexereiBlocks.WEBCAP.get(), new Item.Properties()));
+
     // --- combat charms (carried in a charm pouch; per-charm charge lives in NBT, see CharmItem) ---
     public static final RegistryObject<Item> CHARM_POUCH = ITEMS.register("charm_pouch",
             () -> new CharmPouchItem(new Item.Properties()));

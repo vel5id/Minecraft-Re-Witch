@@ -1,5 +1,6 @@
 package com.vel5id.hexerei.registry;
 
+import com.vel5id.hexerei.block.crop.MistletoeBlock;
 import com.vel5id.hexerei.block.crop.WitchCropBlock;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
@@ -71,7 +72,10 @@ public final class HexereiCrops {
             () -> HexereiItems.MANDRAKE_ROOT.get(), null);
     public static final RegistryObject<Block> ARTICHOKE = crop("artichoke", 4, true, true, false, false, false,
             () -> HexereiItems.ARTICHOKE.get(), null);
-    public static final RegistryObject<Block> SNOWBELL = crop("snowbell", 4, false, true, false, true, false,
+    // Renamed snowbell -> hellebore ("Морозник"). The 6th constructor arg (the WitchCropBlock "snowbell"
+    // boolean) is the hellebore bonus-drop flag: kept true so the +20% icy_needle bonus drop still fires.
+    // Mature produce stays vanilla snowball + 20% icy_needle (icy_needle is a brew ingredient — do not retheme).
+    public static final RegistryObject<Block> HELLEBORE = crop("hellebore", 4, false, true, false, true, false,
             () -> Items.SNOWBALL, () -> HexereiItems.ICY_NEEDLE.get());
     public static final RegistryObject<Block> WORMWOOD = crop("wormwood", 4, false, true, false, false, true,
             () -> HexereiItems.WORMWOOD.get(), null);
@@ -81,6 +85,48 @@ public final class HexereiCrops {
             () -> HexereiItems.WOLFSBANE.get(), null);
     public static final RegistryObject<Block> GARLIC = crop("garlic", 5, false, true, false, false, false,
             null, null);
+
+    // --- slice H: new farmland crops (all via crop(...), seed item auto-registered) ---
+    // crowseye / celandine: standard bonemeal-big farmland crops, maxAge 4.
+    public static final RegistryObject<Block> CROWSEYE = crop("crowseye", 4, false, true, false, false, false,
+            () -> HexereiItems.CROWSEYE_BERRY.get(), null);
+    public static final RegistryObject<Block> CELANDINE = crop("celandine", 4, false, true, false, false, false,
+            () -> HexereiItems.CELANDINE.get(), null);
+    // hops: reuses the wormwood "tall/self-stacking" behaviour (wormwood=true) — mature bottom grows an upper segment.
+    public static final RegistryObject<Block> HOPS = crop("hops", 4, false, true, false, false, true,
+            () -> HexereiItems.HOPS.get(), null);
+    // sandwort: big=false ⇒ bonemeal gives +1 per use (slow, hardy desert herb).
+    public static final RegistryObject<Block> SANDWORT = crop("sandwort", 4, false, false, false, false, false,
+            () -> HexereiItems.SANDWORT.get(), null);
+
+    // mistletoe: a WitchCropBlock subclass with log/leaf placement, so it cannot use the farmland-only
+    // crop(...) helper (which hard-codes new WitchCropBlock). Registered via cropSubclass so it still
+    // joins CROP_BLOCKS/SEED_ITEMS/SEED_BY_CROP — creative tab + the instanceof WitchCropBlock altar synergy fire.
+    public static final RegistryObject<Block> MISTLETOE = cropSubclass("mistletoe",
+            (seedSup, produceSup) -> new MistletoeBlock(4, false, true, false, false, false,
+                    seedSup, produceSup, null, cropProps()),
+            () -> HexereiItems.MISTLETOE_SPRIG.get());
+
+    /** Functional factory for a WitchCropBlock subclass given its (seed, produce) suppliers. */
+    @FunctionalInterface
+    private interface CropFactory {
+        Block create(Supplier<Item> seed, Supplier<Item> produce);
+    }
+
+    /** Like crop(...) but for a pre-built WitchCropBlock subclass with a non-default placement rule. */
+    private static RegistryObject<Block> cropSubclass(String name, CropFactory factory,
+            @Nullable Supplier<Item> produce) {
+        Supplier<Item> seedSup = () -> seedFor(name).get();
+        Supplier<Item> produceSup = produce != null ? produce : seedSup;
+        RegistryObject<Block> block = HexereiBlocks.BLOCKS.register(name,
+                () -> factory.create(seedSup, produceSup));
+        RegistryObject<Item> seed = HexereiItems.ITEMS.register(seedName(name),
+                () -> new ItemNameBlockItem(block.get(), new Item.Properties()));
+        SEED_BY_CROP.put(name, seed);
+        CROP_BLOCKS.add(block);
+        SEED_ITEMS.add(seed);
+        return block;
+    }
 
     /** Force class-load so the static crop registrations run. Call from the mod constructor. */
     public static void init() {}

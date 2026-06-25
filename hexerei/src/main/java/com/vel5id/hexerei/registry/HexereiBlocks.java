@@ -2,6 +2,8 @@ package com.vel5id.hexerei.registry;
 
 import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.block.AltarBlock;
+import com.vel5id.hexerei.block.BloodMossBlock;
+import com.vel5id.hexerei.block.WitchMushroomBlock;
 import com.vel5id.hexerei.block.cauldron.CauldronBlock;
 import com.vel5id.hexerei.block.ritual.RitualSigilBlock;
 import com.vel5id.hexerei.block.ritual.RuneBlock;
@@ -62,4 +64,39 @@ public final class HexereiBlocks {
                     .strength(1.5F)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()));
+
+    // --- slice H: ground decoration + mushrooms ---
+    // Blood Moss: flat carpet-style red ground cover, non-spreading v1; drops self via loot JSON.
+    public static final RegistryObject<Block> BLOOD_MOSS = BLOCKS.register("blood_moss",
+            () -> new BloodMossBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.MOSS_CARPET)));
+
+    // Zevanty: glowing mushroom (light level 8). Mushrooms drop self via loot JSON (no getDrops override).
+    public static final RegistryObject<Block> ZEVANTY = BLOCKS.register("zevanty",
+            () -> new WitchMushroomBlock(true, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .lightLevel(s -> 8)
+                    .randomTicks()));
+
+    public static final RegistryObject<Block> PUFFBALL = BLOCKS.register("puffball",
+            () -> new WitchMushroomBlock(false, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.TERRACOTTA_WHITE)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .randomTicks()));
+
+    public static final RegistryObject<Block> WEBCAP = BLOCKS.register("webcap",
+            () -> new WitchMushroomBlock(false, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .randomTicks()));
 }

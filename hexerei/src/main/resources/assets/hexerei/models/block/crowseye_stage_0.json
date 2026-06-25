@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/crop",
   "textures": {
-    "crop": "hexerei:block/snowbell_stage_2"
+    "crop": "hexerei:block/crowseye_stage_0"
   }
 }
