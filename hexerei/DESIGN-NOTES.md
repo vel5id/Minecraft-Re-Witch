@@ -335,3 +335,20 @@ spirit-bearing reagent (anything in `ReagentRegistry`) → consume one → essen
   essence + raises that domain's satiation; serverTick decays satiation (`SATIATION_DECAY=1`/20-tick step).
 - **`AltarBlock.use`**: holding a reagent → offer (consume 1) with SOUL particles + sound; artefact
   placement and the GUI are unchanged. All knobs `[UNVERIFIED]`; `Offering` math unit-tested.
+
+# Rune redesign — symbols instead of connecting lines
+
+The old `rune` block was a redstone-like 8-way connecting decal (`RuneShapes`, eight boolean
+properties) whose neighbour detection mis-resolved which segment to show. Replaced by distinct
+**symbols**: each rune shows one of 18 `RuneSymbol` glyphs (3 per `Correspondence` domain), stored as
+the `symbol` IntegerProperty (0–17, declaration order). `RuneShapes` + its test + the six connection
+models/textures are removed.
+
+- **Block:** `RuneBlock` keeps the 12×12×1 decal, sturdy-face-below survival, and the bound-circle
+  break penalty (`onRemove` → `RitualDestruction`) — a symbol swap (same block) does NOT penalize.
+- **Assets:** `block/rune_glyph` parent (thin slab, up-face `#rune`) + 18 child models +
+  `blockstates/rune.json` (18 variants) + 18 line-glyph textures (generated, Elder-Futhark style,
+  white strokes on transparent). Item icon = `block/rune_branch`.
+- **Chalk:** right-click an existing rune to cycle its symbol; the ring is still drawn from a sigil.
+- **Ritual matcher unchanged** — it tests a rune's PRESENCE, not its symbol; the symbol→domain meaning
+  feeds the rite's `Act` once rituals read the vector model (Slice D/E). In-world render unverified.

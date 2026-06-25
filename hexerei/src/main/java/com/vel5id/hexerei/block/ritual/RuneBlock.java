@@ -3,7 +3,7 @@ package com.vel5id.hexerei.block.ritual;
 import com.vel5id.hexerei.blockentity.RitualSigilBlockEntity;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.ritual.RitualDestruction;
-import com.vel5id.hexerei.ritual.RuneShapes.Dir8;
+import com.vel5id.hexerei.soul.RuneSymbol;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -16,45 +16,41 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
 /**
- * A flat 1px chalk decal that connects to neighbouring runes both orthogonally (N/E/S/W) and
- * diagonally (NE/SE/SW/NW), like vanilla {@code redstone_wire}/{@code tripwire}. Connections are
- * stored as eight boolean blockstate properties and rendered with a multipart blockstate; the pure
- * boolean -> (shape, rotation) mapping lives in {@link com.vel5id.hexerei.ritual.RuneShapes}.
+ * A flat 1px chalk decal showing one {@link RuneSymbol} glyph (Статья VI — the diegetic language of
+ * the circle). Eighteen symbols, three per {@link com.vel5id.hexerei.soul.Correspondence} domain,
+ * stored as the {@code symbol} blockstate property. The chalk picks the glyph; the ritual matcher
+ * tests only for a rune's PRESENCE at the ring offsets, so the symbol is free to mean a domain later.
  *
- * <p>Replaces the old {@code ritual_glyph} decal as the ring block of a ritual circle. The
- * connection booleans are purely cosmetic to {@code RitualActivation}, which only tests for the
- * presence of a rune at the ring offsets.
+ * <p>Replaces the old redstone-like connection system (eight boolean properties) — runes no longer
+ * connect; each is its own symbol.
  */
 public class RuneBlock extends Block {
     // 12x12 inset, 1px tall — smaller and shallower than the 16x16x2 sigil.
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 1.0, 14);
 
-    public static final BooleanProperty N = BooleanProperty.create("n");
-    public static final BooleanProperty E = BooleanProperty.create("e");
-    public static final BooleanProperty S = BooleanProperty.create("s");
-    public static final BooleanProperty W = BooleanProperty.create("w");
-    public static final BooleanProperty NE = BooleanProperty.create("ne");
-    public static final BooleanProperty SE = BooleanProperty.create("se");
-    public static final BooleanProperty SW = BooleanProperty.create("sw");
-    public static final BooleanProperty NW = BooleanProperty.create("nw");
+    public static final int SYMBOL_COUNT = RuneSymbol.VALUES.length; // 18
+    public static final IntegerProperty SYMBOL = IntegerProperty.create("symbol", 0, SYMBOL_COUNT - 1);
 
     public RuneBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any()
-                .setValue(N, false).setValue(E, false).setValue(S, false).setValue(W, false)
-                .setValue(NE, false).setValue(SE, false).setValue(SW, false).setValue(NW, false));
+        registerDefaultState(stateDefinition.any().setValue(SYMBOL, 0));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(N, E, S, W, NE, SE, SW, NW);
+        builder.add(SYMBOL);
+    }
+
+    /** The glyph this rune shows. */
+    public static RuneSymbol symbolOf(BlockState state) {
+        return RuneSymbol.VALUES[state.getValue(SYMBOL)];
     }
 
     @Override
@@ -69,37 +65,17 @@ public class RuneBlock extends Block {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
                                   LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (!canSurvive(state, level, pos)) {
-            return Blocks.AIR.defaultBlockState();
-        }
-        return withConnections(level, pos, state);
-    }
-
-    @Nullable
-    @Override
-    public BlockState getStateForPlacement(net.minecraft.world.item.context.BlockPlaceContext ctx) {
-        return withConnections(ctx.getLevel(), ctx.getClickedPos(), defaultBlockState());
-    }
-
-    @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
-                                BlockPos fromPos, boolean moving) {
-        if (!level.isClientSide) {
-            BlockState updated = withConnections(level, pos, state);
-            if (updated != state) {
-                level.setBlock(pos, updated, 2);
-            }
-        }
-        super.neighborChanged(state, level, pos, block, fromPos, moving);
+        return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        // Only a genuine rune removal (block type change) triggers the penalty — not a connection
-        // boolean update, which also routes through onRemove with the same block.
+        // Only a genuine rune removal (block type change) breaks a bound circle — not a symbol swap,
+        // which routes through onRemove with the same block.
         if (!state.is(newState.getBlock()) && level instanceof ServerLevel sl) {
             BlockPos sigilPos = findBoundSigil(level, pos);
             if (sigilPos != null) {
@@ -131,22 +107,5 @@ public class RuneBlock extends Block {
             }
         }
         return null;
-    }
-
-    /** Scans the eight neighbours and returns {@code state} with all eight connection booleans set. */
-    private static BlockState withConnections(LevelReader level, BlockPos pos, BlockState state) {
-        return state
-                .setValue(N, isRune(level, pos, Dir8.N))
-                .setValue(E, isRune(level, pos, Dir8.E))
-                .setValue(S, isRune(level, pos, Dir8.S))
-                .setValue(W, isRune(level, pos, Dir8.W))
-                .setValue(NE, isRune(level, pos, Dir8.NE))
-                .setValue(SE, isRune(level, pos, Dir8.SE))
-                .setValue(SW, isRune(level, pos, Dir8.SW))
-                .setValue(NW, isRune(level, pos, Dir8.NW));
-    }
-
-    private static boolean isRune(LevelReader level, BlockPos pos, Dir8 dir) {
-        return level.getBlockState(pos.offset(dir.dx, 0, dir.dz)).is(HexereiBlocks.RUNE.get());
     }
 }

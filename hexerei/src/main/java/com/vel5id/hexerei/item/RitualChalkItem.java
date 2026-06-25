@@ -46,6 +46,17 @@ public class RitualChalkItem extends Item {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
+        // Right-click an existing rune to cycle its symbol (the diegetic domain glyph).
+        var cs = level.getBlockState(clicked);
+        if (cs.is(HexereiBlocks.RUNE.get())) {
+            if (!level.isClientSide) {
+                int next = (cs.getValue(com.vel5id.hexerei.block.ritual.RuneBlock.SYMBOL) + 1)
+                        % com.vel5id.hexerei.block.ritual.RuneBlock.SYMBOL_COUNT;
+                level.setBlock(clicked, cs.setValue(com.vel5id.hexerei.block.ritual.RuneBlock.SYMBOL, next), 3);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+
         // Runes only exist as part of a sigil ring — no off-sigil free-draw fallback.
         return InteractionResult.PASS;
     }

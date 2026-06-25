@@ -1,0 +1,6 @@
+{
+  "parent": "hexerei:block/rune_glyph",
+  "textures": {
+    "rune": "hexerei:block/rune_bolt"
+  }
+}

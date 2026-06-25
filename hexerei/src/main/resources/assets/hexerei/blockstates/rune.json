@@ -1,45 +1,58 @@
 {
-  "multipart": [
-    { "when": { "n": "true", "e": "true", "s": "true", "w": "true" },
-      "apply": { "model": "hexerei:block/rune_cross" } },
-
-    { "when": { "n": "true", "e": "true", "s": "true", "w": "false" },
-      "apply": { "model": "hexerei:block/rune_t" } },
-    { "when": { "n": "false", "e": "true", "s": "true", "w": "true" },
-      "apply": { "model": "hexerei:block/rune_t", "y": 90 } },
-    { "when": { "n": "true", "e": "false", "s": "true", "w": "true" },
-      "apply": { "model": "hexerei:block/rune_t", "y": 180 } },
-    { "when": { "n": "true", "e": "true", "s": "false", "w": "true" },
-      "apply": { "model": "hexerei:block/rune_t", "y": 270 } },
-
-    { "when": { "n": "true", "e": "false", "s": "true", "w": "false" },
-      "apply": { "model": "hexerei:block/rune_line" } },
-    { "when": { "n": "false", "e": "true", "s": "false", "w": "true" },
-      "apply": { "model": "hexerei:block/rune_line", "y": 90 } },
-
-    { "when": { "n": "true", "e": "true", "s": "false", "w": "false" },
-      "apply": { "model": "hexerei:block/rune_corner" } },
-    { "when": { "n": "false", "e": "true", "s": "true", "w": "false" },
-      "apply": { "model": "hexerei:block/rune_corner", "y": 90 } },
-    { "when": { "n": "false", "e": "false", "s": "true", "w": "true" },
-      "apply": { "model": "hexerei:block/rune_corner", "y": 180 } },
-    { "when": { "n": "true", "e": "false", "s": "false", "w": "true" },
-      "apply": { "model": "hexerei:block/rune_corner", "y": 270 } },
-
-    { "when": { "n": "true", "e": "false", "s": "false", "w": "false" },
-      "apply": { "model": "hexerei:block/rune_end" } },
-    { "when": { "n": "false", "e": "true", "s": "false", "w": "false" },
-      "apply": { "model": "hexerei:block/rune_end", "y": 90 } },
-    { "when": { "n": "false", "e": "false", "s": "true", "w": "false" },
-      "apply": { "model": "hexerei:block/rune_end", "y": 180 } },
-    { "when": { "n": "false", "e": "false", "s": "false", "w": "true" },
-      "apply": { "model": "hexerei:block/rune_end", "y": 270 } },
-    { "when": { "n": "false", "e": "false", "s": "false", "w": "false" },
-      "apply": { "model": "hexerei:block/rune_end" } },
-
-    { "when": { "ne": "true" }, "apply": { "model": "hexerei:block/rune_diagonal" } },
-    { "when": { "se": "true" }, "apply": { "model": "hexerei:block/rune_diagonal", "y": 90 } },
-    { "when": { "sw": "true" }, "apply": { "model": "hexerei:block/rune_diagonal", "y": 180 } },
-    { "when": { "nw": "true" }, "apply": { "model": "hexerei:block/rune_diagonal", "y": 270 } }
-  ]
+  "variants": {
+    "symbol=0": {
+      "model": "hexerei:block/rune_sprout"
+    },
+    "symbol=1": {
+      "model": "hexerei:block/rune_branch"
+    },
+    "symbol=2": {
+      "model": "hexerei:block/rune_root"
+    },
+    "symbol=3": {
+      "model": "hexerei:block/rune_facet"
+    },
+    "symbol=4": {
+      "model": "hexerei:block/rune_peak"
+    },
+    "symbol=5": {
+      "model": "hexerei:block/rune_crack"
+    },
+    "symbol=6": {
+      "model": "hexerei:block/rune_wave"
+    },
+    "symbol=7": {
+      "model": "hexerei:block/rune_drop"
+    },
+    "symbol=8": {
+      "model": "hexerei:block/rune_stream"
+    },
+    "symbol=9": {
+      "model": "hexerei:block/rune_bone"
+    },
+    "symbol=10": {
+      "model": "hexerei:block/rune_skull"
+    },
+    "symbol=11": {
+      "model": "hexerei:block/rune_wither"
+    },
+    "symbol=12": {
+      "model": "hexerei:block/rune_moon"
+    },
+    "symbol=13": {
+      "model": "hexerei:block/rune_bolt"
+    },
+    "symbol=14": {
+      "model": "hexerei:block/rune_star"
+    },
+    "symbol=15": {
+      "model": "hexerei:block/rune_door"
+    },
+    "symbol=16": {
+      "model": "hexerei:block/rune_eye"
+    },
+    "symbol=17": {
+      "model": "hexerei:block/rune_spiral"
+    }
+  }
 }
