@@ -12,3 +12,6 @@
 
 # Third-party test mods — never redistribute
 mods/
+
+# Windows NTFS alternate-data-stream metadata (WSL)
+*:Zone.Identifier

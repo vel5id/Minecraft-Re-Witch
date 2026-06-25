@@ -14,6 +14,24 @@ This repo holds three loosely-related things under one root (`/home/h621l/minecr
 
 When the task is "the mod," work in `hexerei/`. The Docker server and the RU pack are separate concerns.
 
+## Design law — the Constitution (MANDATORY GATE, read before any mod change)
+
+`hexerei/WARRANTLY/` holds three Russian design-law documents that are **binding, not advisory**. They define the mod as *a world-interaction system* (one Law, expressed many ways), not a content pack. Every change to `hexerei/` mechanics, content, or balance — and every design decision behind it — **must conform to them**. This gate sits *above* `DESIGN-NOTES.md`: the Constitution decides *whether* a thing may exist; DESIGN-NOTES records the *numbers* once it may.
+
+The three documents, in hierarchy:
+
+1. **`Конституция_мира_ведьм.md`** — *the Law.* What a change MUST contain (derives from binding/sealing/releasing; has a cost; shares the one essence/spirit economy; multiple uses; predictable from the Law; feeds the causal loop or deepens understanding; diegetic) and MUST NOT contain (one-shot dead-ends; free power; a parallel system/currency; cosmetics posing as mechanics; metaphysics violations; randomness where logic belongs; tone breaks; wholesale imports of foreign paradigms). The loop of Article III (power source = danger source) is **inviolable**.
+2. **`Грамматика_векторов.md`** — *the arithmetic.* Everything reduces to vectors: `Act` (transient delta) integrated into `State` (`Bond.disposition`, `ChunkSoulData.disturbance[domain]`, `PlayerSoulData`). Nobody writes `State` except through `Act`. Decay is **asymmetric** (attention heals, debt does not; `resentment` floors at `debt + marks`). Ritual success and failure are *functions of state*, never flat dice; failure feeds the loop.
+3. **`Модель_данных_привязки.md`** — *the implementation.* `Bond` is the single source of truth; the mob (`PresenceEntity`) is a disposable projection. Ritual / amulet / living-world / dream are four verbs (`create / modify / seal / read`) over one record.
+
+**Mandatory procedure for every mod change:**
+
+- **Before designing or coding**, run the proposed change through the **litmus checklist** at the end of `Конституция_мира_ведьм.md` (9 questions). Any single "no" → stop, redesign, or cut. State the verdict.
+- **Before declaring a change done**, confirm it did not break the Article III loop, did not introduce a parallel economy, and integrates `State` only through `Act` (where the vector model applies).
+- If a requested change genuinely cannot pass the gate, **say so and propose a Law-conformant alternative** rather than silently building a "thing beside the Law." Amending the Constitution itself is allowed but rare, and must pass its own supreme test (does it serve the Law?).
+
+These docs are the source of truth for *intent*; when they and the code disagree, surface the conflict — do not assume either is automatically right.
+
 ## Building & testing the mod (`hexerei/`)
 
 **Every Gradle command needs `JAVA_HOME` pointing at JDK 17.** A portable one is vendored:
