@@ -1,5 +1,7 @@
 # Minecraft — Re:Witch
 
+![Minecraft — Re:Witch](docs/img/banner.png)
+
 An original **witchcraft mod for Minecraft 1.20.1 (Forge)**. Build an altar, grow a witch-garden, brew
 in the cauldron, lay ritual circles, bind combat charms — and watch the land sicken with *taint* and the
 sky bleed under a *Blood Moon*. The mod ships with an in-game Patchouli guidebook (the **Grimoire**) and
@@ -35,7 +37,35 @@ Everything is server-authoritative, fully localized (`en_us` + `ru_ru`), and cov
 
 ---
 
-## Building the mod
+## Gallery
+
+*All art below is in-mod: 16×16 textures shown upscaled. No third-party assets.*
+
+**Magic items & charms**
+
+![Magic items and charms](docs/img/gallery-items.png)
+
+**Cauldron brews**
+
+![Cauldron brews](docs/img/gallery-brews.png)
+
+**Herbs & reagents**
+
+![Herbs and reagents](docs/img/gallery-herbs.png)
+
+**Blocks & terrain**
+
+![Blocks and terrain](docs/img/gallery-blocks.png)
+
+---
+
+## Download & install
+
+Grab the latest `hexerei-1.20.1-*.jar` from the **[Releases](https://github.com/vel5id/Minecraft-Re-Witch/releases)**
+page, then drop it into the `mods/` folder of a Forge **1.20.1 (47.4.10)** install alongside
+**[Patchouli](https://www.curseforge.com/minecraft/mc-mods/patchouli)** (required for the in-game guidebook).
+
+## Building from source
 
 Requires **JDK 17**. From the `hexerei/` directory:
 
@@ -51,7 +81,9 @@ the in-game guidebook.
 
 ## Dockerised test server
 
-The repository root also contains a self-contained Forge server image (curated mods baked in from `mods/`):
+The repository root also ships a small Forge 1.20.1 server harness (`Dockerfile` + `docker-compose.yml`)
+used during development. Drop your own `.jar`s into a local `mods/` folder (it is **gitignored** — no
+third-party mods are redistributed here), then:
 
 ```bash
 cp .env.example .env
@@ -59,7 +91,7 @@ docker compose up -d --build
 docker compose logs -f minecraft   # watch for "Done ("
 ```
 
-See the server notes in `docs/` and `CLAUDE.md` for project conventions.
+See `CLAUDE.md` for project conventions.
 
 ---
 
