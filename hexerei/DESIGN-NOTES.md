@@ -386,3 +386,83 @@ are kept (the matched recipe is the intended effect), but whether it FIRES is a 
   disturbance places (normal play unaffected).
 - **Payment is essence** — `consumePower` already debits the altar's earned reservoir after Slice B.
   All knobs `[UNVERIFIED]`; in-world ritual flow needs a playtest.
+
+# Sealed Amulets slice (retire the flat charm system → the "запечатать" verb)
+
+The three flat combat charms (`ward_charm`/`bloodlust_charm`/`hexbane_charm` + `CharmItem`/`CharmDef`/
+`CharmDefs`/`CharmCharge`/`CharmTickHandler`) were a **parallel system** the Constitution forbids. They are
+replaced by **one** `hexerei:amulet` item that carries a `Bond` in its NBT — the "запечатать" verb (Модель §7).
+A sealed amulet is obtained only from a **sealing rite**; worn in a charm pouch, it grants a domain-derived
+effect at the price of accruing soul-debt that grinds its seal until it shatters.
+
+- **One item, domain-driven** (mirrors the brew one-item-tinted-by-content pattern). `AmuletItem` stores the
+  whole `Bond` under NBT key `hexerei:sealed_bond` via `Bond.CODEC` + `NbtOps` — Forge 1.20.1 has no
+  `DataComponentType` (that is 1.20.5+/NeoForge), so NBT is the item-data path (same as the old charge).
+- **Effect = f(domain)** (`SealedAmulet.effectFor`, pure): FOREST→Resistance (always), DEATH→Weakness aura to
+  hostiles within 5, THRESHOLD→Strength at ≤6 hearts. `ActiveMode` is reframed diegetically as the spirit's
+  *nature* (a threshold-spirit stirs near death), not a separate axis — preserving all three old behaviours.
+- **Cost model replaced**: there is **no altar recharge**. Each second worn, `bond.disposition.debt += DRAW_RATE`
+  and resentment (`max(0, debt − loyalty)`) grinds `seal.integrity` (`−= GRIND_RATE·resentment`). At
+  integrity ≤ 0 the amulet **shatters** (item removed, `BREAK_DISTURBANCE` written, the Mark conceptually
+  persists). This is the Article-III cost — the witch's own debt, not nature-power.
+- **`SealedAmulet`** is pure + unit-tested, including a **lifespan invariant** (an un-tended amulet breaks
+  within a bounded band — no permanent free power; loyalty keeps it intact). Constants all `[UNVERIFIED]`,
+  tuned via that band: `DRAW_RATE = GRIND_RATE = 0.0005` → ~47 min lifespan, debt ≈ 1.4 at break.
+- **`AmuletTickHandler`** (replaces `CharmTickHandler`, same 20-tick hook) scans the carried pouch, accrues
+  debt/grinds each sealed amulet, applies its effect, breaks on 0, and **reconciles `PlayerSoulData.amulets`
+  + `totalDebt`** with the pouch (Модель §3) so future dream/living-world readers see the worn bonds.
+- **Three sealing rites** (`RitualRecipes`: `seal_amulet_forest`/`_death`/`_threshold`, SMALL ring, cost 80),
+  one `SealAmuletRite(domain)` class (SpawnItemRite-style instances). Each sacrifice is a domain reagent **no
+  other rite uses** (celandine / crowseye_berry / garlic), so `RitualRecipes.match` stays unambiguous.
+- **`CharmPouchItem`** now validates slots against `AmuletItem.isSealed` and shows a mean-seal-**integrity**
+  bar (was a charge bar). `bone_charm` (altar artefact) is untouched.
+
+## Known `[UNVERIFIED]` / out of scope
+- All `SealedAmulet` constants (DRAW/GRIND rates, severities, disturbances) are first-pass; tune by playtest.
+- **Owner-binding at creation** is deferred (the `Rite` contract has no player handle) — the amulet drops
+  un-owned and binds on pouch, matching `BoundBeastRite`'s caveat.
+- **The deep Article-III payoff** (accrued `debt`/`Mark` → presences turn on the witch) needs the unbuilt
+  `PresenceEntity`; this slice only records `totalDebt` + `Mark` for it. The v1 bite is the finite lifespan.
+- **APPEASE/FEED rites** (loyalty to offset debt) and **dream rendering** of worn-bond debt — later verbs.
+- **Patchouli guidebook** `entries/charms/*` still describes the retired charms — a content follow-up.
+- **In-world GameTests** (`AmuletGameTests`, the sealing-rite test in `RitualExpansionGameTests`) are written
+  but the `runGameTestServer` boot currently fails on a **pre-existing Patchouli mixin** error
+   (`AccessorSmithingTrimRecipe`) unrelated to this slice; pure unit tests + `build` are green.
+
+# Curses slice (the "create free bond" verb, weaponized — taglock + echo)
+
+Inspired by HEE's 11-type curse system (verified from the jar: `mechanics/curse/CurseType` — TELEPORTATION/
+CONFUSION/TRANQUILITY/SLOWNESS/WEAKNESS/BLINDNESS/DEATH/DECAY/VAMPIRE/REBOUND/LOSS, delivered as a
+projectile + technical-curse entity ticking `uses` times). Hexerei's realisation: a curse is a free,
+un-sealed `Bond` laid on a player's `PlayerSoulData.marks`; the spirit's grip (`disposition.fear`) ticks
+down each second and the curse departs when `fear ≤ 0`.
+
+- **Taglock** — right-click a player to store their UUID+name in the taglock's NBT (Witchery's taglock).
+  Dropped on a curse rite's circle alongside the domain reagent, it **targets** the victim.
+- **Three curse rites** (`STONE→Clumsiness`/`THRESHOLD→Unluckiness`/`DEATH→Weakness`), one `CurseRite(domain)`
+  class. Sacrifices are domain reagents **no other rite uses** (sandwort / glowing_spore / blood_moss).
+- **The echo (anti-spam)** — every successful curse cast also lays a **milder copy (~20% strength, one tier
+  down) on the caster** via `RitualContext.currentCaster()` (the new player-handle ThreadLocal). Cast five
+  curses → bear five echoes. The echo is distinguished by `spiritType` suffix `_echo`; `CurseTickHandler`
+  reads it to pick FULL vs ECHO modifier/potion values. Self-target → no echo (no double-dip).
+- **`Curse`** is pure + unit-tested (effectFor domain×strength, FULL/ECHO modifier values, grip/isSpent/
+  finiteness, `isEcho`). Lifetime: `CURSE_TICKS = 600` (one tick/sec → ~10 min). All `[UNVERIFIED]`.
+- **`CurseTickHandler`** (same 20-tick boundary) applies effects **self-correctingly**: each tick removes
+  every known curse modifier UUID from the four attributes (BLOCK/ENTITY_REACH, ENTITY_GRAVITY, LUCK),
+  then re-adds exactly the still-active set — no stale modifier survives a lifted curse. Potions (Weakness/
+  Unluck) are refreshed and lapse ~2s after the last active curse.
+- **Clumsiness (STONE):** `ForgeMod.BLOCK_REACH`×0.60, `ENTITY_REACH`×0.60, `ENTITY_GRAVITY`×1.40 (attr).
+  ECHO: ×0.88 / ×0.88 / ×1.12 (~20% of the debuff reduction).
+- **Unluckiness (THRESHOLD):** `Attributes.LUCK` −2 + Unluck II (full) / −0.4 + Unluck I (echo).
+- **Weakness (DEATH):** Weakness II (amp 1, full) / Weakness I (amp 0, echo).
+- **The caster handle is no longer deferred** — `RitualContext` gained a nullable `caster` UUID +
+  `currentCaster()`; `RitualActivation.tryPerform(level, pos, player)` overload threads it from
+  `RitualSigilBlock.use`; backward-compatible (`tryPerform(level, pos)` delegates with null).
+  **Side benefit:** unblocks amulet/bound-beast owner-binding in a one-line follow-up.
+
+## Known `[UNVERIFIED]` / out of scope
+- All `Curse` constants (CURSE_TICKS, modifier values) are first-pass; tune by playtest.
+- **Crit-chance reduction** (requested) — not an attribute in MC 1.20.1; substituted by luck/drop reduction.
+- **Cleansing rite** (the counter), **offline-target curses**, **curse projectile**, **fear-scaled
+  strength**, the remaining HEE curses — follow-up slices.
+- **`runGameTestServer`** still blocked by the pre-existing Patchouli mixin error.

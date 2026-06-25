@@ -1,6 +1,6 @@
 package com.vel5id.hexerei;
 
-import com.vel5id.hexerei.item.CharmTickHandler;
+import com.vel5id.hexerei.item.AmuletTickHandler;
 import com.vel5id.hexerei.network.HexereiNetwork;
 import com.vel5id.hexerei.network.TaintSyncS2CPacket;
 import com.vel5id.hexerei.ritual.WorldTaintAura;
@@ -25,8 +25,9 @@ public final class HexereiLevelEvents {
             WorldTaintAura.punishPlayers(sl);
             com.vel5id.hexerei.ritual.BloodMoonPulse.tick(sl);
         }
-        if (gt % 20 == 0) {             // every 1s: drain/recharge/apply carried charms
-            CharmTickHandler.tick(sl);
+        if (gt % 20 == 0) {             // every 1s: accrue debt/grind seals/apply effects of worn amulets
+            AmuletTickHandler.tick(sl);
+            com.vel5id.hexerei.item.CurseTickHandler.tick(sl); // + tick curse bonds on afflicted players
         }
     }
 

@@ -11,8 +11,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * An altar artefact. The item's identity IS its {@link ArtefactDef} (one item instance per artefact,
- * like {@link CharmItem}); the def carries no NBT. Placed in the altar's single slot, it scales the
+ * An altar artefact. The item's identity IS its {@link ArtefactDef} (one item instance per artefact);
+ * the def carries no NBT. Placed in the altar's single slot, it scales the
  * taint/effect of rituals that altar funds.
  */
 public class ArtefactItem extends Item {

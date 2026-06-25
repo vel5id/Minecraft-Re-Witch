@@ -26,6 +26,16 @@ public final class RitualActivation {
     public enum Result { SUCCESS, FAILED, NO_RECIPE, NO_POWER }
 
     public static Result tryPerform(ServerLevel level, BlockPos center) {
+        return tryPerform(level, center, (java.util.UUID) null);
+    }
+
+    /** Activation attributed to {@code caster} — exposes the activating player to the rite via {@link RitualContext}. */
+    public static Result tryPerform(ServerLevel level, BlockPos center,
+                                   @Nullable net.minecraft.world.entity.player.Player caster) {
+        return tryPerform(level, center, caster == null ? null : caster.getUUID());
+    }
+
+    public static Result tryPerform(ServerLevel level, BlockPos center, @Nullable java.util.UUID casterUuid) {
         // Contract: the center must be a ritual sigil block (self-contained for any caller).
         if (!level.getBlockState(center).is(HexereiBlocks.RITUAL_SIGIL.get())) {
             return Result.NO_RECIPE;
@@ -89,7 +99,7 @@ public final class RitualActivation {
             boolean bloodMoon = BloodMoonData.get(level).isActive();
             float taintMul = artefactTaint * phase.taintMul() * (bloodMoon ? BloodMoonData.BLOOD_TAINT_MUL : 1f);
             float effectMul = artefactEffect * phase.effectMul() * (bloodMoon ? BloodMoonData.RITUAL_EFFECT_MUL : 1f);
-            RitualContext.begin(taintMul, effectMul);
+            RitualContext.begin(taintMul, effectMul, casterUuid);
             try {
                 recipe.rite().perform(level, center);
                 maybeIgniteBloodMoon(level, recipe, phase);

@@ -97,7 +97,7 @@ public class RitualSigilBlock extends Block implements EntityBlock {
             ));
         }
 
-        RitualActivation.Result result = RitualActivation.tryPerform(sl, pos);
+        RitualActivation.Result result = RitualActivation.tryPerform(sl, pos, player);
         if (result == RitualActivation.Result.SUCCESS) {
             level.playSound(null, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.BLOCKS, 0.6F, 1.2F);
         } else {

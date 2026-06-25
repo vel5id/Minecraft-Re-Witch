@@ -1,13 +1,13 @@
 package com.vel5id.hexerei.registry;
 
 import com.vel5id.hexerei.HexereiMod;
+import com.vel5id.hexerei.item.AmuletItem;
 import com.vel5id.hexerei.item.ArtefactDefs;
 import com.vel5id.hexerei.item.ArtefactItem;
 import com.vel5id.hexerei.item.BrewItem;
-import com.vel5id.hexerei.item.CharmDefs;
-import com.vel5id.hexerei.item.CharmItem;
 import com.vel5id.hexerei.item.CharmPouchItem;
 import com.vel5id.hexerei.item.GrimoireItem;
+import com.vel5id.hexerei.item.TaglockItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -86,15 +86,15 @@ public final class HexereiItems {
     public static final RegistryObject<Item> WEBCAP = ITEMS.register("webcap",
             () -> new BlockItem(HexereiBlocks.WEBCAP.get(), new Item.Properties()));
 
-    // --- combat charms (carried in a charm pouch; per-charm charge lives in NBT, see CharmItem) ---
+    // --- sealed amulets (a bond carried in NBT; obtained from a sealing rite, worn in a charm pouch) ---
     public static final RegistryObject<Item> CHARM_POUCH = ITEMS.register("charm_pouch",
             () -> new CharmPouchItem(new Item.Properties()));
-    public static final RegistryObject<Item> WARD_CHARM = ITEMS.register("ward_charm",
-            () -> new CharmItem(new Item.Properties(), CharmDefs.WARD));
-    public static final RegistryObject<Item> BLOODLUST_CHARM = ITEMS.register("bloodlust_charm",
-            () -> new CharmItem(new Item.Properties(), CharmDefs.BLOODLUST));
-    public static final RegistryObject<Item> HEXBANE_CHARM = ITEMS.register("hexbane_charm",
-            () -> new CharmItem(new Item.Properties(), CharmDefs.HEXBANE));
+    public static final RegistryObject<Item> AMULET = ITEMS.register("amulet",
+            () -> new AmuletItem(new Item.Properties().stacksTo(1)));
+
+    // --- taglock: binds to a player (right-click) to target a curse rite at a circle ---
+    public static final RegistryObject<Item> TAGLOCK = ITEMS.register("taglock",
+            () -> new TaglockItem(new Item.Properties().stacksTo(16)));
 
     // --- altar artefacts (placed in the altar's single slot; scale a rite's taint/effect, see ArtefactDef) ---
     public static final RegistryObject<Item> BONE_CHARM = ITEMS.register("bone_charm",

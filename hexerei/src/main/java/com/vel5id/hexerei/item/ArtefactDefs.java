@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/** The catalog of altar artefacts. One {@link ArtefactDef} per artefact item — mirrors {@link CharmDefs}. */
+/** The catalog of altar artefacts. One {@link ArtefactDef} per artefact item — mirrors how rites are listed in {@code RitualRecipes.ALL}. */
 public final class ArtefactDefs {
     private ArtefactDefs() {}
 

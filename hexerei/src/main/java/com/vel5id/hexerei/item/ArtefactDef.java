@@ -2,7 +2,7 @@ package com.vel5id.hexerei.item;
 
 /**
  * An altar artefact's static definition. Pure data — the artefact <em>item</em> carries one of these
- * (identity-by-item-type, like {@link CharmDef}); nothing about it lives in the stack's NBT.
+ * (identity-by-item-type); nothing about it lives in the stack's NBT.
  *
  * <p>An artefact placed in the altar's single slot scales the rituals that altar funds:
  * <ul>

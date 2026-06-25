@@ -1,6 +1,7 @@
 package com.vel5id.hexerei.item;
 
 import com.vel5id.hexerei.menu.CharmPouchMenu;
+import com.vel5id.hexerei.soul.Bond;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
@@ -17,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A pouch that holds up to {@value #SLOTS} combat charms. Right-click to open its GUI; while the pouch is
- * carried, each contained charm grants its buff (driven server-side by {@code CharmTickHandler}). Contents
- * live in the pouch stack's own NBT, so they travel with the item — no BlockEntity, no SavedData.
+ * A pouch that holds up to {@value #SLOTS} sealed amulets. Right-click to open its GUI; while the pouch is
+ * carried, each contained amulet draws debt and grants its effect (driven server-side by {@link AmuletTickHandler}).
+ * Contents live in the pouch stack's own NBT, so they travel with the item — no BlockEntity, no SavedData.
  */
 public class CharmPouchItem extends Item {
     public static final int SLOTS = 3;
@@ -29,16 +30,17 @@ public class CharmPouchItem extends Item {
         super(properties.stacksTo(1));
     }
 
-    public static boolean isCharm(ItemStack stack) {
-        return stack.getItem() instanceof CharmItem;
+    /** A sealed amulet (a {@code hexerei:amulet} carrying a bond) is the only thing a pouch slot accepts. */
+    public static boolean isWearable(ItemStack stack) {
+        return AmuletItem.isSealed(stack);
     }
 
-    /** A fresh 3-slot handler that accepts only charms (never a nested pouch), one per slot. */
+    /** A fresh 3-slot handler that accepts only sealed amulets (never a nested pouch), one per slot. */
     public static ItemStackHandler createHandler() {
         return new ItemStackHandler(SLOTS) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
-                return isCharm(stack);
+                return isWearable(stack);
             }
 
             @Override
@@ -95,7 +97,7 @@ public class CharmPouchItem extends Item {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return Math.round(13.0F * chargeFraction(stack));
+        return Math.round(13.0F * integrityFraction(stack));
     }
 
     @Override
@@ -103,16 +105,21 @@ public class CharmPouchItem extends Item {
         return 0x9B59B6; // witch purple
     }
 
-    /** Mean charge across the filled slots, in [0, 1]; 0 when empty. */
-    private static float chargeFraction(ItemStack pouch) {
-        List<ItemStack> charms = contents(pouch);
-        if (charms.isEmpty()) {
+    /** Mean seal integrity across the filled slots, in [0, 1]; 0 when empty. */
+    private static float integrityFraction(ItemStack pouch) {
+        List<ItemStack> amulets = contents(pouch);
+        if (amulets.isEmpty()) {
             return 0.0F;
         }
-        int total = 0;
-        for (ItemStack charm : charms) {
-            total += CharmItem.getCharge(charm);
+        float total = 0f;
+        int counted = 0;
+        for (ItemStack amulet : amulets) {
+            Bond bond = AmuletItem.readBond(amulet);
+            if (bond != null && bond.seal() != null) {
+                total += Math.max(0f, Math.min(1f, bond.seal().integrity()));
+                counted++;
+            }
         }
-        return total / (float) (CharmCharge.MAX_CHARGE * charms.size());
+        return counted == 0 ? 0f : total / counted;
     }
 }

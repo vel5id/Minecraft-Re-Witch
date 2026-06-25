@@ -52,10 +52,38 @@ public final class RitualRecipes {
             "hexerei:hungering_altar", CircleSize.MEDIUM, "hexerei:obsidian_skull", 0,
             new HungeringRite(), "ritual.hexerei.hungering_altar");
 
+    // The "запечатать" verb (Модель §7): seal a fresh spirit of the sacrifice's domain into an amulet.
+    // One SealAmuletRite class, three instances; each sacrifice is a reagent of its domain that NO other
+    // rite uses, so RitualRecipes.match stays unambiguous. SMALL ring, cost 80 (between Verdant/Tempest).
+    public static final RitualRecipe SEAL_FOREST = new RitualRecipe(
+            "hexerei:seal_amulet_forest", CircleSize.SMALL, "hexerei:celandine", 80,
+            new SealAmuletRite(com.vel5id.hexerei.soul.Correspondence.FOREST), "ritual.hexerei.seal_amulet_forest");
+    public static final RitualRecipe SEAL_DEATH = new RitualRecipe(
+            "hexerei:seal_amulet_death", CircleSize.SMALL, "hexerei:crowseye_berry", 80,
+            new SealAmuletRite(com.vel5id.hexerei.soul.Correspondence.DEATH), "ritual.hexerei.seal_amulet_death");
+    public static final RitualRecipe SEAL_THRESHOLD = new RitualRecipe(
+            "hexerei:seal_amulet_threshold", CircleSize.SMALL, "hexerei:garlic", 80,
+            new SealAmuletRite(com.vel5id.hexerei.soul.Correspondence.THRESHOLD), "ritual.hexerei.seal_amulet_threshold");
+
+    // Curse rites (Модель §7 — weaponizing a spirit onto a named victim via a taglock). Each sacrifice is a
+    // domain reagent no other rite uses (sandwort=STONE, glowing_spore=THRESHOLD, blood_moss=DEATH). The
+    // taglock dropped on the same circle supplies the target; the caster bears an echo. Cost 100 (> amulet 80).
+    public static final RitualRecipe CURSE_CLUMSY = new RitualRecipe(
+            "hexerei:curse_clumsiness", CircleSize.SMALL, "hexerei:sandwort", 100,
+            new CurseRite(com.vel5id.hexerei.soul.Correspondence.STONE), "ritual.hexerei.curse_clumsiness");
+    public static final RitualRecipe CURSE_UNLUCKY = new RitualRecipe(
+            "hexerei:curse_unluckiness", CircleSize.SMALL, "hexerei:glowing_spore", 100,
+            new CurseRite(com.vel5id.hexerei.soul.Correspondence.THRESHOLD), "ritual.hexerei.curse_unluckiness");
+    public static final RitualRecipe CURSE_WEAK = new RitualRecipe(
+            "hexerei:curse_weakness", CircleSize.SMALL, "hexerei:blood_moss", 100,
+            new CurseRite(com.vel5id.hexerei.soul.Correspondence.DEATH), "ritual.hexerei.curse_weakness");
+
     // Order = chalk scroll order: gentle/cheap first, expensive/aggressive last. TEMPEST stays index 0
     // to preserve the saved-NBT default and existing GameTest expectations.
     public static final List<RitualRecipe> ALL =
-            List.of(TEMPEST, VERDANT, MANIFEST_CHALK, BOUND_BEAST, WANING_MOON, ECLIPSE, HUNGERING);
+            List.of(TEMPEST, VERDANT, MANIFEST_CHALK, BOUND_BEAST, WANING_MOON, ECLIPSE, HUNGERING,
+                    SEAL_FOREST, SEAL_DEATH, SEAL_THRESHOLD,
+                    CURSE_CLUMSY, CURSE_UNLUCKY, CURSE_WEAK);
 
     public static final Map<String, RitualRecipe> BY_ID = ALL.stream()
             .collect(Collectors.toUnmodifiableMap(RitualRecipe::id, r -> r));

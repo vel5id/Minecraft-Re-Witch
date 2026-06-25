@@ -1,12 +1,15 @@
 package com.vel5id.hexerei.test;
 
 import com.vel5id.hexerei.HexereiMod;
+import com.vel5id.hexerei.item.AmuletItem;
 import com.vel5id.hexerei.power.AltarPowerManager;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.registry.HexereiItems;
 import com.vel5id.hexerei.ritual.RitualActivation;
 import com.vel5id.hexerei.ritual.RitualCircle;
 import com.vel5id.hexerei.ritual.VerdantRite;
+import com.vel5id.hexerei.soul.Bond;
+import com.vel5id.hexerei.soul.Correspondence;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -204,6 +207,40 @@ public class RitualExpansionGameTests {
                 h.fail("power should be untouched on a failed match");
             } else {
                 h.succeed();
+            }
+        });
+    }
+
+    /** The sealing rite (celandine sacrifice) spawns a forest-domain sealed amulet and debits 80 power. */
+    @GameTest(template = "empty", batch = "ritual", timeoutTicks = 100)
+    public void sealAmuletSpawnsForestAmulet(GameTestHelper h) {
+        BlockPos center = new BlockPos(18, 2, 18);
+        buildSmall(h, center, 12);
+        dropSacrifice(h, center, HexereiItems.CELANDINE.get());
+        RitualGameTests.FakeAltar fake = poweredAltar(h, center, 1000f);
+        h.runAfterDelay(3, () -> {
+            RitualActivation.Result r = RitualActivation.tryPerform(h.getLevel(), h.absolutePos(center));
+            AltarPowerManager.get(h.getLevel()).unregister(fake);
+            AABB box = new AABB(h.absolutePos(center)).inflate(2);
+            List<ItemEntity> amulets = h.getLevel().getEntitiesOfClass(ItemEntity.class, box,
+                    e -> e.isAlive() && e.getItem().is(HexereiItems.AMULET.get()));
+            if (r != RitualActivation.Result.SUCCESS) {
+                h.fail("sealing rite did not succeed: " + r);
+            } else if (amulets.isEmpty()) {
+                h.fail("sealing rite did not spawn an amulet");
+            } else {
+                Bond bond = AmuletItem.readBond(amulets.get(0).getItem());
+                if (bond == null) {
+                    h.fail("spawned amulet carries no bond");
+                } else if (bond.domain() != Correspondence.FOREST) {
+                    h.fail("expected FOREST domain; got " + bond.domain());
+                } else if (bond.seal() == null || bond.seal().integrity() < 0.999f) {
+                    h.fail("spawned amulet should have a full seal");
+                } else if (Math.abs(fake.getCurrentPower() - 920f) > 0.01f) {
+                    h.fail("expected 80 power consumed (1000->920); got " + fake.getCurrentPower());
+                } else {
+                    h.succeed();
+                }
             }
         });
     }

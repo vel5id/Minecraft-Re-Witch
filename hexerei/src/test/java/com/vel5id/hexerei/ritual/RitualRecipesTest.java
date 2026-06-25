@@ -39,10 +39,21 @@ class RitualRecipesTest {
         assertTrue(RitualRecipes.ALL.contains(RitualRecipes.TEMPEST));
     }
 
-    @Test void all_hasSevenRecipesWithTempestFirst() {
-        assertEquals(7, RitualRecipes.ALL.size()); // + HUNGERING (Hungering Altar rite)
-        assertSame(RitualRecipes.HUNGERING, RitualRecipes.ALL.get(RitualRecipes.ALL.size() - 1)); // newest last
+    @Test void all_hasThirteenRecipesTempestFirstCurseWeakLast() {
+        assertEquals(13, RitualRecipes.ALL.size()); // + SEAL_FOREST/DEATH/THRESHOLD + CURSE_CLUMSY/UNLUCKY/WEAK
         assertSame(RitualRecipes.TEMPEST, RitualRecipes.ALL.get(0)); // index 0 preserves the saved-NBT default
+        assertSame(RitualRecipes.CURSE_WEAK, RitualRecipes.ALL.get(RitualRecipes.ALL.size() - 1)); // newest last
+    }
+
+    @Test void match_smallCircleDistinguishesSealRecipesBySacrifice() {
+        // Each seal recipe's sacrifice is a domain reagent no other rite uses, so match() is unambiguous.
+        BlockPos center = new BlockPos(0, 0, 0);
+        assertEquals(RitualRecipes.SEAL_FOREST,
+                RitualRecipes.match(fullSmallRing(center), center, "hexerei:celandine").orElse(null));
+        assertEquals(RitualRecipes.SEAL_DEATH,
+                RitualRecipes.match(fullSmallRing(center), center, "hexerei:crowseye_berry").orElse(null));
+        assertEquals(RitualRecipes.SEAL_THRESHOLD,
+                RitualRecipes.match(fullSmallRing(center), center, "hexerei:garlic").orElse(null));
     }
 
     @Test void byId_roundTripsEveryRecipe() {

@@ -45,11 +45,11 @@ public final class HexereiCreativeTabs {
                         output.accept(HexereiBlocks.ZEVANTY.get());
                         output.accept(HexereiBlocks.PUFFBALL.get());
                         output.accept(HexereiBlocks.WEBCAP.get());
-                        // combat charms + their pouch
+                        // sealed amulets + their pouch
                         output.accept(HexereiItems.CHARM_POUCH.get());
-                        output.accept(HexereiItems.WARD_CHARM.get());
-                        output.accept(HexereiItems.BLOODLUST_CHARM.get());
-                        output.accept(HexereiItems.HEXBANE_CHARM.get());
+                        output.accept(HexereiItems.AMULET.get());
+                        // taglock — the curse-targeting reagent
+                        output.accept(HexereiItems.TAGLOCK.get());
                         // altar artefacts (purifier/amplifier slot items)
                         output.accept(HexereiItems.BONE_CHARM.get());
                         output.accept(HexereiItems.WAX_POPPET.get());
