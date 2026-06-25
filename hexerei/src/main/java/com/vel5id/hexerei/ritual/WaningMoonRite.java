@@ -51,6 +51,6 @@ public final class WaningMoonRite implements Rite {
                     2, 0.0, 0.1, 0.0, 0.0);
         }
 
-        Rites.addRitualTaint(level, new ChunkPos(center), TAINT_COST / 4f);
+        Rites.addRitualTaint(level, new ChunkPos(center), com.vel5id.hexerei.soul.Correspondence.DEATH, TAINT_COST / 4f);
     }
 }

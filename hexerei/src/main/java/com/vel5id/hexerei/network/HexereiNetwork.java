@@ -1,7 +1,6 @@
 package com.vel5id.hexerei.network;
 
 import com.vel5id.hexerei.HexereiMod;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -35,7 +34,7 @@ public final class HexereiNetwork {
 
     /** Send current taint for a chunk to all players watching it. */
     public static void sendTaintSync(ServerLevel level, ChunkPos pos) {
-        float value = ChunkTaintData.get(level).getTaint(pos);
+        float value = com.vel5id.hexerei.soul.Disturbance.total(level, pos);
         CHANNEL.send(
                 PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunk(pos.x, pos.z)),
                 new TaintSyncS2CPacket(pos.toLong(), value));

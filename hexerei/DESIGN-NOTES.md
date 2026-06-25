@@ -352,3 +352,19 @@ models/textures are removed.
 - **Chalk:** right-click an existing rune to cycle its symbol; the ring is still drawn from a sigil.
 - **Ritual matcher unchanged** — it tests a rune's PRESENCE, not its symbol; the symbol→domain meaning
   feeds the rite's `Act` once rituals read the vector model (Slice D/E). In-world render unverified.
+
+# Phase 2-3 — Slice C: taint scalar → per-domain disturbance (one store)
+
+The scalar `ChunkTaintData` SavedData is retired; `ChunkSoulData.disturbance[domain]` (Phase 1) is now
+the single store of place-unrest. The dual system is gone — the Hungering Altar's disturbance now drives
+the same visible taint ladder / aura / punishment / altar blockstate as the rites.
+
+- **`Disturbance`** (server gateway over the chunk capability): `add(level,cp,domain,amt)` (+sync),
+  `total(cp)`, `level(cp)` = `TaintLevel.fromValue(total)`. Decay is **lazy** (`ChunkSoulData.lazyDecay`,
+  `DECAY_INTERVAL=1200`, applied on access) — no all-loaded-chunks sweep; the per-domain scar floor holds.
+- **Writers carry a domain:** `Rites.addRitualTaint(level,cp,domain,base)` → `Disturbance.add`. Tempest→SKY,
+  Verdant/BoundBeast→FOREST, Eclipse/WaningMoon/BloodMoon→DEATH, SpawnItem→THRESHOLD; RitualDestruction→DEATH.
+- **Readers:** `WorldTaintAura`, altar `TAINT_LEVEL` blockstate, `sendTaintSync`, chunk-watch → `Disturbance`.
+  `TaintLevel` thresholds (15/40/70) now read TOTAL disturbance; `TaintLevel`, `Rites.scaledTaint`,
+  `TaintSyncS2CPacket`/`ClientTaintCache` (scalar visual) are preserved.
+- Removed `ChunkTaintData` + `TaintDataTest`; 3 GameTests migrated to `Disturbance`.

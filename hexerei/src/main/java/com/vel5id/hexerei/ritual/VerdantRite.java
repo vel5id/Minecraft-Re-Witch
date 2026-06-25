@@ -63,6 +63,6 @@ public final class VerdantRite implements Rite {
                 center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
                 40, 2.0, 0.5, 2.0, 0.0);
 
-        Rites.addRitualTaint(level, new ChunkPos(center), TAINT_COST / 4f);
+        Rites.addRitualTaint(level, new ChunkPos(center), com.vel5id.hexerei.soul.Correspondence.FOREST, TAINT_COST / 4f);
     }
 }

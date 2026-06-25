@@ -1,7 +1,6 @@
 package com.vel5id.hexerei.ritual;
 
 import com.vel5id.hexerei.network.HexereiNetwork;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -30,7 +29,7 @@ public final class RitualDestruction {
 
     /**
      * Apply the area penalty for breaking a bound circle at {@code sigilPos}: taint the chunk by
-     * {@code boundRite.powerCost/4} (cap + permanent floor handled by {@link ChunkTaintData}) and
+     * {@code boundRite.powerCost/4} (cap + permanent floor handled by ChunkSoulData) and
      * apply Weakness I + Mining Fatigue I for 100t to players within radius 4, with a WITCH burst
      * and a low WITHER_DEATH cue.
      *
@@ -42,8 +41,7 @@ public final class RitualDestruction {
         float taint = cost / 4f;
 
         ChunkPos cp = new ChunkPos(sigilPos);
-        ChunkTaintData.get(level).addTaint(cp, taint);
-        HexereiNetwork.sendTaintSync(level, cp);
+        com.vel5id.hexerei.soul.Disturbance.add(level, cp, com.vel5id.hexerei.soul.Correspondence.DEATH, taint);
 
         AABB area = new AABB(sigilPos).inflate(PLAYER_RADIUS);
         List<Player> players = level.getEntitiesOfClass(Player.class, area);

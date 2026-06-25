@@ -26,6 +26,7 @@ public class ChunkSoulData implements INBTSerializable<CompoundTag> {
     static final float SCAR_FRACTION = 0.1f;
     static final float MAX_DISTURBANCE = 100f;
     static final float DECAY_PER_TICK = 0.5f;
+    static final long DECAY_INTERVAL = 1200L;   // a decay step every 60s, matching the old taint cadence
 
     private static final Codec<Map<Correspondence, Float>> DOMAIN_MAP =
             Codec.unboundedMap(Correspondence.CODEC, Codec.FLOAT);
@@ -33,6 +34,7 @@ public class ChunkSoulData implements INBTSerializable<CompoundTag> {
     private final Map<Correspondence, Float> disturbance = new EnumMap<>(Correspondence.class);
     private final Map<Correspondence, Float> floor = new EnumMap<>(Correspondence.class);
     private final List<Bond> rootedBonds = new ArrayList<>();
+    private long lastDecayTick = 0L;            // for lazy decay on access (no all-chunk iteration)
 
     public float getDisturbance(Correspondence d) {
         return disturbance.getOrDefault(d, 0f);
@@ -84,12 +86,33 @@ public class ChunkSoulData implements INBTSerializable<CompoundTag> {
         }
     }
 
+    /**
+     * Catch up decay for the time since this chunk was last touched (lazy — applied on access, so no
+     * all-loaded-chunks sweep is needed). {@code now} is the level game-time. Attention heals, but the
+     * per-domain scar floor holds (Грамматика).
+     */
+    public void lazyDecay(long now) {
+        if (lastDecayTick <= 0L) {
+            lastDecayTick = now;
+            return;
+        }
+        long steps = (now - lastDecayTick) / DECAY_INTERVAL;
+        if (steps <= 0L) return;
+        float amount = DECAY_PER_TICK * steps;
+        for (Correspondence d : new ArrayList<>(disturbance.keySet())) {
+            float flr = floor.getOrDefault(d, 0f);
+            disturbance.put(d, Math.max(flr, disturbance.get(d) - amount));
+        }
+        lastDecayTick += steps * DECAY_INTERVAL;
+    }
+
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.put("disturbance", DOMAIN_MAP.encodeStart(NbtOps.INSTANCE, disturbance).result().orElseGet(CompoundTag::new));
         tag.put("floor", DOMAIN_MAP.encodeStart(NbtOps.INSTANCE, floor).result().orElseGet(CompoundTag::new));
         tag.put("rootedBonds", Bond.CODEC.listOf().encodeStart(NbtOps.INSTANCE, rootedBonds).result().orElseGet(ListTag::new));
+        tag.putLong("lastDecay", lastDecayTick);
         return tag;
     }
 
@@ -101,5 +124,6 @@ public class ChunkSoulData implements INBTSerializable<CompoundTag> {
         DOMAIN_MAP.parse(NbtOps.INSTANCE, tag.get("floor")).result().ifPresent(floor::putAll);
         rootedBonds.clear();
         Bond.CODEC.listOf().parse(NbtOps.INSTANCE, tag.get("rootedBonds")).result().ifPresent(rootedBonds::addAll);
+        lastDecayTick = tag.getLong("lastDecay");
     }
 }

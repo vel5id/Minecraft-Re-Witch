@@ -179,7 +179,7 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         // Sync taint level to blockstate every 40 ticks (core only)
         if (be.ticks % 40 == 0 && be.isCore() && level instanceof net.minecraft.server.level.ServerLevel sl) {
             net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(pos);
-            com.vel5id.hexerei.power.TaintLevel tl = com.vel5id.hexerei.power.ChunkTaintData.get(sl).getLevel(cp);
+            com.vel5id.hexerei.power.TaintLevel tl = com.vel5id.hexerei.soul.Disturbance.level(sl, cp);
             int taintLvl = tl.ordinal();
             BlockState cur = level.getBlockState(pos);
             if (cur.getBlock() instanceof com.vel5id.hexerei.block.AltarBlock && cur.getValue(com.vel5id.hexerei.block.AltarBlock.TAINT_LEVEL) != taintLvl) {

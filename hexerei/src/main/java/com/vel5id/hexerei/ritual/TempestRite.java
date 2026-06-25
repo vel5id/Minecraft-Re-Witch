@@ -55,6 +55,6 @@ public final class TempestRite implements Rite {
             }
         }
 
-        Rites.addRitualTaint(level, new ChunkPos(center), 25f);
+        Rites.addRitualTaint(level, new ChunkPos(center), com.vel5id.hexerei.soul.Correspondence.SKY, 25f);
     }
 }

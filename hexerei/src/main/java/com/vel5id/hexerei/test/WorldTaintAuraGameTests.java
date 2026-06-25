@@ -2,7 +2,6 @@ package com.vel5id.hexerei.test;
 
 import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.power.AltarPowerManager;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.ritual.WorldTaintAura;
@@ -95,7 +94,7 @@ public class WorldTaintAuraGameTests {
         BlockPos absCenter = h.absolutePos(centre);
         FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
         AltarPowerManager.get(sl).register(stub);
-        ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 20f); // → LOW (15–39)
+        com.vel5id.hexerei.soul.Disturbance.add(sl, new ChunkPos(absCenter), com.vel5id.hexerei.soul.Correspondence.DEATH, 20f); // → LOW (15–39)
 
         // Run pulse many times to overcome probabilistic mutations
         for (int pulse = 0; pulse < 8; pulse++) {
@@ -139,7 +138,7 @@ public class WorldTaintAuraGameTests {
         BlockPos absCenter = h.absolutePos(centre);
         FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
         AltarPowerManager.get(sl).register(stub);
-        ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 75f); // → HIGH (≥70)
+        com.vel5id.hexerei.soul.Disturbance.add(sl, new ChunkPos(absCenter), com.vel5id.hexerei.soul.Correspondence.DEATH, 75f); // → HIGH (≥70)
 
         for (int pulse = 0; pulse < 20; pulse++) {
             WorldTaintAura.pulse(sl);
@@ -184,7 +183,7 @@ public class WorldTaintAuraGameTests {
         FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
         AltarPowerManager.get(sl).register(stub);
         // addTaint(40) → MEDIUM (≥40, <70)
-        ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 40f);
+        com.vel5id.hexerei.soul.Disturbance.add(sl, new ChunkPos(absCenter), com.vel5id.hexerei.soul.Correspondence.DEATH, 40f);
 
         for (int pulse = 0; pulse < 20; pulse++) {
             WorldTaintAura.pulse(sl);
@@ -219,7 +218,7 @@ public class WorldTaintAuraGameTests {
         FixedPowerSource stub = new FixedPowerSource(sl, absCenter);
         AltarPowerManager.get(sl).register(stub);
         // addTaint(20) → LOW (15–39), below MEDIUM threshold
-        ChunkTaintData.get(sl).addTaint(new ChunkPos(absCenter), 20f);
+        com.vel5id.hexerei.soul.Disturbance.add(sl, new ChunkPos(absCenter), com.vel5id.hexerei.soul.Correspondence.DEATH, 20f);
 
         for (int pulse = 0; pulse < 20; pulse++) {
             WorldTaintAura.pulse(sl);

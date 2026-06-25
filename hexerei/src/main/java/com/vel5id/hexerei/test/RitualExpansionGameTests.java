@@ -2,7 +2,6 @@ package com.vel5id.hexerei.test;
 
 import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.power.AltarPowerManager;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.registry.HexereiItems;
 import com.vel5id.hexerei.ritual.RitualActivation;
@@ -101,7 +100,7 @@ public class RitualExpansionGameTests {
             int age = wheat.hasProperty(CropBlock.AGE) ? wheat.getValue(CropBlock.AGE) : -1;
             if (age <= 0) {
                 h.fail("verdant did not grow the wheat (age=" + age + ")");
-            } else if (ChunkTaintData.get(h.getLevel()).getTaint(new ChunkPos(abs)) <= 0f) {
+            } else if (com.vel5id.hexerei.soul.Disturbance.total(h.getLevel(), new ChunkPos(abs)) <= 0f) {
                 h.fail("verdant did not taint the chunk");
             } else {
                 h.succeed();

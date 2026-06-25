@@ -45,6 +45,6 @@ public final class SpawnItemRite implements Rite {
                 center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
                 24, 0.1, 0.6, 0.1, 0.05);
 
-        Rites.addRitualTaint(level, new ChunkPos(center), TAINT_COST / 4f);
+        Rites.addRitualTaint(level, new ChunkPos(center), com.vel5id.hexerei.soul.Correspondence.THRESHOLD, TAINT_COST / 4f);
     }
 }

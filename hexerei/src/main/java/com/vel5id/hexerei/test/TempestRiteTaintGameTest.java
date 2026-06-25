@@ -2,7 +2,6 @@ package com.vel5id.hexerei.test;
 
 import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.power.AltarPowerManager;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import com.vel5id.hexerei.registry.HexereiItems;
@@ -76,11 +75,11 @@ public class TempestRiteTaintGameTest {
         h.runAfterDelay(3, () -> {
             // Ensure no prior taint
             ChunkPos cp = new ChunkPos(absCentre);
-            float before = ChunkTaintData.get(sl).getTaint(cp);
+            float before = com.vel5id.hexerei.soul.Disturbance.total(sl, cp);
 
             new TempestRite(1200).perform(sl, absCentre);
 
-            float after = ChunkTaintData.get(sl).getTaint(cp);
+            float after = com.vel5id.hexerei.soul.Disturbance.total(sl, cp);
             AltarPowerManager.get(sl).unregister(altar);
 
             if (after <= before) {
@@ -111,10 +110,10 @@ public class TempestRiteTaintGameTest {
             TempestRite rite = new TempestRite(1200);
 
             rite.perform(sl, absCentre);
-            float after1 = ChunkTaintData.get(sl).getTaint(cp);
+            float after1 = com.vel5id.hexerei.soul.Disturbance.total(sl, cp);
 
             rite.perform(sl, absCentre);
-            float after2 = ChunkTaintData.get(sl).getTaint(cp);
+            float after2 = com.vel5id.hexerei.soul.Disturbance.total(sl, cp);
 
             if (after2 <= after1) {
                 h.fail("Second TempestRite.perform() did not further increase taint (after1=" + after1 + " after2=" + after2 + ")");

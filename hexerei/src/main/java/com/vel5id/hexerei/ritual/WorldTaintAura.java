@@ -1,7 +1,6 @@
 package com.vel5id.hexerei.ritual;
 
 import com.vel5id.hexerei.power.AltarPowerManager;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.power.TaintLevel;
 import com.vel5id.hexerei.registry.HexereiBlocks;
@@ -35,7 +34,6 @@ public final class WorldTaintAura {
     private static final int RADIUS = 5;
 
     public static void pulse(ServerLevel level) {
-        ChunkTaintData taintData = ChunkTaintData.get(level);
         RandomSource rng = level.getRandom();
 
         // Snapshot the source list to avoid ConcurrentModificationException if
@@ -46,7 +44,7 @@ public final class WorldTaintAura {
             if (src == null || src.isPowerInvalid()) continue;
 
             BlockPos center = src.getLocation();
-            TaintLevel tl = taintData.getLevel(new ChunkPos(center));
+            TaintLevel tl = com.vel5id.hexerei.soul.Disturbance.level(level, new ChunkPos(center));
             if (tl.ordinal() < TaintLevel.LOW.ordinal()) continue;
 
             int grassCount  = 0;
@@ -103,10 +101,9 @@ public final class WorldTaintAura {
      * player stays and lapses ~1 s after they leave.
      */
     public static void punishPlayers(ServerLevel level) {
-        ChunkTaintData taintData = ChunkTaintData.get(level);
         for (ServerPlayer player : level.players()) {
             if (player.isCreative() || player.isSpectator()) continue;
-            TaintLevel tl = taintData.getLevel(new ChunkPos(player.blockPosition()));
+            TaintLevel tl = com.vel5id.hexerei.soul.Disturbance.level(level, new ChunkPos(player.blockPosition()));
             applyLadder(player, tl);
         }
     }

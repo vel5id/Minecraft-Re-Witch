@@ -38,6 +38,6 @@ public final class BoundBeastRite implements Rite {
                 center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
                 16, 0.4, 0.5, 0.4, 0.02);
 
-        Rites.addRitualTaint(level, new ChunkPos(center), TAINT_COST / 4f);
+        Rites.addRitualTaint(level, new ChunkPos(center), com.vel5id.hexerei.soul.Correspondence.FOREST, TAINT_COST / 4f);
     }
 }

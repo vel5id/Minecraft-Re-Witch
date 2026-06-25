@@ -3,7 +3,6 @@ package com.vel5id.hexerei;
 import com.vel5id.hexerei.item.CharmTickHandler;
 import com.vel5id.hexerei.network.HexereiNetwork;
 import com.vel5id.hexerei.network.TaintSyncS2CPacket;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import com.vel5id.hexerei.ritual.WorldTaintAura;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -21,9 +20,6 @@ public final class HexereiLevelEvents {
         if (event.phase != TickEvent.Phase.END) return;
         if (!(event.level instanceof ServerLevel sl)) return;
         long gt = sl.getGameTime();
-        if (gt % 1200 == 0) {           // every 60s: decay taint
-            ChunkTaintData.get(sl).decayTick();
-        }
         if (gt % 200 == 0) {
             WorldTaintAura.pulse(sl);
             WorldTaintAura.punishPlayers(sl);
@@ -38,7 +34,7 @@ public final class HexereiLevelEvents {
     public static void onChunkWatch(ChunkWatchEvent.Watch event) {
         ServerLevel sl = event.getLevel();
         ChunkPos pos = event.getPos();
-        float taint = ChunkTaintData.get(sl).getTaint(pos);
+        float taint = com.vel5id.hexerei.soul.Disturbance.total(sl, pos);
         if (taint > 0f) {
             // Send current taint to the player who just loaded this chunk
             HexereiNetwork.CHANNEL.send(

@@ -37,7 +37,7 @@ public final class BloodMoonPulse {
             if (src == null || src.isPowerInvalid()) {
                 continue;
             }
-            Rites.addRitualTaint(level, new ChunkPos(src.getLocation()), BloodMoonData.BLOOD_AMBIENT_TAINT);
+            Rites.addRitualTaint(level, new ChunkPos(src.getLocation()), com.vel5id.hexerei.soul.Correspondence.DEATH, BloodMoonData.BLOOD_AMBIENT_TAINT);
         }
 
         // Hostiles emboldened near survival/adventure players.

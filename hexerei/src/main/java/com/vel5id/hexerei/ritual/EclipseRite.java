@@ -27,6 +27,6 @@ public final class EclipseRite implements Rite {
                 40, 1.5, 0.5, 1.5, 0.1);
 
         // Heavy taint, scaled by the live RitualContext (on a blood-moon eclipse it self-amplifies its dirtiness).
-        Rites.addRitualTaint(level, new ChunkPos(center), TAINT_COST);
+        Rites.addRitualTaint(level, new ChunkPos(center), com.vel5id.hexerei.soul.Correspondence.DEATH, TAINT_COST);
     }
 }
