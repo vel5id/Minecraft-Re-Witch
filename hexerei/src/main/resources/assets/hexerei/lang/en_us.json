@@ -62,6 +62,14 @@
   "container.hexerei.charm_pouch": "Charm Pouch",
   "tooltip.hexerei.charm.dormant": "Dormant (no charge)",
 
+  "item.hexerei.bone_charm": "Bone Charm",
+  "item.hexerei.wax_poppet": "Wax Poppet",
+  "item.hexerei.obsidian_skull": "Obsidian Skull",
+  "tooltip.hexerei.artefact.taint_mul": "Taint ×%s",
+  "tooltip.hexerei.artefact.effect_mul": "Effect ×%s",
+  "tooltip.hexerei.artefact.purifier": "Purifier",
+  "tooltip.hexerei.artefact.amplifier": "Amplifier",
+
   "item.hexerei.grimoire": "Grimoire",
   "hexerei.book.grimoire.landing": "The collected workings of the hedge-witch — altars, the garden, the cauldron, and the rites."
 }

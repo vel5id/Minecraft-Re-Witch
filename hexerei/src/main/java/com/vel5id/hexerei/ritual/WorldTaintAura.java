@@ -6,8 +6,13 @@ import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.power.TaintLevel;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -86,6 +91,34 @@ public final class WorldTaintAura {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Punishes every survival/adventure player standing in a tainted chunk, on the same 200-tick pulse
+     * cadence as {@link #pulse}. Each player is judged by the {@link TaintLevel} of their <em>own</em>
+     * chunk (taint outlives the altar that caused it — punishment is per-player, not per-altar). Creative
+     * and spectator players are immune. The {@link TaintPunishment} ladder resolves to vanilla effects,
+     * applied for {@link TaintPunishment#REFRESH_TICKS} (220) ticks so the debuff never gaps while the
+     * player stays and lapses ~1 s after they leave.
+     */
+    public static void punishPlayers(ServerLevel level) {
+        ChunkTaintData taintData = ChunkTaintData.get(level);
+        for (ServerPlayer player : level.players()) {
+            if (player.isCreative() || player.isSpectator()) continue;
+            TaintLevel tl = taintData.getLevel(new ChunkPos(player.blockPosition()));
+            applyLadder(player, tl);
+        }
+    }
+
+    /** Applies the {@link TaintPunishment} ladder for {@code tl} to {@code player} (resolving vanilla effect ids). */
+    private static void applyLadder(ServerPlayer player, TaintLevel tl) {
+        for (TaintPunishment.Effect e : TaintPunishment.effectsFor(tl)) {
+            MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(e.effectId()));
+            if (effect == null) continue;
+            // ambient, hidden particles, visible HUD icon — mirrors CharmTickHandler so the player sees why.
+            player.addEffect(new MobEffectInstance(
+                    effect, TaintPunishment.REFRESH_TICKS, e.amplifier(), true, false, true));
         }
     }
 }

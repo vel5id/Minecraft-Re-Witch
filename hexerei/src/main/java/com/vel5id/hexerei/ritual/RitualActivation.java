@@ -1,7 +1,9 @@
 package com.vel5id.hexerei.ritual;
 
 import com.vel5id.hexerei.HexereiMod;
+import com.vel5id.hexerei.blockentity.AltarBlockEntity;
 import com.vel5id.hexerei.power.AltarPowerManager;
+import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.power.RelativePowerSource;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import net.minecraft.core.BlockPos;
@@ -11,6 +13,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /** Activates a ritual at a circle center: complete circle + sacrifice item + altar power -> rite. */
@@ -45,7 +48,9 @@ public final class RitualActivation {
             }
             anyMatched = true;
             RitualRecipe recipe = match.get();
-            if (!payPower(level, center, recipe.powerCost())) {
+            IPowerSource funder = payPower(level, center, recipe.powerCost());
+            // A priced rite must be funded; a free rite (cost<=0) proceeds even with no altar (funder may be null).
+            if (recipe.powerCost() > 0 && funder == null) {
                 continue; // another sacrifice in range might be affordable
             }
             stack.shrink(1);
@@ -54,26 +59,41 @@ public final class RitualActivation {
             } else {
                 ie.setItem(stack);
             }
+            // Carry the funding altar's artefact multipliers into the rite (taint/effect) for its perform.
+            float taintMul = funder instanceof AltarBlockEntity altar ? altar.taintMultiplier() : 1f;
+            float effectMul = funder instanceof AltarBlockEntity altar ? altar.effectMultiplier() : 1f;
+            RitualContext.begin(taintMul, effectMul);
             try {
                 recipe.rite().perform(level, center);
             } catch (Exception e) {
                 HexereiMod.LOGGER.error("Rite {} failed to perform", recipe.nameKey(), e);
+            } finally {
+                RitualContext.end();
             }
             return Result.SUCCESS;
         }
         return anyMatched ? Result.NO_POWER : Result.NO_RECIPE;
     }
 
-    /** Atomically debit {@code cost} from the first in-range altar that can pay it. */
-    private static boolean payPower(ServerLevel level, BlockPos center, int cost) {
+    /**
+     * Atomically debit {@code cost} from the first in-range altar that can pay it, returning that altar so the
+     * caller can read its multipliers. A free rite ({@code cost <= 0}) is attributed to the nearest in-range
+     * source if one exists. Returns {@code null} when no source paid (priced) or none is in range (free) — the
+     * caller distinguishes these by the recipe cost.
+     */
+    @Nullable
+    private static IPowerSource payPower(ServerLevel level, BlockPos center, int cost) {
         if (cost <= 0) {
-            return true;
+            for (RelativePowerSource r : AltarPowerManager.get(level).query(level, center)) {
+                return r.source();
+            }
+            return null;
         }
         for (RelativePowerSource r : AltarPowerManager.get(level).query(level, center)) {
             if (r.source().consumePower(cost)) {
-                return true;
+                return r.source();
             }
         }
-        return false;
+        return null;
     }
 }

@@ -1,7 +1,5 @@
 package com.vel5id.hexerei.ritual;
 
-import com.vel5id.hexerei.network.HexereiNetwork;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -41,9 +39,13 @@ public final class VerdantRite implements Rite {
     @Override
     public void perform(ServerLevel level, BlockPos center) {
         RandomSource rng = level.getRandom();
+        // The amplifier/purifier on the funding altar scales the growth budget (effectMul, 1.0 with no artefact).
+        // Clamped to [1, 2*MAX_GROWTHS] so a deep purifier never zeroes the rite and an amplifier can't run away.
+        int budget = Math.max(1, Math.min(2 * MAX_GROWTHS,
+                Math.round(MAX_GROWTHS * RitualContext.currentEffectMul())));
         int grown = 0;
         for (int[] c : cells()) {
-            if (grown >= MAX_GROWTHS) {
+            if (grown >= budget) {
                 break;
             }
             BlockPos p = center.offset(c[0], c[1], c[2]);
@@ -61,8 +63,6 @@ public final class VerdantRite implements Rite {
                 center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
                 40, 2.0, 0.5, 2.0, 0.0);
 
-        ChunkPos cp = new ChunkPos(center);
-        ChunkTaintData.get(level).addTaint(cp, TAINT_COST / 4f);
-        HexereiNetwork.sendTaintSync(level, cp);
+        Rites.addRitualTaint(level, new ChunkPos(center), TAINT_COST / 4f);
     }
 }

@@ -1,7 +1,5 @@
 package com.vel5id.hexerei.ritual;
 
-import com.vel5id.hexerei.network.HexereiNetwork;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -57,8 +55,6 @@ public final class TempestRite implements Rite {
             }
         }
 
-        ChunkPos cp = new ChunkPos(center);
-        ChunkTaintData.get(level).addTaint(cp, 25f);
-        HexereiNetwork.sendTaintSync(level, cp);
+        Rites.addRitualTaint(level, new ChunkPos(center), 25f);
     }
 }

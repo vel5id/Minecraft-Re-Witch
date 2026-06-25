@@ -1,7 +1,5 @@
 package com.vel5id.hexerei.ritual;
 
-import com.vel5id.hexerei.network.HexereiNetwork;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -40,8 +38,6 @@ public final class BoundBeastRite implements Rite {
                 center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
                 16, 0.4, 0.5, 0.4, 0.02);
 
-        ChunkPos cp = new ChunkPos(center);
-        ChunkTaintData.get(level).addTaint(cp, TAINT_COST / 4f);
-        HexereiNetwork.sendTaintSync(level, cp);
+        Rites.addRitualTaint(level, new ChunkPos(center), TAINT_COST / 4f);
     }
 }

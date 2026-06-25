@@ -117,3 +117,57 @@ ingredients that progress toward a recipe are taken) → gated on a nearby altar
 - Flower power: a flower block contributes 4/30. Flowers are matched via the
   `#minecraft:small_flowers` tag, so a mixed flower field yields slightly more than a strict
   two-type cap. Acceptable design nuance.
+
+# Altar Artefacts + Taint Punishment slice
+
+One slice ships both halves: artefacts that scale a ritual's taint/effect, and the player
+punishment that finally makes taint bite.
+
+## Artefacts (Part A)
+- **One artefact slot per altar** (purifier OR amplifier, never both — multiplier-stacking balance
+  is unverified). Stored as a single `ItemStack` in the **core** `AltarBlockEntity` NBT (`Artefact`),
+  placed/swapped/retrieved by a world right-click on a formed altar (no new packet). Drops on
+  break/de-form.
+- Three concrete items, each an immutable `(taintMul, effectMul, enhancement)` `ArtefactDef`:
+  | id | archetype | taintMul | effectMul | enhancement |
+  |----|-----------|---------:|----------:|------------:|
+  | `bone_charm` | purifier | 0.5 | 1.0 | 0 |
+  | `wax_poppet` | purifier (deep) | 0.25 | 0.9 | 0 |
+  | `obsidian_skull` | amplifier | 2.0 | 1.5 | 1 |
+- `taintMul` is **universal**: all 5 rites route their taint write through `Rites.addRitualTaint`,
+  which multiplies by `RitualContext.currentTaintMul()`. `effectMul` is **advisory** — only
+  `VerdantRite` reads it this slice (growth budget = `clamp(round(MAX_GROWTHS * effectMul), 1, 2*MAX)`;
+  skull→18, poppet→11, default→12).
+- The multiplier reaches `Rite.perform` (whose signature is unchanged) via a server-thread
+  `RitualContext` ThreadLocal that `RitualActivation` sets around `perform` in try/finally. The
+  multiplier comes from **exactly the funding altar** — `payPower` returns the `@Nullable IPowerSource`
+  that paid.
+- `obsidian_skull` activates the dormant `enhancementLevel` field (→1) for future gated rites.
+  `powerScale`/`rechargeScale`/`rangeScale` deliberately stay at 1.0 this slice (power-economy change
+  is out of scope; the fields stay wired for #19 Coven Power).
+- Acquisition is **temporary** shapeless recipes (like `altar_placeholder`): bone_charm = bone +
+  string; wax_poppet = honeycomb + string; obsidian_skull = obsidian + wither_skeleton_skull. The
+  "earned via ritual" path is a follow-up.
+- No world render of the placed artefact this slice (a floating-item `BlockEntityRenderer` is a
+  separable cosmetic follow-up).
+
+## Taint Punishment (Part B)
+- `WorldTaintAura.punishPlayers(ServerLevel)` runs on the **same 200-tick pulse** as `pulse`, called
+  from `HexereiLevelEvents.onLevelTick` under `gt % 200`. It iterates **players, not altars** — taint
+  outlives the altar that caused it, so each player is judged by the `TaintLevel` of their **own
+  chunk**. Creative/spectator are immune.
+- The ladder (`TaintPunishment.effectsFor`, a pure unit-tested mapping resolved to vanilla effects):
+  | chunk TaintLevel | effects |
+  |------------------|---------|
+  | NONE (<15) | none |
+  | LOW (≥15) | Hunger I |
+  | MEDIUM (≥40) | Hunger I + Weakness I |
+  | HIGH (≥70) | Hunger I + Weakness I + Wither I |
+- **`TAINT_PUNISH_REFRESH = 220`** ticks (`TaintPunishment.REFRESH_TICKS`): one 200-tick pulse period
+  + ~1 s slack. Invariant **duration > cadence** so the debuff never gaps while the player stays, and
+  lapses ~1 s after leaving. All amplifiers are 0 (level I); re-applying each pulse just refreshes the
+  timer (vanilla replaces equal/stronger — no runaway). Effects are `ambient, hidden particles,
+  visible HUD icon` (mirrors `CharmTickHandler`) so the player sees *why*.
+- Wither I (vanilla `MobEffects.WITHER`, not the project's Withering-Bile brew) for HIGH: ~2.5 hearts
+  lost per pulse window, fully regenerable by leaving — a strong "get out" signal, not instant death
+  (the Cleansing Loop is the intended counter, out of scope here).

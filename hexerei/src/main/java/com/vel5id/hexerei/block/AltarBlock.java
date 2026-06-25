@@ -1,11 +1,13 @@
 package com.vel5id.hexerei.block;
 
 import com.vel5id.hexerei.blockentity.AltarBlockEntity;
+import com.vel5id.hexerei.item.ArtefactItem;
 import com.vel5id.hexerei.registry.HexereiBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -72,6 +74,12 @@ public class AltarBlock extends Block implements EntityBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock())) {
             if (level.getBlockEntity(pos) instanceof AltarBlockEntity be) {
+                // Only the core holds the artefact; drop it before the BE is torn down so it isn't lost.
+                ItemStack artefact = be.getArtefact();
+                if (!artefact.isEmpty() && be.isCore()) {
+                    be.setArtefact(ItemStack.EMPTY);
+                    Block.popResource(level, pos, artefact);
+                }
                 be.updateMultiblock(pos);
             }
         }
@@ -85,11 +93,37 @@ public class AltarBlock extends Block implements EntityBlock {
                 BlockPos core = be.corePos();
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
                         () -> () -> com.vel5id.hexerei.client.AltarScreen.open(core));
-            } else {
-                be.revalidateAndUpdate();
+                return InteractionResult.sidedSuccess(true);
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            // Server: artefact place/swap/retrieve on a formed altar, before the existing revalidate path.
+            AltarBlockEntity core = be.coreBe();
+            if (core != null) {
+                ItemStack held = player.getItemInHand(hand);
+                if (held.getItem() instanceof ArtefactItem) {
+                    // Place or swap: store the new artefact (count 1), return the previous one to the player.
+                    ItemStack prev = core.setArtefact(held.copyWithCount(1));
+                    held.shrink(1);
+                    if (!prev.isEmpty()) {
+                        giveOrDrop(player, prev);
+                    }
+                    return InteractionResult.SUCCESS;
+                }
+                if (held.isEmpty() && player.isShiftKeyDown() && !core.getArtefact().isEmpty()) {
+                    // Shift + empty hand retrieves the artefact.
+                    giveOrDrop(player, core.setArtefact(ItemStack.EMPTY));
+                    return InteractionResult.SUCCESS;
+                }
+            }
+            be.revalidateAndUpdate();
+            return InteractionResult.sidedSuccess(false);
         }
         return InteractionResult.PASS;
+    }
+
+    /** Vanilla give-or-drop: add to the player's inventory, else drop at their feet. */
+    private static void giveOrDrop(Player player, ItemStack stack) {
+        if (!player.getInventory().add(stack)) {
+            player.drop(stack, false);
+        }
     }
 }

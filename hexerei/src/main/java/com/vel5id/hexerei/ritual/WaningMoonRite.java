@@ -1,7 +1,5 @@
 package com.vel5id.hexerei.ritual;
 
-import com.vel5id.hexerei.network.HexereiNetwork;
-import com.vel5id.hexerei.power.ChunkTaintData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -53,8 +51,6 @@ public final class WaningMoonRite implements Rite {
                     2, 0.0, 0.1, 0.0, 0.0);
         }
 
-        ChunkPos cp = new ChunkPos(center);
-        ChunkTaintData.get(level).addTaint(cp, TAINT_COST / 4f);
-        HexereiNetwork.sendTaintSync(level, cp);
+        Rites.addRitualTaint(level, new ChunkPos(center), TAINT_COST / 4f);
     }
 }

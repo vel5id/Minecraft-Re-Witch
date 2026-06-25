@@ -39,6 +39,10 @@ public final class HexereiCreativeTabs {
                         output.accept(HexereiItems.WARD_CHARM.get());
                         output.accept(HexereiItems.BLOODLUST_CHARM.get());
                         output.accept(HexereiItems.HEXBANE_CHARM.get());
+                        // altar artefacts (purifier/amplifier slot items)
+                        output.accept(HexereiItems.BONE_CHARM.get());
+                        output.accept(HexereiItems.WAX_POPPET.get());
+                        output.accept(HexereiItems.OBSIDIAN_SKULL.get());
                         // one filled brew per starter recipe, for creative access
                         output.accept(com.vel5id.hexerei.item.BrewItem.of(com.vel5id.hexerei.brewing.Brews.SLEEPING_DRAUGHT));
                         output.accept(com.vel5id.hexerei.item.BrewItem.of(com.vel5id.hexerei.brewing.Brews.FRAILTY));

@@ -62,6 +62,14 @@
   "container.hexerei.charm_pouch": "Мешочек амулетов",
   "tooltip.hexerei.charm.dormant": "Спит (нет заряда)",
 
+  "item.hexerei.bone_charm": "Костяной оберег",
+  "item.hexerei.wax_poppet": "Восковая куколка",
+  "item.hexerei.obsidian_skull": "Обсидиановый череп",
+  "tooltip.hexerei.artefact.taint_mul": "Скверна ×%s",
+  "tooltip.hexerei.artefact.effect_mul": "Эффект ×%s",
+  "tooltip.hexerei.artefact.purifier": "Очиститель",
+  "tooltip.hexerei.artefact.amplifier": "Усилитель",
+
   "item.hexerei.grimoire": "Гримуар",
   "hexerei.book.grimoire.landing": "Собрание трудов ведьмы — алтари, сад, котёл и обряды."
 }

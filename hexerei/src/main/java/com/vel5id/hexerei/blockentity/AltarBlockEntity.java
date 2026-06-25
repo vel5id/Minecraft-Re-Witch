@@ -2,6 +2,8 @@ package com.vel5id.hexerei.blockentity;
 
 import com.vel5id.hexerei.block.AltarBlock;
 import com.vel5id.hexerei.block.AltarFormation;
+import com.vel5id.hexerei.item.ArtefactDef;
+import com.vel5id.hexerei.item.ArtefactItem;
 import com.vel5id.hexerei.power.AltarPowerManager;
 import com.vel5id.hexerei.power.AltarPowerTable;
 import com.vel5id.hexerei.power.IPowerSource;
@@ -22,6 +24,7 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -45,6 +48,10 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
     private int rechargeScale = 1;
     private int rangeScale = 1;
     private int enhancementLevel = 0;
+    // The placed artefact (one slot per altar; core-only) and the multipliers derived from it.
+    private ItemStack artefact = ItemStack.EMPTY;
+    private float taintMul = 1f;
+    private float effectMul = 1f;
     private long ticks = 0;
     private long lastPowerUpdate = 0;
 
@@ -52,12 +59,78 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         super(HexereiBlockEntities.ALTAR.get(), pos, state);
     }
 
-    private boolean isCore() {
+    public boolean isCore() {
         return core != null && core.equals(worldPosition);
     }
 
     public BlockPos corePos() {
         return core != null ? core : worldPosition;
+    }
+
+    /** The {@link AltarBlockEntity} that owns the shared artefact slot — this BE if it is the core, else the core. */
+    @Nullable
+    public AltarBlockEntity coreBe() {
+        if (isCore()) {
+            return this;
+        }
+        return level != null && level.getBlockEntity(corePos()) instanceof AltarBlockEntity be ? be : null;
+    }
+
+    // ---- artefact slot (one per altar; lives on the core BE) ----
+
+    /** The placed artefact stack (on the core), or {@link ItemStack#EMPTY}. Routes to the core. */
+    public ItemStack getArtefact() {
+        AltarBlockEntity c = coreBe();
+        return c == null ? ItemStack.EMPTY : c.artefact;
+    }
+
+    /**
+     * Stores {@code stack} (count 1) as the altar's artefact and returns the previously held one. Routes to
+     * the core, recomputes the multipliers, and persists/syncs. {@code stack} may be {@link ItemStack#EMPTY}
+     * to clear the slot.
+     */
+    public ItemStack setArtefact(ItemStack stack) {
+        AltarBlockEntity c = coreBe();
+        if (c == null) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack prev = c.artefact;
+        c.artefact = stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1);
+        c.applyArtefact();
+        return prev;
+    }
+
+    /** Clears the artefact slot, returning the previously held stack. Routes to the core. */
+    public ItemStack clearArtefact() {
+        return setArtefact(ItemStack.EMPTY);
+    }
+
+    /** The current taint multiplier from the placed artefact (1.0 with none). Routes to the core. */
+    public float taintMultiplier() {
+        AltarBlockEntity c = coreBe();
+        return c == null ? 1f : c.taintMul;
+    }
+
+    /** The current effect multiplier from the placed artefact (1.0 with none). Routes to the core. */
+    public float effectMultiplier() {
+        AltarBlockEntity c = coreBe();
+        return c == null ? 1f : c.effectMul;
+    }
+
+    /**
+     * Recomputes the derived multipliers and {@code enhancementLevel} from the placed artefact — the single
+     * source of truth, called after any artefact change and on {@link #onLoad}. Core-only; persists and syncs.
+     */
+    public void applyArtefact() {
+        if (!isCore()) {
+            return;
+        }
+        ArtefactDef d = ArtefactItem.defOf(artefact);
+        this.taintMul = d == null ? 1f : d.taintMul();
+        this.effectMul = d == null ? 1f : d.effectMul();
+        this.enhancementLevel = d == null ? 0 : d.enhancement();
+        setChanged();
+        sync();
     }
 
     // ---- ticking ----
@@ -150,6 +223,13 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
                 rechargeScale = 1;
                 rangeScale = 1;
                 enhancementLevel = 0;
+                // De-form must not trap the artefact: pop it to the world and reset the derived multipliers.
+                if (!artefact.isEmpty()) {
+                    Block.popResource(server, worldPosition, artefact);
+                    artefact = ItemStack.EMPTY;
+                }
+                taintMul = 1f;
+                effectMul = 1f;
             }
         }
         if (level != null) {
@@ -348,6 +428,7 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         super.onLoad();
         if (level instanceof ServerLevel server && isCore()) {
             AltarPowerManager.get(server).register(this);
+            applyArtefact();   // recompute the derived multipliers from the persisted artefact
         }
     }
 
@@ -366,6 +447,12 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         tag.putInt("RechargeScale", rechargeScale);
         tag.putInt("RangeScale", rangeScale);
         tag.putInt("EnhancementLevel", enhancementLevel);
+        if (!artefact.isEmpty()) {
+            tag.put("Artefact", artefact.save(new CompoundTag()));
+        }
+        // Derived from the artefact but persisted so a chunk-load before onLoad's recompute is still correct.
+        tag.putFloat("TaintMul", taintMul);
+        tag.putFloat("EffectMul", effectMul);
     }
 
     @Override
@@ -380,6 +467,9 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         rechargeScale = tag.contains("RechargeScale") ? tag.getInt("RechargeScale") : 1;
         rangeScale = tag.contains("RangeScale") ? tag.getInt("RangeScale") : 1;
         enhancementLevel = tag.getInt("EnhancementLevel");
+        artefact = tag.contains("Artefact") ? ItemStack.of(tag.getCompound("Artefact")) : ItemStack.EMPTY;
+        taintMul = tag.contains("TaintMul") ? tag.getFloat("TaintMul") : 1f;
+        effectMul = tag.contains("EffectMul") ? tag.getFloat("EffectMul") : 1f;
     }
 
     // ---- sync (ClientboundBlockEntityDataPacket) ----

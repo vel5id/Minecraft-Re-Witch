@@ -1,6 +1,8 @@
 package com.vel5id.hexerei.registry;
 
 import com.vel5id.hexerei.HexereiMod;
+import com.vel5id.hexerei.item.ArtefactDefs;
+import com.vel5id.hexerei.item.ArtefactItem;
 import com.vel5id.hexerei.item.BrewItem;
 import com.vel5id.hexerei.item.CharmDefs;
 import com.vel5id.hexerei.item.CharmItem;
@@ -69,6 +71,14 @@ public final class HexereiItems {
             () -> new CharmItem(new Item.Properties(), CharmDefs.BLOODLUST));
     public static final RegistryObject<Item> HEXBANE_CHARM = ITEMS.register("hexbane_charm",
             () -> new CharmItem(new Item.Properties(), CharmDefs.HEXBANE));
+
+    // --- altar artefacts (placed in the altar's single slot; scale a rite's taint/effect, see ArtefactDef) ---
+    public static final RegistryObject<Item> BONE_CHARM = ITEMS.register("bone_charm",
+            () -> new ArtefactItem(new Item.Properties(), ArtefactDefs.BONE_CHARM));
+    public static final RegistryObject<Item> WAX_POPPET = ITEMS.register("wax_poppet",
+            () -> new ArtefactItem(new Item.Properties(), ArtefactDefs.WAX_POPPET));
+    public static final RegistryObject<Item> OBSIDIAN_SKULL = ITEMS.register("obsidian_skull",
+            () -> new ArtefactItem(new Item.Properties(), ArtefactDefs.OBSIDIAN_SKULL));
 
     // The in-game guide book (opens the Patchouli "grimoire" book).
     public static final RegistryObject<Item> GRIMOIRE = ITEMS.register("grimoire",
