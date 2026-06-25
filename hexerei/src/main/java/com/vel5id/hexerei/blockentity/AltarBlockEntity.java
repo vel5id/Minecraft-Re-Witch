@@ -48,6 +48,7 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
     private int rechargeScale = 1;
     private int rangeScale = 1;
     private int enhancementLevel = 0;
+    private boolean hungering = false; // a rite awakened the altar into a life-draining Hungering Altar
     // The placed artefact (one slot per altar; core-only) and the multipliers derived from it.
     private ItemStack artefact = ItemStack.EMPTY;
     private float taintMul = 1f;
@@ -139,15 +140,31 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         if (!be.isCore()) {
             return;
         }
+        // Article III (WARRANTLY): no passive recharge. The altar is an essence RESERVOIR earned by
+        // taking from the world (see EssenceSourcing); maxScaled is only the capacity cap. Power that
+        // somehow exceeds the cap is clamped down, but it is never filled for free.
         float maxScaled = be.maxPower * be.powerScale;
-        if (be.power < maxScaled) {
-            if (be.ticks % 20L == 0L) {
-                be.power = (int) Math.min(be.power + BASE_POWER_PER_UPDATE * be.rechargeScale, maxScaled);
-                be.sync();
-            }
-        } else if (be.power > maxScaled && be.ticks % 20L == 0L) {
+        if (be.power > maxScaled && be.ticks % 20L == 0L) {
             be.power = maxScaled;
             be.sync();
+        }
+
+        // Hungering Altar (WARRANTLY Статья III): once awakened by a rite, drain the nearest life for
+        // essence and curse the surrounding region. Power and danger, the same act.
+        if (be.hungering && level instanceof net.minecraft.server.level.ServerLevel hsl) {
+            if (be.ticks % com.vel5id.hexerei.ritual.HungeringAltar.DRAIN_INTERVAL == 0L && be.power < maxScaled) {
+                com.vel5id.hexerei.soul.Act act = com.vel5id.hexerei.soul.AltarDrain.drainNearest(
+                        hsl, pos, com.vel5id.hexerei.ritual.HungeringAltar.DRAIN_RADIUS);
+                if (act != null) {
+                    be.gainEssence(com.vel5id.hexerei.soul.EssenceSource.essenceFrom(act));
+                }
+            }
+            if (be.ticks % com.vel5id.hexerei.ritual.HungeringAltar.PENALTY_INTERVAL == 0L) {
+                float disturbance = hsl.getChunkAt(pos)
+                        .getCapability(com.vel5id.hexerei.soul.HexereiCapabilities.CHUNK_SOUL)
+                        .map(com.vel5id.hexerei.soul.ChunkSoulData::totalDisturbance).orElse(0f);
+                com.vel5id.hexerei.ritual.HungeringAltar.applyRegionalPenalty(hsl, pos, disturbance);
+            }
         }
 
         // Sync taint level to blockstate every 40 ticks (core only)
@@ -391,6 +408,48 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         return false;
     }
 
+    /**
+     * Credit essence earned from a take in the world (see {@code EssenceSourcing}). Routes to the
+     * multiblock core and is clamped to the reservoir capacity — essence is earned, never granted free.
+     */
+    public void gainEssence(float amount) {
+        if (level == null || level.isClientSide || amount <= 0f) {
+            return;
+        }
+        if (!isCore()) {
+            if (level.getBlockEntity(corePos()) instanceof AltarBlockEntity coreBe && coreBe != this) {
+                coreBe.gainEssence(amount);
+            }
+            return;
+        }
+        power = Math.min(power + amount, maxPower * powerScale);
+        setChanged();
+        sync();
+    }
+
+    /** Awaken/quiet the Hungering Altar (a rite). Routes to the multiblock core. */
+    public void setHungering(boolean value) {
+        if (!isCore()) {
+            if (level != null && level.getBlockEntity(corePos()) instanceof AltarBlockEntity coreBe && coreBe != this) {
+                coreBe.setHungering(value);
+            }
+            return;
+        }
+        if (hungering != value) {
+            hungering = value;
+            setChanged();
+            sync();
+        }
+    }
+
+    public boolean isHungering() {
+        if (!isCore() && level != null
+                && level.getBlockEntity(corePos()) instanceof AltarBlockEntity coreBe && coreBe != this) {
+            return coreBe.hungering;
+        }
+        return hungering;
+    }
+
     // ---- GUI readouts (read synced fields directly; side-agnostic) ----
     public float clientPower() {
         if (level != null && !isCore()
@@ -455,6 +514,7 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         // Derived from the artefact but persisted so a chunk-load before onLoad's recompute is still correct.
         tag.putFloat("TaintMul", taintMul);
         tag.putFloat("EffectMul", effectMul);
+        tag.putBoolean("Hungering", hungering);
     }
 
     @Override
@@ -472,6 +532,7 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         artefact = tag.contains("Artefact") ? ItemStack.of(tag.getCompound("Artefact")) : ItemStack.EMPTY;
         taintMul = tag.contains("TaintMul") ? tag.getFloat("TaintMul") : 1f;
         effectMul = tag.contains("EffectMul") ? tag.getFloat("EffectMul") : 1f;
+        hungering = tag.getBoolean("Hungering");
     }
 
     // ---- sync (ClientboundBlockEntityDataPacket) ----

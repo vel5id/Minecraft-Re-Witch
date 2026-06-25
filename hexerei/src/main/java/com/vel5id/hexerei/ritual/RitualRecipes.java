@@ -45,10 +45,17 @@ public final class RitualRecipes {
             "hexerei:eclipse", CircleSize.MEDIUM, "hexerei:wolfsbane", 220,
             new EclipseRite(), "ritual.hexerei.eclipse");
 
+    // Awaken the Hungering Altar (WARRANTLY Статья III). Paid by its sacrifice (an obsidian skull), not
+    // altar power (cost 0), so it bootstraps the essence loop. MEDIUM ring; sacrifice distinct from the
+    // belladonna/wolfsbane MEDIUM rites above.
+    public static final RitualRecipe HUNGERING = new RitualRecipe(
+            "hexerei:hungering_altar", CircleSize.MEDIUM, "hexerei:obsidian_skull", 0,
+            new HungeringRite(), "ritual.hexerei.hungering_altar");
+
     // Order = chalk scroll order: gentle/cheap first, expensive/aggressive last. TEMPEST stays index 0
     // to preserve the saved-NBT default and existing GameTest expectations.
     public static final List<RitualRecipe> ALL =
-            List.of(TEMPEST, VERDANT, MANIFEST_CHALK, BOUND_BEAST, WANING_MOON, ECLIPSE);
+            List.of(TEMPEST, VERDANT, MANIFEST_CHALK, BOUND_BEAST, WANING_MOON, ECLIPSE, HUNGERING);
 
     public static final Map<String, RitualRecipe> BY_ID = ALL.stream()
             .collect(Collectors.toUnmodifiableMap(RitualRecipe::id, r -> r));

@@ -39,9 +39,9 @@ class RitualRecipesTest {
         assertTrue(RitualRecipes.ALL.contains(RitualRecipes.TEMPEST));
     }
 
-    @Test void all_hasSixRecipesWithTempestFirst() {
-        assertEquals(6, RitualRecipes.ALL.size()); // + ECLIPSE
-        assertSame(RitualRecipes.ECLIPSE, RitualRecipes.ALL.get(RitualRecipes.ALL.size() - 1)); // eclipse last
+    @Test void all_hasSevenRecipesWithTempestFirst() {
+        assertEquals(7, RitualRecipes.ALL.size()); // + HUNGERING (Hungering Altar rite)
+        assertSame(RitualRecipes.HUNGERING, RitualRecipes.ALL.get(RitualRecipes.ALL.size() - 1)); // newest last
         assertSame(RitualRecipes.TEMPEST, RitualRecipes.ALL.get(0)); // index 0 preserves the saved-NBT default
     }
 

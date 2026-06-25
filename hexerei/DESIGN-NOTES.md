@@ -283,3 +283,42 @@ Additive pure-logic foundation for rituals/brews reading the vector model. No li
   | artichoke / hellebore / icy_needle | WATER | 0 | 0 | 0–0.05 | 0.4–0.5 | water & frost |
   | glowing_spore | THRESHOLD | 0 | 0 | 0 | 0.4 | luminous fungal |
   | blood_moss | DEATH | 0 | 0 | 0.10 | 0.6 | crimson |
+
+# Phase 2-3 migration — Slice B: Essence economy (replace free AltarPower)
+
+The Article III fix: the altar no longer fills for free. **No passive recharge** (the
+`serverTick` `BASE_POWER_PER_UPDATE` drift is removed; only the >cap clamp remains).
+`maxPower` (the 29³ scan) is kept as the **capacity** cap only; the reservoir is **earned**.
+
+- **`EssenceSource`** — `essenceFrom(act) = ESSENCE_PER_MAGNITUDE(=10) · magnitude · max(0,−reciprocity)`
+  (only takes free essence). `breakRelease(domain, mag, defile)` = a full take (reciprocity −1).
+- **`ReleaseBlocks`** — block-id → {domain, magnitude, defilement} for harvestable witch crops,
+  mushrooms, blood moss (all `[UNVERIFIED]`; magnitudes 0.4–1.0, deadly herbs carry defilement 0.05–0.20).
+- **`EssenceSourcing`** (Forge `BlockEvent.BreakEvent`, server) — breaking a release block:
+  credits `AltarBlockEntity.gainEssence(essenceFrom(act))` to the nearest altar within `getRange()`,
+  AND writes `ChunkSoulData.disturbance[domain] += …` (first live use of the Phase-1 capability).
+  Power and danger are one act.
+- **`AltarBlockEntity.gainEssence`** — routes to the multiblock core, clamps to capacity.
+
+Balance `[UNVERIFIED]`: a crop yields 4–10 essence; rituals cost ~50–100 → ~10–20 harvests per rite.
+**In-world unverified** — compile + unit-tested (EssenceSource, ReleaseBlocks); the BreakEvent→altar
+credit + disturbance write needs a dedicated-server smoke test (GameTest altar scans are flaky).
+
+# Phase 2-3 — Slice B′: The Hungering Altar (rite-gated drain + regional curse)
+
+Replaces the player-harvest source (removed — farming your own crop for power was illogical). An
+altar gives NO essence by default; a rite awakens it into a *hungering* altar that EATS the land.
+
+- **Activation:** `HungeringRite` (recipe `HUNGERING` — MEDIUM ring + an **obsidian_skull** sacrifice,
+  altar-power cost **0** so it bootstraps the loop). Sets `AltarBlockEntity.hungering` (NBT-persisted,
+  synced, routed to the multiblock core) and burns an initial `DEATH` disturbance scar (`AWAKENING_SCAR=30`).
+- **Drain (`AltarDrain`, gated on hungering, every `DRAIN_INTERVAL=40` ticks, only while below capacity):**
+  consumes the NEAREST living block within `DRAIN_RADIUS=5` — `grass_block→dirt`, leaves/flowers/vanilla
+  bushes/witch-crops→air — deterministically (nearest first, so the blight grows outward, no dice). Each
+  bite = a take `Act` → `gainEssence(essenceFrom)` + `ChunkSoulData.disturbance[domain]+=…`.
+- **Regional curse (`HungeringAltar`, every `PENALTY_INTERVAL=100` ticks):** every player within
+  `PENALTY_CHUNK_RADIUS=6` chunks (96 blocks) gets Weakness (+Darkness at amp≥2). Amplifier =
+  `min(3, disturbance / DISTURB_PER_AMP(=30))` — the danger grows with the place's accumulated unrest.
+- Power and danger are the same act: essence only ever comes with a spreading scar + a cursed region.
+  All knobs `[UNVERIFIED]`. **In-world unverified** (drain/curse loop) — `penaltyAmplifier` unit-tested;
+  needs a playtest. Offerings + altar-held-artefact radius scaling are Slice B″.

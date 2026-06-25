@@ -38,6 +38,13 @@ public class ChunkSoulData implements INBTSerializable<CompoundTag> {
         return disturbance.getOrDefault(d, 0f);
     }
 
+    /** Sum of disturbance across all domains — the place's overall unrest. */
+    public float totalDisturbance() {
+        float sum = 0f;
+        for (float v : disturbance.values()) sum += v;
+        return sum;
+    }
+
     public Map<Correspondence, Float> disturbanceView() {
         return new EnumMap<>(disturbance);
     }
