@@ -368,3 +368,21 @@ the same visible taint ladder / aura / punishment / altar blockstate as the rite
   `TaintLevel` thresholds (15/40/70) now read TOTAL disturbance; `TaintLevel`, `Rites.scaledTaint`,
   `TaintSyncS2CPacket`/`ClientTaintCache` (scalar visual) are preserved.
 - Removed `ChunkTaintData` + `TaintDataTest`; 3 GameTests migrated to `Disturbance`.
+
+# Phase 2-3 — Slice D: rituals read Act + resolve against the place (hybrid)
+
+`RitualActivation` now resolves each cast against state instead of just matching a recipe. Named rites
+are kept (the matched recipe is the intended effect), but whether it FIRES is a function of the place.
+
+- **Act assembly** (`buildRitualAct`): the rite's `Act` = the sacrifice's `ReagentDescriptor`
+  (`ReagentRegistry`) + each ring rune's `RuneSymbol.domain` (binding 0.2, magnitude 0.3) — so the
+  **rune symbols now MEAN domains** in the rite (the diegetic-language payoff).
+- **Resolution** (`RitualResolver.resolve`, pure, tested): `Resolution.success/classify` over the
+  dominant domain's disturbance + the place's total disturbance, neutral caster standing for now (no
+  player handle at the entry point — a witch's debt/loyalty folds in later).
+- **Botch feeds the loop** (Грамматика §7): a domain disturbed past ~50% resists — the cast still spent
+  its sacrifice and essence, so instead of a free no-op it writes `BOTCH_DISTURBANCE=10` to that domain,
+  plays a smoke/fizzle telegraph, and returns `Result.FAILED` without performing. SUCCESS in calm/low-
+  disturbance places (normal play unaffected).
+- **Payment is essence** — `consumePower` already debits the altar's earned reservoir after Slice B.
+  All knobs `[UNVERIFIED]`; in-world ritual flow needs a playtest.

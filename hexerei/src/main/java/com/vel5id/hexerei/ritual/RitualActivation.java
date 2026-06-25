@@ -23,7 +23,7 @@ public final class RitualActivation {
 
     private static final double SACRIFICE_RADIUS = 2.5;
 
-    public enum Result { SUCCESS, NO_RECIPE, NO_POWER }
+    public enum Result { SUCCESS, FAILED, NO_RECIPE, NO_POWER }
 
     public static Result tryPerform(ServerLevel level, BlockPos center) {
         // Contract: the center must be a ritual sigil block (self-contained for any caller).
@@ -60,6 +60,28 @@ public final class RitualActivation {
             } else {
                 ie.setItem(stack);
             }
+
+            // Resolve the rite against the PLACE (Грамматика §6-7): its Act = sacrifice reagent + the
+            // ring's rune domains; a domain already disturbed resists. A resisted/misaligned cast still
+            // spent the sacrifice — it BOTCHES (feeds the loop with more disturbance), never a free no-op.
+            com.vel5id.hexerei.soul.Act act = buildRitualAct(level, center, recipe, id);
+            com.vel5id.hexerei.soul.Correspondence dom = com.vel5id.hexerei.soul.RitualResolver.dominantDomain(act);
+            net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(center);
+            float domDist = dom == null ? 0f : com.vel5id.hexerei.soul.Disturbance.domainTotal(level, cp, dom);
+            float totDist = com.vel5id.hexerei.soul.Disturbance.total(level, cp);
+            if (!com.vel5id.hexerei.soul.RitualResolver.isSuccess(
+                    com.vel5id.hexerei.soul.RitualResolver.resolve(act, domDist, totDist).outcome())) {
+                if (dom != null) {
+                    com.vel5id.hexerei.soul.Disturbance.add(level, cp, dom,
+                            com.vel5id.hexerei.soul.RitualResolver.BOTCH_DISTURBANCE);
+                }
+                level.playSound(null, center, net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH,
+                        net.minecraft.sounds.SoundSource.BLOCKS, 0.6f, 0.6f);
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE,
+                        center.getX() + 0.5, center.getY() + 0.6, center.getZ() + 0.5, 20, 0.6, 0.3, 0.6, 0.02);
+                return Result.FAILED;
+            }
+
             // Compose the multipliers: funding altar artefact x lunar phase x active blood moon.
             float artefactTaint = funder instanceof AltarBlockEntity altar ? altar.taintMultiplier() : 1f;
             float artefactEffect = funder instanceof AltarBlockEntity altar ? altar.effectMultiplier() : 1f;
@@ -79,6 +101,27 @@ public final class RitualActivation {
             return Result.SUCCESS;
         }
         return anyMatched ? Result.NO_POWER : Result.NO_RECIPE;
+    }
+
+    /** Assemble the rite's Act from the sacrifice reagent + each ring rune's domain glyph (Грамматика §1). */
+    private static com.vel5id.hexerei.soul.Act buildRitualAct(ServerLevel level, BlockPos center,
+                                                              RitualRecipe recipe, String sacrificeId) {
+        java.util.List<com.vel5id.hexerei.soul.ReagentDescriptor> reagents = new java.util.ArrayList<>();
+        net.minecraft.resources.ResourceLocation sid = net.minecraft.resources.ResourceLocation.tryParse(sacrificeId);
+        com.vel5id.hexerei.soul.ReagentDescriptor sac = sid == null ? null
+                : com.vel5id.hexerei.soul.ReagentRegistry.get(sid);
+        if (sac != null) {
+            reagents.add(sac);
+        }
+        for (BlockPos rp : recipe.circleSize().ringPositions(center)) {
+            net.minecraft.world.level.block.state.BlockState bs = level.getBlockState(rp);
+            if (bs.is(HexereiBlocks.RUNE.get())) {
+                com.vel5id.hexerei.soul.Correspondence d =
+                        com.vel5id.hexerei.block.ritual.RuneBlock.symbolOf(bs).domain();
+                reagents.add(new com.vel5id.hexerei.soul.ReagentDescriptor(d, 0f, 0.2f, 0f, 0.3f)); // a rune writes its domain
+            }
+        }
+        return com.vel5id.hexerei.soul.ActAssembler.assemble(reagents);
     }
 
     /** A small chance (bumped on a new moon) that performing any non-eclipse rite ignites a blood moon. */

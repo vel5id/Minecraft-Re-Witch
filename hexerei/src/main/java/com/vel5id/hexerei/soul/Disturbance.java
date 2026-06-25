@@ -36,6 +36,12 @@ public final class Disturbance {
         return soul == null ? 0f : soul.totalDisturbance();
     }
 
+    /** Disturbance of a single domain in the chunk (decay applied). */
+    public static float domainTotal(ServerLevel level, ChunkPos cp, Correspondence domain) {
+        ChunkSoulData soul = of(level, cp);
+        return soul == null ? 0f : soul.getDisturbance(domain);
+    }
+
     /** The chunk's visual unrest band (the former taint ladder), from total disturbance. */
     public static TaintLevel level(ServerLevel level, ChunkPos cp) {
         return TaintLevel.fromValue(total(level, cp));
