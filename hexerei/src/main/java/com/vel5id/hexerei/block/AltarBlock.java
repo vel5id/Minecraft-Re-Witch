@@ -108,6 +108,21 @@ public class AltarBlock extends Block implements EntityBlock {
                     }
                     return InteractionResult.SUCCESS;
                 }
+                // Offer a spirit-bearing reagent: consume one, free essence (diminishing returns).
+                com.vel5id.hexerei.soul.ReagentDescriptor reagent =
+                        com.vel5id.hexerei.soul.ReagentRegistry.get(
+                                net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(held.getItem()));
+                if (reagent != null) {
+                    core.offer(reagent);
+                    held.shrink(1);
+                    if (level instanceof net.minecraft.server.level.ServerLevel sl) {
+                        sl.sendParticles(net.minecraft.core.particles.ParticleTypes.SOUL,
+                                pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 8, 0.25, 0.2, 0.25, 0.02);
+                    }
+                    level.playSound(null, pos, net.minecraft.sounds.SoundEvents.SOUL_ESCAPE,
+                            net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 1.2f);
+                    return InteractionResult.SUCCESS;
+                }
                 if (held.isEmpty() && player.isShiftKeyDown() && !core.getArtefact().isEmpty()) {
                     // Shift + empty hand retrieves the artefact.
                     giveOrDrop(player, core.setArtefact(ItemStack.EMPTY));

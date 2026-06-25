@@ -49,6 +49,9 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
     private int rangeScale = 1;
     private int enhancementLevel = 0;
     private boolean hungering = false; // a rite awakened the altar into a life-draining Hungering Altar
+    // Per-domain offering satiation (core-only): bulk-feeding one domain yields less; decays over time.
+    private final java.util.EnumMap<com.vel5id.hexerei.soul.Correspondence, Float> satiation =
+            new java.util.EnumMap<>(com.vel5id.hexerei.soul.Correspondence.class);
     // The placed artefact (one slot per altar; core-only) and the multipliers derived from it.
     private ItemStack artefact = ItemStack.EMPTY;
     private float taintMul = 1f;
@@ -165,6 +168,12 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
                         .map(com.vel5id.hexerei.soul.ChunkSoulData::totalDisturbance).orElse(0f);
                 com.vel5id.hexerei.ritual.HungeringAltar.applyRegionalPenalty(hsl, pos, disturbance);
             }
+        }
+
+        // Offering satiation eases back toward zero (the altar's hunger for a domain returns).
+        if (!be.satiation.isEmpty() && be.ticks % 20L == 0L) {
+            be.satiation.replaceAll((d, v) -> com.vel5id.hexerei.soul.Offering.decay(v, 1f));
+            be.satiation.values().removeIf(v -> v <= 0f);
         }
 
         // Sync taint level to blockstate every 40 ticks (core only)
@@ -450,6 +459,28 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         return hungering;
     }
 
+    /**
+     * Offer a reagent's spirit to the altar (a deliberate sacrifice): credits essence with per-domain
+     * diminishing returns and raises that domain's satiation. Routes to the core; returns the essence
+     * actually gained (0 off-server / no core).
+     */
+    public float offer(com.vel5id.hexerei.soul.ReagentDescriptor reagent) {
+        if (level == null || level.isClientSide) {
+            return 0f;
+        }
+        if (!isCore()) {
+            return level.getBlockEntity(corePos()) instanceof AltarBlockEntity coreBe && coreBe != this
+                    ? coreBe.offer(reagent) : 0f;
+        }
+        float sat = satiation.getOrDefault(reagent.domain(), 0f);
+        float gained = com.vel5id.hexerei.soul.Offering.essence(reagent.magnitude(), sat);
+        gainEssence(gained);
+        satiation.put(reagent.domain(), com.vel5id.hexerei.soul.Offering.satiationAfter(sat, reagent.magnitude()));
+        setChanged();
+        sync();
+        return gained;
+    }
+
     // ---- GUI readouts (read synced fields directly; side-agnostic) ----
     public float clientPower() {
         if (level != null && !isCore()
@@ -515,6 +546,11 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         tag.putFloat("TaintMul", taintMul);
         tag.putFloat("EffectMul", effectMul);
         tag.putBoolean("Hungering", hungering);
+        if (!satiation.isEmpty()) {
+            CompoundTag sat = new CompoundTag();
+            satiation.forEach((d, v) -> sat.putFloat(d.key(), v));
+            tag.put("Satiation", sat);
+        }
     }
 
     @Override
@@ -533,6 +569,14 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         taintMul = tag.contains("TaintMul") ? tag.getFloat("TaintMul") : 1f;
         effectMul = tag.contains("EffectMul") ? tag.getFloat("EffectMul") : 1f;
         hungering = tag.getBoolean("Hungering");
+        satiation.clear();
+        if (tag.contains("Satiation")) {
+            CompoundTag sat = tag.getCompound("Satiation");
+            for (String k : sat.getAllKeys()) {
+                com.vel5id.hexerei.soul.Correspondence d = com.vel5id.hexerei.soul.Correspondence.byKey(k);
+                if (d != null) satiation.put(d, sat.getFloat(k));
+            }
+        }
     }
 
     // ---- sync (ClientboundBlockEntityDataPacket) ----

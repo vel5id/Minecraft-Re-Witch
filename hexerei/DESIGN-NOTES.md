@@ -322,3 +322,16 @@ altar gives NO essence by default; a rite awakens it into a *hungering* altar th
 - Power and danger are the same act: essence only ever comes with a spreading scar + a cursed region.
   All knobs `[UNVERIFIED]`. **In-world unverified** (drain/curse loop) — `penaltyAmplifier` unit-tested;
   needs a playtest. Offerings + altar-held-artefact radius scaling are Slice B″.
+
+# Phase 2-3 — Slice B″: Offerings (deliberate sacrifice, diminishing returns)
+
+The active counterpart to the Hungering Altar's passive drain. Right-click an altar with a
+spirit-bearing reagent (anything in `ReagentRegistry`) → consume one → essence (a take of its spirit).
+
+- **`Offering`** (pure): `essence = ESSENCE_PER_MAGNITUDE · magnitude · yieldMultiplier(satiation)`,
+  `yieldMultiplier = 1/(1+satiation)`. Bulk-feeding one domain saturates it (5×mag-1 offerings ≈ 23
+  essence, not 50) — anti-grind, so no domain becomes a parallel essence farm.
+- **`AltarBlockEntity`**: per-domain `satiation` (core-only, NBT, routed); `offer(reagent)` credits
+  essence + raises that domain's satiation; serverTick decays satiation (`SATIATION_DECAY=1`/20-tick step).
+- **`AltarBlock.use`**: holding a reagent → offer (consume 1) with SOUL particles + sound; artefact
+  placement and the GUI are unchanged. All knobs `[UNVERIFIED]`; `Offering` math unit-tested.
