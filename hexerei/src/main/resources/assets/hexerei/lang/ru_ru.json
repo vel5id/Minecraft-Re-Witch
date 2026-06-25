@@ -5,7 +5,6 @@
   "hexerei.gui.altar.power": "Сила: %s / %s",
   "hexerei.rite.missingpowersource": "Рядом нет алтаря.",
   "hexerei.rite.insufficientpower": "У алтаря недостаточно силы.",
-
   "block.hexerei.belladonna": "Белладонна",
   "block.hexerei.mandrake": "Мандрагора",
   "block.hexerei.artichoke": "Водный артишок",
@@ -23,7 +22,6 @@
   "block.hexerei.zevanty": "Зеванты",
   "block.hexerei.puffball": "Дождевик",
   "block.hexerei.webcap": "Паутинник",
-
   "item.hexerei.seeds_belladonna": "Семена белладонны",
   "item.hexerei.seeds_mandrake": "Семена мандрагоры",
   "item.hexerei.seeds_artichoke": "Семена артишока",
@@ -37,7 +35,6 @@
   "item.hexerei.seeds_hops": "Семена хмеля",
   "item.hexerei.seeds_sandwort": "Семена песчанки",
   "item.hexerei.seeds_mistletoe": "Семена омелы",
-
   "item.hexerei.belladonna_flower": "Цветок белладонны",
   "item.hexerei.mandrake_root": "Корень мандрагоры",
   "item.hexerei.artichoke": "Артишок",
@@ -54,7 +51,6 @@
   "item.hexerei.zevanty": "Зеванты",
   "item.hexerei.puffball": "Дождевик",
   "item.hexerei.webcap": "Паутинник",
-
   "block.hexerei.cauldron": "Ведьмин котёл",
   "item.hexerei.brew": "Зелье",
   "brew.hexerei.sleeping_draught": "Сонное зелье",
@@ -63,7 +59,6 @@
   "brew.hexerei.bloodwort_tonic": "Кровавый тоник",
   "brew.hexerei.hags_swiftness": "Прыть ведьмы",
   "brew.hexerei.withering_bile": "Иссушающая желчь",
-
   "block.hexerei.rune": "Руна",
   "block.hexerei.ritual_sigil": "Ритуальный сигил",
   "ritual.hexerei.tempest": "Обряд бури",
@@ -78,14 +73,12 @@
   "item.hexerei.ritual_chalk.tip2": "[Shift+Скролл] Сменить обряд",
   "item.hexerei.ritual_chalk.tip3": "[ПКМ по сигилу] Нарисовать и связать",
   "hexerei.ritual.destroy_first": "Разрушьте круг",
-
   "item.hexerei.charm_pouch": "Мешочек амулетов",
   "item.hexerei.ward_charm": "Оберег",
   "item.hexerei.bloodlust_charm": "Кровавый амулет",
   "item.hexerei.hexbane_charm": "Амулет-проклятие",
   "container.hexerei.charm_pouch": "Мешочек амулетов",
   "tooltip.hexerei.charm.dormant": "Спит (нет заряда)",
-
   "item.hexerei.bone_charm": "Костяной оберег",
   "item.hexerei.wax_poppet": "Восковая куколка",
   "item.hexerei.obsidian_skull": "Обсидиановый череп",
@@ -93,7 +86,19 @@
   "tooltip.hexerei.artefact.effect_mul": "Эффект ×%s",
   "tooltip.hexerei.artefact.purifier": "Очиститель",
   "tooltip.hexerei.artefact.amplifier": "Усилитель",
-
   "item.hexerei.grimoire": "Гримуар",
-  "hexerei.book.grimoire.landing": "Собрание трудов ведьмы — алтари, сад, котёл и обряды."
+  "hexerei.book.grimoire.landing": "Собрание трудов ведьмы — алтари, сад, котёл и обряды.",
+  "ritual.hexerei.eclipse": "Обряд Затмения",
+  "hexerei.moon.full": "Полнолуние",
+  "hexerei.moon.waning_gibbous": "Убывающая Луна",
+  "hexerei.moon.last_quarter": "Последняя четверть",
+  "hexerei.moon.waning_crescent": "Старый месяц",
+  "hexerei.moon.new": "Новолуние",
+  "hexerei.moon.waxing_crescent": "Молодой месяц",
+  "hexerei.moon.first_quarter": "Первая четверть",
+  "hexerei.moon.waxing_gibbous": "Растущая Луна",
+  "item.hexerei.ritual_chalk.moon": "Луна: %s (%s)",
+  "hexerei.moon.effect.strong": "обряды усилены",
+  "hexerei.moon.effect.weak": "обряды ослаблены",
+  "hexerei.moon.effect.neutral": "обряды нейтральны"
 }

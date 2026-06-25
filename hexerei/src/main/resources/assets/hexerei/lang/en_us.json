@@ -5,7 +5,6 @@
   "hexerei.gui.altar.power": "Power: %s / %s",
   "hexerei.rite.missingpowersource": "No altar nearby.",
   "hexerei.rite.insufficientpower": "Altar has insufficient power.",
-
   "block.hexerei.belladonna": "Belladonna",
   "block.hexerei.mandrake": "Mandrake",
   "block.hexerei.artichoke": "Water Artichoke",
@@ -23,7 +22,6 @@
   "block.hexerei.zevanty": "Zevanty",
   "block.hexerei.puffball": "Puffball",
   "block.hexerei.webcap": "Webcap",
-
   "item.hexerei.seeds_belladonna": "Belladonna Seeds",
   "item.hexerei.seeds_mandrake": "Mandrake Seeds",
   "item.hexerei.seeds_artichoke": "Artichoke Seeds",
@@ -37,7 +35,6 @@
   "item.hexerei.seeds_hops": "Hops Seeds",
   "item.hexerei.seeds_sandwort": "Sandwort Seeds",
   "item.hexerei.seeds_mistletoe": "Mistletoe Seeds",
-
   "item.hexerei.belladonna_flower": "Belladonna Flower",
   "item.hexerei.mandrake_root": "Mandrake Root",
   "item.hexerei.artichoke": "Artichoke",
@@ -54,7 +51,6 @@
   "item.hexerei.zevanty": "Zevanty",
   "item.hexerei.puffball": "Puffball",
   "item.hexerei.webcap": "Webcap",
-
   "block.hexerei.cauldron": "Witch's Cauldron",
   "item.hexerei.brew": "Brew",
   "brew.hexerei.sleeping_draught": "Sleeping Draught",
@@ -63,7 +59,6 @@
   "brew.hexerei.bloodwort_tonic": "Bloodwort Tonic",
   "brew.hexerei.hags_swiftness": "Hag's Swiftness",
   "brew.hexerei.withering_bile": "Withering Bile",
-
   "block.hexerei.rune": "Rune",
   "block.hexerei.ritual_sigil": "Ritual Sigil",
   "ritual.hexerei.tempest": "Rite of the Tempest",
@@ -78,14 +73,12 @@
   "item.hexerei.ritual_chalk.tip2": "[Shift+Scroll] Change rite",
   "item.hexerei.ritual_chalk.tip3": "[Right-click sigil] Draw & bind",
   "hexerei.ritual.destroy_first": "Destroy the circle first",
-
   "item.hexerei.charm_pouch": "Charm Pouch",
   "item.hexerei.ward_charm": "Ward Charm",
   "item.hexerei.bloodlust_charm": "Bloodlust Charm",
   "item.hexerei.hexbane_charm": "Hexbane Charm",
   "container.hexerei.charm_pouch": "Charm Pouch",
   "tooltip.hexerei.charm.dormant": "Dormant (no charge)",
-
   "item.hexerei.bone_charm": "Bone Charm",
   "item.hexerei.wax_poppet": "Wax Poppet",
   "item.hexerei.obsidian_skull": "Obsidian Skull",
@@ -93,7 +86,19 @@
   "tooltip.hexerei.artefact.effect_mul": "Effect ×%s",
   "tooltip.hexerei.artefact.purifier": "Purifier",
   "tooltip.hexerei.artefact.amplifier": "Amplifier",
-
   "item.hexerei.grimoire": "Grimoire",
-  "hexerei.book.grimoire.landing": "The collected workings of the hedge-witch — altars, the garden, the cauldron, and the rites."
+  "hexerei.book.grimoire.landing": "The collected workings of the hedge-witch — altars, the garden, the cauldron, and the rites.",
+  "ritual.hexerei.eclipse": "Rite of the Eclipse",
+  "hexerei.moon.full": "Full Moon",
+  "hexerei.moon.waning_gibbous": "Waning Gibbous",
+  "hexerei.moon.last_quarter": "Last Quarter",
+  "hexerei.moon.waning_crescent": "Waning Crescent",
+  "hexerei.moon.new": "New Moon",
+  "hexerei.moon.waxing_crescent": "Waxing Crescent",
+  "hexerei.moon.first_quarter": "First Quarter",
+  "hexerei.moon.waxing_gibbous": "Waxing Gibbous",
+  "item.hexerei.ritual_chalk.moon": "Moon: %s (%s)",
+  "hexerei.moon.effect.strong": "rites strengthened",
+  "hexerei.moon.effect.weak": "rites weakened",
+  "hexerei.moon.effect.neutral": "rites neutral"
 }

@@ -24,6 +24,13 @@ public final class HexereiNetwork {
                 CycleRiteC2SPacket::encode, CycleRiteC2SPacket::decode, CycleRiteC2SPacket::handle);
         CHANNEL.registerMessage(nextId++, TaintSyncS2CPacket.class,
                 TaintSyncS2CPacket::encode, TaintSyncS2CPacket::decode, TaintSyncS2CPacket::handle);
+        CHANNEL.registerMessage(nextId++, BloodMoonSyncS2CPacket.class,
+                BloodMoonSyncS2CPacket::encode, BloodMoonSyncS2CPacket::decode, BloodMoonSyncS2CPacket::handle);
+    }
+
+    /** Tell every client in {@code level} that the blood moon turned on/off (a whole-level event). */
+    public static void sendBloodMoonSync(ServerLevel level, boolean active) {
+        CHANNEL.send(PacketDistributor.DIMENSION.with(level::dimension), new BloodMoonSyncS2CPacket(active));
     }
 
     /** Send current taint for a chunk to all players watching it. */

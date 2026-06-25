@@ -2,6 +2,7 @@ package com.vel5id.hexerei.item;
 
 import com.vel5id.hexerei.blockentity.RitualSigilBlockEntity;
 import com.vel5id.hexerei.registry.HexereiBlocks;
+import com.vel5id.hexerei.ritual.LunarPhase;
 import com.vel5id.hexerei.ritual.RitualCircle;
 import com.vel5id.hexerei.ritual.RitualRecipe;
 import com.vel5id.hexerei.ritual.RitualRecipes;
@@ -9,6 +10,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -105,6 +107,19 @@ public class RitualChalkItem extends Item {
                     Component.translatable(rite.nameKey())).withStyle(ChatFormatting.LIGHT_PURPLE));
             tooltip.add(Component.translatable(rite.circleSize().circleLabelKey(),
                     rite.circleSize().ringPositions(BlockPos.ZERO).size()).withStyle(ChatFormatting.DARK_GRAY));
+        }
+        if (level != null) {
+            // The current moon and what it does to rites — read live (the client level has the same moon formula).
+            LunarPhase phase = LunarPhase.fromIndex(level.dimensionType().moonPhase(level.getDayTime()));
+            ChatFormatting color = phase.effectMul() > 1f ? ChatFormatting.GREEN
+                    : phase.effectMul() < 1f ? ChatFormatting.RED : ChatFormatting.GRAY;
+            MutableComponent moon = Component.translatable("item.hexerei.ritual_chalk.moon",
+                    Component.translatable(phase.nameKey()), Component.translatable(phase.effectKey()))
+                    .withStyle(color);
+            if (phase.isFull() || phase.isNew()) {
+                moon = moon.withStyle(ChatFormatting.BOLD);
+            }
+            tooltip.add(moon);
         }
         tooltip.add(Component.translatable("item.hexerei.ritual_chalk.tip2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.hexerei.ritual_chalk.tip3").withStyle(ChatFormatting.GRAY));

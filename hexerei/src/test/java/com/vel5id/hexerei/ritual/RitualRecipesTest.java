@@ -39,8 +39,9 @@ class RitualRecipesTest {
         assertTrue(RitualRecipes.ALL.contains(RitualRecipes.TEMPEST));
     }
 
-    @Test void all_hasFiveRecipesWithTempestFirst() {
-        assertEquals(5, RitualRecipes.ALL.size());
+    @Test void all_hasSixRecipesWithTempestFirst() {
+        assertEquals(6, RitualRecipes.ALL.size()); // + ECLIPSE
+        assertSame(RitualRecipes.ECLIPSE, RitualRecipes.ALL.get(RitualRecipes.ALL.size() - 1)); // eclipse last
         assertSame(RitualRecipes.TEMPEST, RitualRecipes.ALL.get(0)); // index 0 preserves the saved-NBT default
     }
 

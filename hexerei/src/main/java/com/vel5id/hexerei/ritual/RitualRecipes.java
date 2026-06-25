@@ -39,10 +39,16 @@ public final class RitualRecipes {
             "hexerei:waning_moon", CircleSize.MEDIUM, "hexerei:belladonna_flower", 150,
             new WaningMoonRite(), "ritual.hexerei.waning_moon");
 
+    // The capstone dark rite: forces night and ignites a Blood Moon. MEDIUM + wolfsbane (distinct from
+    // Waning Moon's belladonna on the same MEDIUM ring). Top of the power ladder.
+    public static final RitualRecipe ECLIPSE = new RitualRecipe(
+            "hexerei:eclipse", CircleSize.MEDIUM, "hexerei:wolfsbane", 220,
+            new EclipseRite(), "ritual.hexerei.eclipse");
+
     // Order = chalk scroll order: gentle/cheap first, expensive/aggressive last. TEMPEST stays index 0
     // to preserve the saved-NBT default and existing GameTest expectations.
     public static final List<RitualRecipe> ALL =
-            List.of(TEMPEST, VERDANT, MANIFEST_CHALK, BOUND_BEAST, WANING_MOON);
+            List.of(TEMPEST, VERDANT, MANIFEST_CHALK, BOUND_BEAST, WANING_MOON, ECLIPSE);
 
     public static final Map<String, RitualRecipe> BY_ID = ALL.stream()
             .collect(Collectors.toUnmodifiableMap(RitualRecipe::id, r -> r));

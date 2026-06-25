@@ -27,6 +27,7 @@ public final class HexereiLevelEvents {
         if (gt % 200 == 0) {
             WorldTaintAura.pulse(sl);
             WorldTaintAura.punishPlayers(sl);
+            com.vel5id.hexerei.ritual.BloodMoonPulse.tick(sl);
         }
         if (gt % 20 == 0) {             // every 1s: drain/recharge/apply carried charms
             CharmTickHandler.tick(sl);

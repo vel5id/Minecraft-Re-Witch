@@ -3,6 +3,7 @@ package com.vel5id.hexerei.ritual;
 import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.blockentity.AltarBlockEntity;
 import com.vel5id.hexerei.power.AltarPowerManager;
+import com.vel5id.hexerei.power.BloodMoonData;
 import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.power.RelativePowerSource;
 import com.vel5id.hexerei.registry.HexereiBlocks;
@@ -59,12 +60,17 @@ public final class RitualActivation {
             } else {
                 ie.setItem(stack);
             }
-            // Carry the funding altar's artefact multipliers into the rite (taint/effect) for its perform.
-            float taintMul = funder instanceof AltarBlockEntity altar ? altar.taintMultiplier() : 1f;
-            float effectMul = funder instanceof AltarBlockEntity altar ? altar.effectMultiplier() : 1f;
+            // Compose the multipliers: funding altar artefact x lunar phase x active blood moon.
+            float artefactTaint = funder instanceof AltarBlockEntity altar ? altar.taintMultiplier() : 1f;
+            float artefactEffect = funder instanceof AltarBlockEntity altar ? altar.effectMultiplier() : 1f;
+            LunarPhase phase = LunarPhase.fromIndex(level.dimensionType().moonPhase(level.getDayTime()));
+            boolean bloodMoon = BloodMoonData.get(level).isActive();
+            float taintMul = artefactTaint * phase.taintMul() * (bloodMoon ? BloodMoonData.BLOOD_TAINT_MUL : 1f);
+            float effectMul = artefactEffect * phase.effectMul() * (bloodMoon ? BloodMoonData.RITUAL_EFFECT_MUL : 1f);
             RitualContext.begin(taintMul, effectMul);
             try {
                 recipe.rite().perform(level, center);
+                maybeIgniteBloodMoon(level, recipe, phase);
             } catch (Exception e) {
                 HexereiMod.LOGGER.error("Rite {} failed to perform", recipe.nameKey(), e);
             } finally {
@@ -73,6 +79,18 @@ public final class RitualActivation {
             return Result.SUCCESS;
         }
         return anyMatched ? Result.NO_POWER : Result.NO_RECIPE;
+    }
+
+    /** A small chance (bumped on a new moon) that performing any non-eclipse rite ignites a blood moon. */
+    private static void maybeIgniteBloodMoon(ServerLevel level, RitualRecipe recipe, LunarPhase phase) {
+        BloodMoonData data = BloodMoonData.get(level);
+        if (data.isActive() || recipe.id().equals(RitualRecipes.ECLIPSE.id())) {
+            return; // already a blood moon, or the eclipse rite which ignites deterministically
+        }
+        float chance = phase.isNew() ? 0.05f : 0.02f;
+        if (level.getRandom().nextFloat() < chance) {
+            data.ignite(level);
+        }
     }
 
     /**
