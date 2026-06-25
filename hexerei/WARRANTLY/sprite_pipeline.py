@@ -101,9 +101,11 @@ def detect_checker_palette(rgb, band=10):
 
 
 # ----------------------------------------------------------------------------- stage 2
-def background_to_alpha(rgb, mode="auto", tol=34, warm_protect=True, fill_holes=True):
-    """RGB uint8 -> alpha uint8 [H,W]. Removes only border-connected background so
-    interior shadows/outline survive."""
+def background_to_alpha(rgb, mode="auto", tol=34, warm_protect=True, fill_holes=True,
+                        protect_interior=True):
+    """RGB uint8 -> alpha uint8 [H,W]. With protect_interior, removes only border-connected
+    background so interior shadows survive (sprites); with protect_interior=False, keys ALL
+    bg-colored pixels — enclosed loops become transparent too (line glyphs / runes)."""
     H, W = rgb.shape[:2]
     f = rgb.astype(np.float32)
     pal, auto_mode, _ = detect_checker_palette(rgb)
@@ -139,17 +141,21 @@ def background_to_alpha(rgb, mode="auto", tol=34, warm_protect=True, fill_holes=
             warm = (f[:, :, 0] - f[:, :, 2]) > 12  # R > B => warm (plant shadow), keep
             alpha = np.where(warm, np.maximum(alpha, 0.6), alpha)
 
-    # keep as background ONLY low-alpha regions connected to the frame border
     bgmask = alpha < 0.5
-    lbl, n = _label(bgmask)
-    border = set(lbl[0, :]) | set(lbl[-1, :]) | set(lbl[:, 0]) | set(lbl[:, -1])
-    border.discard(0)
-    true_bg = np.isin(lbl, list(border))
-    alpha = np.where(bgmask & ~true_bg, 1.0, alpha)   # interior pockets -> opaque
-    if fill_holes:
-        solid = _fill_holes(alpha >= 0.5)
-        alpha = np.where(solid, np.maximum(alpha, 0.5), alpha)
-    alpha[true_bg] = 0.0
+    if protect_interior:
+        # keep as background ONLY low-alpha regions connected to the frame border
+        lbl, n = _label(bgmask)
+        border = set(lbl[0, :]) | set(lbl[-1, :]) | set(lbl[:, 0]) | set(lbl[:, -1])
+        border.discard(0)
+        true_bg = np.isin(lbl, list(border))
+        alpha = np.where(bgmask & ~true_bg, 1.0, alpha)   # interior pockets -> opaque
+        if fill_holes:
+            solid = _fill_holes(alpha >= 0.5)
+            alpha = np.where(solid, np.maximum(alpha, 0.5), alpha)
+        alpha[true_bg] = 0.0
+    else:
+        # line-glyph mode: any bg-colored pixel is background, enclosed loops included
+        alpha[bgmask] = 0.0
     return (np.clip(alpha, 0, 1) * 255).astype(np.uint8), mode, bg
 
 
@@ -229,9 +235,10 @@ def premult_downscale_fit(rgb, alpha, bbox, box=32, hard=True, hard_thr=128, mar
 
 # ----------------------------------------------------------------------------- end-to-end
 def process(input_path, output_path, box=32, soft=False, mode="auto",
-            tol=34, drop_strays=True, warm_protect=True, anchor="center"):
+            tol=34, drop_strays=True, warm_protect=True, anchor="center", protect_interior=True):
     rgb = np.array(Image.open(input_path).convert("RGB"))
-    alpha, used_mode, bg = background_to_alpha(rgb, mode, tol, warm_protect)
+    alpha, used_mode, bg = background_to_alpha(rgb, mode, tol, warm_protect,
+                                               protect_interior=protect_interior)
     clean_rgb = despill(rgb, alpha, bg)
     bbox = content_bbox(alpha, drop_strays)
     sprite = premult_downscale_fit(clean_rgb, alpha, bbox, box=box, hard=not soft, anchor=anchor)
