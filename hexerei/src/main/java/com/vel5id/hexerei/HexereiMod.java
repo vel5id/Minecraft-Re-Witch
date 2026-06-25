@@ -28,6 +28,7 @@ public final class HexereiMod {
         HexereiCreativeTabs.TABS.register(modBus);
         HexereiParticles.PARTICLES.register(modBus);
         HexereiMenus.MENUS.register(modBus);
+        com.vel5id.hexerei.soul.HexereiCapabilities.register(modBus); // soul-data capabilities (vector core)
         HexereiNetwork.register();
         MinecraftForge.EVENT_BUS.register(HexereiLevelEvents.class);
         LOGGER.info("Hexerei loading");

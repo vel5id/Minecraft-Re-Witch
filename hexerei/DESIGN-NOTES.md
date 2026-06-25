@@ -4,6 +4,13 @@ Hexerei is built slice-by-slice. Every numeric value in the code is a deliberate
 documented here per slice — never invented on the fly. Values flagged `[UNVERIFIED]` still need
 in-game confirmation.
 
+> **This document is subordinate to the Constitution.** `WARRANTLY/` (the three design-law
+> documents — `Конституция_мира_ведьм.md`, `Грамматика_векторов.md`, `Модель_данных_привязки.md`)
+> decides *whether* a mechanic may exist and *what shape* it must take. DESIGN-NOTES only records the
+> *numbers* once the Constitution has admitted the mechanic. Before adding a slice or changing balance,
+> pass the litmus checklist in `Конституция_мира_ведьм.md`; a number that serves a Law-breaking mechanic
+> is not "balanced," it is out of scope. See the "Design law" gate in the root `CLAUDE.md`.
+
 # Ritual Circles slice
 
 A **Ritual Circle** center block, ringed by **Ritual Glyph** chalk blocks, performs a **rite** when
@@ -221,3 +228,35 @@ punishment that finally makes taint bite.
 - Wither I (vanilla `MobEffects.WITHER`, not the project's Withering-Bile brew) for HIGH: ~2.5 hearts
   lost per pulse window, fully regenerable by leaving — a strong "get out" signal, not instant death
   (the Cleansing Loop is the intended counter, out of scope here).
+
+# Vector core (`soul/`) slice — Phase 1 (WARRANTLY migration)
+
+The constitutional vector model (Грамматика/Модель данных), built pure-logic-first. This is the
+single bloodstream every later slice converts onto; it does **not** yet change item behaviour.
+
+- **`Correspondence`** — 6 domains (forest, stone, water, death, sky, threshold). Deliberately small
+  (Art. VI — each axis is player-facing complexity). Serialized by lowercase `key()`, not enum name.
+- **`Act`** — transient delta {domain weights, reciprocity∈[-1,1], binding∈[-1,1], defilement∈[0,1],
+  magnitude≥0}. `sum()`: domain weights **add**, magnitude **adds**, polarity axes are
+  **magnitude-weighted means** (a big reagent dominates the mix). `interactionStrength = clamp01(|recip|
+  + |binding| + defile)` — the "|interaction|" term of the disturbance write.
+- **`Integration`** — the ONLY Act→State path (Грамматика §2). Per bond-domain weight `w`:
+  `debt += max(0,-recip)·mag·w`, `loyalty += max(0,+recip)·mag·w`, `resentment += defile·mag·w`,
+  `disturbance[D] += interactionStrength·mag·w`, `sealIntegrity = clamp01(integrity + binding·mag)`.
+- **`Decay`** — asymmetric (the Article III loop guard). Rates per 1200-tick decay step:
+  `RESENTMENT_RATE=0.5`, `LOYALTY_RATE=0.25`, `FEAR_RATE=0.5`. **debt never decays here** (only
+  reciprocity>0 acts pay it). `resentment` floors at `debt + Σ mark.severity`; loyalty/fear → 0.
+- **`Resolution`** — success = `align·standing·placePenalty`, never a dice roll (Грамматика §6-7). Knobs:
+  `DEBT_WEIGHT=0.5`, `LOYALTY_WEIGHT=0.5` (standing = clamp01(1 − 0.5·debt + 0.5·loyalty));
+  `SUCCESS_THRESHOLD=0.5`, `RESENT_RESIST=0.5`, `DEFILE_THRESHOLD=0.5`, `STANDING_CAPACITY=3` (magnitude a
+  unit of standing carries before OVERREACH). Failure precedence: DEFILEMENT → RESISTANCE → OVERREACH →
+  MISALIGNMENT → SUCCESS. `[UNVERIFIED]` — all thresholds are first-pass; tune once rites read them.
+- **`ChunkSoulData.disturbance`** — per-domain successor to scalar `ChunkTaintData`. Same asymmetric
+  floor: `SCAR_FRACTION=0.1` of every applied add scars permanently; `MAX_DISTURBANCE=100`,
+  `DECAY_PER_TICK=0.5` (mirrors the old taint numbers, now keyed by `Correspondence`).
+- **`PlayerSoulData`** — essence + totalDebt + marks(List<Bond>) + amulets(List<UUID>); copied on
+  `PlayerEvent.Clone` so debt survives death (Модель §3). `spendEssence` debits only if affordable
+  (consume-before-input discipline carried from the old power model).
+- Persistence: Forge **Capabilities** (`HexereiCapabilities`) — chunk attachment persists with the chunk,
+  player attachment copied on respawn. `[UNVERIFIED]` runtime attach/persist — covered by compile + NBT
+  round-trip unit tests; in-world GameTest/dedicated-server smoke still pending.
