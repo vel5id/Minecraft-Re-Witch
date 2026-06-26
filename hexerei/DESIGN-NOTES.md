@@ -466,3 +466,31 @@ down each second and the curse departs when `fear ≤ 0`.
 - **Cleansing rite** (the counter), **offline-target curses**, **curse projectile**, **fear-scaled
   strength**, the remaining HEE curses — follow-up slices.
 - **`runGameTestServer`** still blocked by the pre-existing Patchouli mixin error.
+  *(Update: unblocked on the NeoForge 1.21.1 port — Patchouli no longer crashes the gametest server there.)*
+
+# Lunar Phases + Blood Moon + Eclipse Rite slice
+
+The moon now modulates every rite, and a rare **blood moon** event raises the stakes. Full design in
+`docs/superpowers/specs/2026-06-25-lunar-bloodmoon-design.md`; the implemented numbers below match it.
+
+## Deliberate design decisions
+- **`LunarPhase`** (pure, unit-tested) maps the 8 vanilla moon phases (index 0=FULL … 4=NEW) to an
+  `(effectMul, taintMul)` pair read at `RitualActivation` time — **no `Rite.perform` signature change**.
+  The product is kept ≈ neutral so a phase is a *trade*, not a free lunch:
+  FULL **1.25 / 0.80** (strongest, cleanest), NEW **0.80 / 1.30** (weakest, dirtiest), gibbous 1.10/0.90,
+  crescent 0.95/1.10, quarters 1.00/1.00 (exact baseline). The funding altar's artefact multiplier, the
+  lunar pair, and an active blood moon all compose into the rite's `taintMul`/`effectMul`.
+- **Blood Moon event** (`BloodMoonData` SavedData + `BloodMoonPulse`): any non-eclipse rite has a small
+  chance to ignite it — `igniteChance = 0.02` (×2.5 → **0.05** on a NEW moon, tying the event to the
+  dark of the moon). While active: `RITUAL_EFFECT_MUL = 1.5` and `BLOOD_TAINT_MUL = 1.5` (rites markedly
+  stronger *and* dirtier — power with a price), and `BLOOD_AMBIENT_TAINT = 0.5`/altar/200t (~9 taint/night
+  near an altar) plus a Weakness I aura (radius 24, dur 220t, mirroring `TaintPunishment.REFRESH_TICKS`).
+  Night starts at gametime **13000** (vanilla nightfall).
+- **Eclipse Rite** (`EclipseRite`): the deliberate igniter — power cost **220** (new top of the 40→150
+  ladder, ~1.5× the prior top) and taint **40** (above Tempest's 25). `WaningMoonRite` keeps its
+  midnight-set behaviour (`midnightOf`).
+- **Client/server split:** the blood-moon flag is server-authoritative (`BloodMoonData`), synced via
+  `BloodMoonSyncS2CPacket` → `ClientBloodMoonCache`, and rendered by `BloodMoonSkyHandler` (red sky tint).
+
+## Known `[UNVERIFIED]`
+- All lunar/blood-moon constants are first-pass (per CLAUDE.md), tuned by playtest.
