@@ -1,5 +1,8 @@
 package com.vel5id.hexerei.block;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
@@ -16,6 +19,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * no huge variant (v1). Renders as a single cross-sprite. Drops itself via loot JSON.
  */
 public class WitchMushroomBlock extends BushBlock {
+    // 1.21 requires every BushBlock subclass to expose a block codec; the glow flag is the only extra state.
+    public static final MapCodec<WitchMushroomBlock> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+            Codec.BOOL.fieldOf("glow").forGetter(b -> b.glow),
+            propertiesCodec()
+    ).apply(inst, WitchMushroomBlock::new));
+
     private static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
 
     private final boolean glow;
@@ -23,6 +32,11 @@ public class WitchMushroomBlock extends BushBlock {
     public WitchMushroomBlock(boolean glow, Properties props) {
         super(props);
         this.glow = glow;
+    }
+
+    @Override
+    public MapCodec<WitchMushroomBlock> codec() {
+        return CODEC;
     }
 
     /** Whether this mushroom emits light (zevanty). The light level is set via block Properties. */

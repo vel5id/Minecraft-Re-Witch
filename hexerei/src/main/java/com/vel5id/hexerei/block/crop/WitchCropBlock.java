@@ -1,5 +1,6 @@
 package com.vel5id.hexerei.block.crop;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -73,6 +74,13 @@ public class WitchCropBlock extends BushBlock implements BonemealableBlock {
         this.produce = produce;
         this.bonus = bonus;
         registerDefaultState(stateDefinition.any().setValue(ageProperty(maxAge), 0));
+    }
+
+    // 1.21 requires a block codec; these crops carry per-crop item Suppliers from registration and are
+    // never serialized via the block codec, so a self-returning stub satisfies the contract.
+    @Override
+    public MapCodec<? extends BushBlock> codec() {
+        return simpleCodec(p -> this);
     }
 
     public int maxAge() {
@@ -183,7 +191,7 @@ public class WitchCropBlock extends BushBlock implements BonemealableBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter w, BlockPos p, BlockState s) {
+    public ItemStack getCloneItemStack(LevelReader w, BlockPos p, BlockState s) {
         return new ItemStack(seed.get());
     }
 }

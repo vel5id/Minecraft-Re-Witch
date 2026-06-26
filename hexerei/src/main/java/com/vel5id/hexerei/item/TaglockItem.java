@@ -38,7 +38,7 @@ public class TaglockItem extends Item {
         if (target instanceof Player victim) {
             bind(stack, victim);
             player.level().playSound(null, player.blockPosition(),
-                    SoundEvents.SOUL_ESCAPE, SoundSource.PLAYERS, 0.6f, 1.4f);
+                    SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 0.6f, 1.4f);
             return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;

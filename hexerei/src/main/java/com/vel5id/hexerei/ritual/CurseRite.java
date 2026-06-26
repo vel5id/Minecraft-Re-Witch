@@ -66,7 +66,7 @@ public final class CurseRite implements Rite {
             }
         }
 
-        level.playSound(null, center, SoundEvents.SOUL_ESCAPE, SoundSource.BLOCKS, 0.9f, 0.7f);
+        level.playSound(null, center, SoundEvents.SOUL_ESCAPE.value(), SoundSource.BLOCKS, 0.9f, 0.7f);
         level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
                 center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
                 20, 0.4, 0.6, 0.4, 0.04);

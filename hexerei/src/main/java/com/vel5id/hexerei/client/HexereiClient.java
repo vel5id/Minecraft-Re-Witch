@@ -14,7 +14,6 @@ import com.vel5id.hexerei.registry.HexereiItems;
 import com.vel5id.hexerei.registry.HexereiMenus;
 import com.vel5id.hexerei.registry.HexereiParticles;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +23,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -35,12 +35,17 @@ public final class HexereiClient {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            MenuScreens.register(HexereiMenus.CHARM_POUCH.get(), CharmPouchScreen::new);
             // Per-brew model selection: one item, 6 textures, picked by the catalog index in NBT.
             ItemProperties.register(HexereiItems.BREW.get(),
                     ResourceLocation.fromNamespaceAndPath(HexereiMod.MODID, "brew"),
                     (stack, level, entity, seed) -> BrewItem.modelIndex(stack) / 10.0f);
         });
+    }
+
+    // NeoForge 1.21: menu screens register through RegisterMenuScreensEvent, not the now-private MenuScreens.register.
+    @SubscribeEvent
+    public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
+        event.register(HexereiMenus.CHARM_POUCH.get(), CharmPouchScreen::new);
     }
 
     @SubscribeEvent

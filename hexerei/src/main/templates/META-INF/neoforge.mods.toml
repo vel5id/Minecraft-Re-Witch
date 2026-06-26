@@ -1,5 +1,5 @@
 # neoforge.mods.toml — NeoForge renamed META-INF/mods.toml to this filename; a leftover mods.toml is ignored.
-# Lives under src/main/templates so the generateModMetadata task expands the ${...} tokens. TOML v0.5.0.
+# Lives under src/main/templates so the generateModMetadata task expands the build-property tokens. TOML v0.5.0.
 modLoader="javafml" # mandatory
 loaderVersion="${loader_version_range}" # mandatory — FML loader major-version range (NeoForge 1.21.x = 4.x)
 license="${mod_license}"
