@@ -2,5 +2,5 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [ "i i", "i i", "iii" ],
   "key": { "i": { "item": "minecraft:iron_ingot" } },
-  "result": { "item": "hexerei:cauldron" }
+  "result": { "id": "hexerei:cauldron" }
 }

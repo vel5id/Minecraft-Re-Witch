@@ -1,0 +1,1 @@
+{ "type": "minecraft:crafting_shapeless", "ingredients": [ { "item": "minecraft:honeycomb" }, { "item": "minecraft:string" } ], "result": { "id": "hexerei:wax_poppet" } }

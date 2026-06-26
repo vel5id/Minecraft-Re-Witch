@@ -9,5 +9,5 @@
     "x": { "item": "minecraft:stone_bricks" },
     "y": { "item": "hexerei:witchlog" }
   },
-  "result": { "item": "hexerei:altar", "count": 3 }
+  "result": { "id": "hexerei:altar", "count": 3 }
 }
