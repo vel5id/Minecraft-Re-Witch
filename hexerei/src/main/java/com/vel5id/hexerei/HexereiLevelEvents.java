@@ -1,24 +1,23 @@
 package com.vel5id.hexerei;
 
 import com.vel5id.hexerei.item.AmuletTickHandler;
-import com.vel5id.hexerei.network.HexereiNetwork;
 import com.vel5id.hexerei.network.TaintSyncS2CPacket;
 import com.vel5id.hexerei.ritual.WorldTaintAura;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.level.ChunkWatchEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.level.ChunkWatchEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public final class HexereiLevelEvents {
     private HexereiLevelEvents() {}
 
+    // NeoForge split the Forge LevelTickEvent into Pre/Post; Post == the old phase==END.
     @SubscribeEvent
-    public static void onLevelTick(TickEvent.LevelTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        if (!(event.level instanceof ServerLevel sl)) return;
+    public static void onLevelTick(LevelTickEvent.Post event) {
+        if (!(event.getLevel() instanceof ServerLevel sl)) return;
         long gt = sl.getGameTime();
         if (gt % 200 == 0) {
             WorldTaintAura.pulse(sl);
@@ -37,10 +36,8 @@ public final class HexereiLevelEvents {
         ChunkPos pos = event.getPos();
         float taint = com.vel5id.hexerei.soul.Disturbance.total(sl, pos);
         if (taint > 0f) {
-            // Send current taint to the player who just loaded this chunk
-            HexereiNetwork.CHANNEL.send(
-                    PacketDistributor.PLAYER.with(event::getPlayer),
-                    new TaintSyncS2CPacket(pos.toLong(), taint));
+            // Send current taint to the player who just loaded this chunk.
+            PacketDistributor.sendToPlayer(event.getPlayer(), new TaintSyncS2CPacket(pos.toLong(), taint));
         }
     }
 }

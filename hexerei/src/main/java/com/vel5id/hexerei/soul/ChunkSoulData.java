@@ -1,10 +1,11 @@
 package com.vel5id.hexerei.soul;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.EnumMap;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ import java.util.Map;
  * <p>Decay is asymmetric: disturbance settles toward 0, but a permanent per-domain
  * floor (10% of every addition) holds forever — the ancient scar. This is the
  * per-domain successor to the scalar {@code ChunkTaintData} the loop used before.
+ *
+ * <p>On NeoForge this rides the {@code CHUNK_SOUL} data attachment; mutators must call
+ * {@code chunk.setUnsaved(true)} so the change persists to the region file.
  */
 public class ChunkSoulData implements INBTSerializable<CompoundTag> {
 
@@ -106,7 +110,18 @@ public class ChunkSoulData implements INBTSerializable<CompoundTag> {
         lastDecayTick += steps * DECAY_INTERVAL;
     }
 
+    // Registry-free codecs (NbtOps) — the attachment's HolderLookup.Provider is unused; the no-arg
+    // overloads remain the source of truth and keep the unit tests provider-agnostic.
     @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        return serializeNBT();
+    }
+
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        deserializeNBT(tag);
+    }
+
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.put("disturbance", DOMAIN_MAP.encodeStart(NbtOps.INSTANCE, disturbance).result().orElseGet(CompoundTag::new));
@@ -116,7 +131,6 @@ public class ChunkSoulData implements INBTSerializable<CompoundTag> {
         return tag;
     }
 
-    @Override
     public void deserializeNBT(CompoundTag tag) {
         disturbance.clear();
         DOMAIN_MAP.parse(NbtOps.INSTANCE, tag.get("disturbance")).result().ifPresent(disturbance::putAll);

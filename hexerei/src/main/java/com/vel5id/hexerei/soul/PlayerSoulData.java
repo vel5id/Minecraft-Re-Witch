@@ -1,11 +1,12 @@
 package com.vel5id.hexerei.soul;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,10 @@ import java.util.UUID;
  * Per-player soul state (Модель §3): the witch's essence, the bonds the world has
  * laid on her, and the amulets she wears. This is what the dream generator reads.
  *
- * <p>It MUST survive death — death does not pay debt (the clone handler copies it
- * on respawn). {@code essence} is the shared resource of the Article III loop;
- * nothing outside this bloodstream may grant power.
+ * <p>It MUST survive death — death does not pay debt. On NeoForge this is carried by
+ * the {@code PLAYER_SOUL} data attachment with {@code copyOnDeath()} (the per-domain
+ * successor to the Forge clone handler). {@code essence} is the shared resource of
+ * the Article III loop; nothing outside this bloodstream may grant power.
  */
 public class PlayerSoulData implements INBTSerializable<CompoundTag> {
 
@@ -44,7 +46,18 @@ public class PlayerSoulData implements INBTSerializable<CompoundTag> {
     public void wearAmulet(UUID bondId) { if (!amulets.contains(bondId)) amulets.add(bondId); }
     public void removeAmulet(UUID bondId) { amulets.remove(bondId); }
 
+    // The soul-data codecs are registry-free (NbtOps), so the attachment's HolderLookup.Provider is unused;
+    // the no-arg overloads stay the source of truth and keep copyFrom / unit tests simple.
     @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        return serializeNBT();
+    }
+
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        deserializeNBT(tag);
+    }
+
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putFloat("essence", essence);
@@ -56,7 +69,6 @@ public class PlayerSoulData implements INBTSerializable<CompoundTag> {
         return tag;
     }
 
-    @Override
     public void deserializeNBT(CompoundTag tag) {
         essence = tag.getFloat("essence");
         totalDebt = tag.getFloat("totalDebt");
@@ -68,7 +80,7 @@ public class PlayerSoulData implements INBTSerializable<CompoundTag> {
                 .result().ifPresent(amulets::addAll);
     }
 
-    /** Copy all state from another instance (used on respawn so debt survives death). */
+    /** Copy all state from another instance (kept as a utility; death-copy is handled by copyOnDeath). */
     public void copyFrom(PlayerSoulData other) {
         deserializeNBT(other.serializeNBT());
     }

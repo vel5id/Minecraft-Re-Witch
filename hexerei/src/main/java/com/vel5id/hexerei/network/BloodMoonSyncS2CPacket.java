@@ -1,27 +1,32 @@
 package com.vel5id.hexerei.network;
 
+import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.client.ClientBloodMoonCache;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+/** S2C: the level's blood-moon state changed (a whole-level event). Mirrors {@link TaintSyncS2CPacket}. */
+public record BloodMoonSyncS2CPacket(boolean active) implements CustomPacketPayload {
 
-/** Server -> client: the level's blood-moon state changed. Mirrors {@link TaintSyncS2CPacket}. */
-public record BloodMoonSyncS2CPacket(boolean active) {
-    public static void encode(BloodMoonSyncS2CPacket p, FriendlyByteBuf buf) {
-        buf.writeBoolean(p.active());
+    public static final Type<BloodMoonSyncS2CPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(HexereiMod.MODID, "blood_moon_sync"));
+
+    public static final StreamCodec<ByteBuf, BloodMoonSyncS2CPacket> STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.BOOL, BloodMoonSyncS2CPacket::active,
+                    BloodMoonSyncS2CPacket::new);
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static BloodMoonSyncS2CPacket decode(FriendlyByteBuf buf) {
-        return new BloodMoonSyncS2CPacket(buf.readBoolean());
-    }
-
-    public static void handle(BloodMoonSyncS2CPacket pkt, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() ->
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                        () -> () -> ClientBloodMoonCache.set(pkt.active())));
-        ctx.get().setPacketHandled(true);
+    /** Runs only on the physical client (S2C handlers are never invoked server-side). */
+    public static void handle(BloodMoonSyncS2CPacket pkt, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> ClientBloodMoonCache.set(pkt.active()));
     }
 }

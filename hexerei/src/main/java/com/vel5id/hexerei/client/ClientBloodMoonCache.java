@@ -1,10 +1,12 @@
 package com.vel5id.hexerei.client;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-/** Client-side read-only mirror of the server's blood-moon flag, fed by {@code BloodMoonSyncS2CPacket}. */
-@OnlyIn(Dist.CLIENT)
+/**
+ * Client-side read-only mirror of the server's blood-moon flag, fed by {@code BloodMoonSyncS2CPacket}.
+ *
+ * <p>Intentionally NOT {@code @OnlyIn(Dist.CLIENT)}: the common S2C payload handler references it, so the
+ * class must be loadable on a dedicated server (where its playToClient handler never runs). It holds only
+ * a primitive flag, so loading it server-side is harmless.
+ */
 public final class ClientBloodMoonCache {
     private ClientBloodMoonCache() {}
 
