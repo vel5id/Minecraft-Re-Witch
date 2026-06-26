@@ -23,11 +23,20 @@ public final class RitualResolver {
 
     /** Resolve the act against the dominant domain's disturbance and the place's total disturbance. */
     public static Resolved resolve(Act act, float domainDisturbance, float totalDisturbance) {
+        return resolve(act, domainDisturbance, totalDisturbance, act.magnitude());
+    }
+
+    /**
+     * As {@link #resolve(Act, float, float)} but with an explicit {@code reachMagnitude} for the OVERREACH
+     * test (the caster's demand — her sacrifice — rather than the act's full magnitude, which the rune ring
+     * inflates without that being an overreach).
+     */
+    public static Resolved resolve(Act act, float domainDisturbance, float totalDisturbance, float reachMagnitude) {
         Disposition neutralCaster = Disposition.EMPTY;   // standing 1.0 until a caster is threaded in
         float domainResentment = SoulMath.clamp01(domainDisturbance / DISTURB_NORM);
         float place = SoulMath.clamp01(totalDisturbance / DISTURB_NORM);
         return new Resolved(
-                Resolution.classify(act, domainResentment, neutralCaster, place),
+                Resolution.classify(act, domainResentment, neutralCaster, place, reachMagnitude),
                 Resolution.success(act, domainResentment, neutralCaster, place));
     }
 

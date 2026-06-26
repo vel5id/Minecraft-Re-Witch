@@ -57,6 +57,18 @@ public final class Resolution {
 
     /** Classify how the act resolves; the order encodes precedence among failure causes. */
     public static Outcome classify(Act act, float domainResentment, Disposition caster, float disturbance) {
+        return classify(act, domainResentment, caster, disturbance, act.magnitude());
+    }
+
+    /**
+     * As {@link #classify(Act, float, Disposition, float)} but with an explicit {@code reachMagnitude} for
+     * the OVERREACH test — the demand the caster actually bears, which can differ from the act's total
+     * magnitude. A ritual's rune ring inflates {@code act.magnitude()} (the runes still write their domain
+     * and binding), but the witch's reach is her sacrifice, not the apparatus; the ring is the channel,
+     * not an overreach. Defaulting {@code reachMagnitude = act.magnitude()} reproduces the simple form.
+     */
+    public static Outcome classify(Act act, float domainResentment, Disposition caster, float disturbance,
+                                   float reachMagnitude) {
         float s = success(act, domainResentment, caster, disturbance);
         if (act.defilement() >= DEFILE_THRESHOLD && s < SUCCESS_THRESHOLD) {
             return Outcome.DEFILEMENT;
@@ -64,7 +76,7 @@ public final class Resolution {
         if (act.binding() > 0f && domainResentment >= RESENT_RESIST && s < SUCCESS_THRESHOLD) {
             return Outcome.RESISTANCE;
         }
-        if (act.magnitude() > STANDING_CAPACITY * standing(caster)) {
+        if (reachMagnitude > STANDING_CAPACITY * standing(caster)) {
             return Outcome.OVERREACH;
         }
         if (s < SUCCESS_THRESHOLD) {

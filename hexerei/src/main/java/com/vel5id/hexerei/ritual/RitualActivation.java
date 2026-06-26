@@ -75,12 +75,13 @@ public final class RitualActivation {
             // ring's rune domains; a domain already disturbed resists. A resisted/misaligned cast still
             // spent the sacrifice — it BOTCHES (feeds the loop with more disturbance), never a free no-op.
             com.vel5id.hexerei.soul.Act act = buildRitualAct(level, center, recipe, id);
+            float reach = sacrificeReach(id); // OVERREACH = the witch's demand (her sacrifice), NOT the rune ring
             com.vel5id.hexerei.soul.Correspondence dom = com.vel5id.hexerei.soul.RitualResolver.dominantDomain(act);
             net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(center);
             float domDist = dom == null ? 0f : com.vel5id.hexerei.soul.Disturbance.domainTotal(level, cp, dom);
             float totDist = com.vel5id.hexerei.soul.Disturbance.total(level, cp);
             if (!com.vel5id.hexerei.soul.RitualResolver.isSuccess(
-                    com.vel5id.hexerei.soul.RitualResolver.resolve(act, domDist, totDist).outcome())) {
+                    com.vel5id.hexerei.soul.RitualResolver.resolve(act, domDist, totDist, reach).outcome())) {
                 if (dom != null) {
                     com.vel5id.hexerei.soul.Disturbance.add(level, cp, dom,
                             com.vel5id.hexerei.soul.RitualResolver.BOTCH_DISTURBANCE);
@@ -132,6 +133,14 @@ public final class RitualActivation {
             }
         }
         return com.vel5id.hexerei.soul.ActAssembler.assemble(reagents);
+    }
+
+    /** The caster's reach for the OVERREACH test: the sacrifice reagent's magnitude (0 if it carries no spirit). */
+    private static float sacrificeReach(String sacrificeId) {
+        net.minecraft.resources.ResourceLocation sid = net.minecraft.resources.ResourceLocation.tryParse(sacrificeId);
+        com.vel5id.hexerei.soul.ReagentDescriptor sac =
+                sid == null ? null : com.vel5id.hexerei.soul.ReagentRegistry.get(sid);
+        return sac == null ? 0f : sac.magnitude();
     }
 
     /** A small chance (bumped on a new moon) that performing any non-eclipse rite ignites a blood moon. */

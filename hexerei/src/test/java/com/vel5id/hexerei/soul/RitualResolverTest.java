@@ -37,4 +37,15 @@ class RitualResolverTest {
         assertSame(Correspondence.DEATH, RitualResolver.dominantDomain(mixed));
         assertNull(RitualResolver.dominantDomain(new Act(Map.of(), 0f, 0f, 0f, 0f)));
     }
+
+    @Test void fullRingInflatesMagnitude_butReachIsTheSacrifice_soCalmSucceeds() {
+        // A full rune ring (12 runes × 0.3) + a sacrifice (~1.0) sums to magnitude ~4.6, past
+        // STANDING_CAPACITY (3). The ring is the ritual's channel, not the witch's overreach — her reach
+        // is the sacrifice. Without the reach split, every complete ritual would OVERREACH even when calm.
+        Act fullRing = new Act(Map.of(Correspondence.FOREST, 12f), 0f, 0.2f, 0f, 4.6f);
+        // Legacy reach (== act.magnitude 4.6) trips OVERREACH:
+        assertSame(Resolution.Outcome.OVERREACH, RitualResolver.resolve(fullRing, 0f, 0f).outcome());
+        // Reach = the sacrifice's magnitude (1.0): a calm place succeeds (the documented Slice-D intent):
+        assertSame(Resolution.Outcome.SUCCESS, RitualResolver.resolve(fullRing, 0f, 0f, 1.0f).outcome());
+    }
 }

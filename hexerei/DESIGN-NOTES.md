@@ -384,6 +384,14 @@ are kept (the matched recipe is the intended effect), but whether it FIRES is a 
   its sacrifice and essence, so instead of a free no-op it writes `BOTCH_DISTURBANCE=10` to that domain,
   plays a smoke/fizzle telegraph, and returns `Result.FAILED` without performing. SUCCESS in calm/low-
   disturbance places (normal play unaffected).
+- **OVERREACH reach = the sacrifice, not the ring** — the rite's `Act` magnitude sums the sacrifice **plus**
+  every ring rune (0.3 each), so a full small ring (12 runes) alone is 3.6 — past `STANDING_CAPACITY` (3).
+  Measuring OVERREACH against `act.magnitude()` made *every* complete rite OVERREACH even in a calm place
+  (contradicting the bullet above). Fixed: `RitualActivation` passes the **sacrifice reagent's magnitude**
+  as the `reachMagnitude` to `RitualResolver.resolve` / `Resolution.classify` (new overloads; the runes
+  still write their domain + binding into the act). Диегетически: the ring is the rite's *channel*, the
+  witch's *reach* is what she sacrifices. (Latent since Slice D; surfaced once the NeoForge port unblocked
+  `runGameTestServer` — the ritual GameTests had never actually run on Forge.)
 - **Payment is essence** — `consumePower` already debits the altar's earned reservoir after Slice B.
   All knobs `[UNVERIFIED]`; in-world ritual flow needs a playtest.
 
