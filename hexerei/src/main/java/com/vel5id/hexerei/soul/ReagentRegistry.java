@@ -20,7 +20,7 @@ public final class ReagentRegistry {
 
     private static void put(String path, Correspondence domain,
                             float reciprocity, float binding, float defilement, float magnitude) {
-        REAGENTS.put(new ResourceLocation("hexerei", path),
+        REAGENTS.put(ResourceLocation.fromNamespaceAndPath("hexerei", path),
                 new ReagentDescriptor(domain, reciprocity, binding, defilement, magnitude));
     }
 

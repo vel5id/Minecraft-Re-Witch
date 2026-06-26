@@ -11,5 +11,5 @@ public final class HexereiTags {
 
     /** Blocks that, placed directly under a cauldron, bring it to a boil. */
     public static final TagKey<Block> CAULDRON_HEAT_SOURCES =
-            BlockTags.create(new ResourceLocation(HexereiMod.MODID, "cauldron_heat_sources"));
+            BlockTags.create(ResourceLocation.fromNamespaceAndPath(HexereiMod.MODID, "cauldron_heat_sources"));
 }

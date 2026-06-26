@@ -5,25 +5,25 @@ import com.vel5id.hexerei.blockentity.AltarBlockEntity;
 import com.vel5id.hexerei.blockentity.CauldronBlockEntity;
 import com.vel5id.hexerei.blockentity.RitualSigilBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class HexereiBlockEntities {
     private HexereiBlockEntities() {}
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
-            DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, HexereiMod.MODID);
+            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, HexereiMod.MODID);
 
-    public static final RegistryObject<BlockEntityType<AltarBlockEntity>> ALTAR =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AltarBlockEntity>> ALTAR =
             BLOCK_ENTITIES.register("altar",
                     () -> BlockEntityType.Builder.of(AltarBlockEntity::new, HexereiBlocks.ALTAR.get()).build(null));
 
-    public static final RegistryObject<BlockEntityType<CauldronBlockEntity>> CAULDRON =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CauldronBlockEntity>> CAULDRON =
             BLOCK_ENTITIES.register("cauldron",
                     () -> BlockEntityType.Builder.of(CauldronBlockEntity::new, HexereiBlocks.CAULDRON.get()).build(null));
 
-    public static final RegistryObject<BlockEntityType<RitualSigilBlockEntity>> RITUAL_SIGIL =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RitualSigilBlockEntity>> RITUAL_SIGIL =
             BLOCK_ENTITIES.register("ritual_sigil",
                     () -> BlockEntityType.Builder.of(RitualSigilBlockEntity::new, HexereiBlocks.RITUAL_SIGIL.get()).build(null));
 }

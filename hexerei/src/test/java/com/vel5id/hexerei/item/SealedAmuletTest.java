@@ -127,7 +127,7 @@ class SealedAmuletTest {
     @Test void sealedBondRoundTripsThroughNbtOps() {
         Bond bond = new Bond(
                 UUID.fromString("00000000-0000-0000-0000-0000000000aa"),
-                new ResourceLocation("hexerei", "forest_warden"),
+                ResourceLocation.fromNamespaceAndPath("hexerei", "forest_warden"),
                 Correspondence.FOREST,
                 new Disposition(1.4f, 0.5f, 0f, 0f),
                 new SealRef(0.75f),
@@ -135,9 +135,9 @@ class SealedAmuletTest {
                 List.of(),
                 100L, 120L);
         Tag nbt = Bond.CODEC.encodeStart(NbtOps.INSTANCE, bond)
-                .getOrThrow(false, e -> fail("encode failed: " + e));
+                .getOrThrow(e -> new AssertionError("encode failed: " + e));
         Bond back = Bond.CODEC.parse(NbtOps.INSTANCE, nbt)
-                .getOrThrow(false, e -> fail("decode failed: " + e));
+                .getOrThrow(e -> new AssertionError("decode failed: " + e));
         assertEquals(bond, back);
         assertTrue(back.isSealed());
         assertEquals(0.75f, back.seal().integrity(), 1e-6);

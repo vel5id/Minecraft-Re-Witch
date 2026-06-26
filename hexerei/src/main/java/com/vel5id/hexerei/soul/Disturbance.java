@@ -17,7 +17,7 @@ public final class Disturbance {
 
     private static ChunkSoulData of(ServerLevel level, ChunkPos cp) {
         LevelChunk chunk = level.getChunk(cp.x, cp.z);
-        ChunkSoulData soul = chunk.getCapability(HexereiCapabilities.CHUNK_SOUL).resolve().orElse(null);
+        ChunkSoulData soul = chunk.getData(HexereiAttachments.CHUNK_SOUL);
         if (soul != null) soul.lazyDecay(level.getGameTime());
         return soul;
     }
@@ -27,6 +27,7 @@ public final class Disturbance {
         ChunkSoulData soul = of(level, cp);
         if (soul == null || amount <= 0f) return;
         soul.addDisturbance(domain, amount);
+        level.getChunk(cp.x, cp.z).setUnsaved(true);
         HexereiNetwork.sendTaintSync(level, cp);
     }
 

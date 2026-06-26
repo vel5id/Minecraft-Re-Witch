@@ -2,15 +2,15 @@ package com.vel5id.hexerei.menu;
 
 import com.vel5id.hexerei.item.CharmPouchItem;
 import com.vel5id.hexerei.registry.HexereiMenus;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 /**
  * Container menu for the {@link CharmPouchItem}: 3 charm-only slots backed by the held pouch stack's NBT,
@@ -25,7 +25,7 @@ public class CharmPouchMenu extends AbstractContainerMenu {
     private final ItemStackHandler handler;
 
     /** Client-side factory: the opening packet carries which hand holds the pouch. */
-    public static CharmPouchMenu fromNetwork(int id, Inventory inv, FriendlyByteBuf buf) {
+    public static CharmPouchMenu fromNetwork(int id, Inventory inv, RegistryFriendlyByteBuf buf) {
         InteractionHand hand = buf.readBoolean() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         return new CharmPouchMenu(id, inv, inv.player.getItemInHand(hand), hand);
     }

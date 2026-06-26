@@ -51,7 +51,7 @@ public final class VerdantRite implements Rite {
             BlockPos p = center.offset(c[0], c[1], c[2]);
             BlockState bs = level.getBlockState(p);
             if (bs.getBlock() instanceof BonemealableBlock bm
-                    && bm.isValidBonemealTarget(level, p, bs, false)
+                    && bm.isValidBonemealTarget(level, p, bs)
                     && bm.isBonemealSuccess(level, rng, p, bs)) {
                 bm.performBonemeal(level, rng, p, bs);
                 grown++;

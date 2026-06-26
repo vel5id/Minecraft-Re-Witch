@@ -22,7 +22,7 @@ public final class ReleaseBlocks {
     private static final Map<ResourceLocation, Release> RELEASES = new HashMap<>();
 
     private static void put(String path, Correspondence domain, float magnitude, float defilement) {
-        RELEASES.put(new ResourceLocation("hexerei", path), new Release(domain, magnitude, defilement));
+        RELEASES.put(ResourceLocation.fromNamespaceAndPath("hexerei", path), new Release(domain, magnitude, defilement));
     }
 
     static {

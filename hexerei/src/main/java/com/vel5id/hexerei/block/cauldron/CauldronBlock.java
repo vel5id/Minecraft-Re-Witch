@@ -4,7 +4,7 @@ import com.vel5id.hexerei.blockentity.CauldronBlockEntity;
 import com.vel5id.hexerei.registry.HexereiBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -81,25 +81,24 @@ public class CauldronBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack held, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof CauldronBlockEntity be)) {
-            return InteractionResult.PASS;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        ItemStack held = player.getItemInHand(hand);
 
         if (held.is(Items.WATER_BUCKET)) {
             if (be.isFilled()) {
-                return InteractionResult.PASS; // already full — no phantom swing
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; // already full — no phantom swing
             }
             if (!level.isClientSide && be.fillWater() && !player.getAbilities().instabuild) {
                 player.setItemInHand(hand, new ItemStack(Items.BUCKET));
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
 
         if (held.is(Items.BUCKET)) {
             if (!be.hasWater()) {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
             if (!level.isClientSide) {
                 be.drain(); // rinse out a wrong/incomplete mix
@@ -113,16 +112,16 @@ public class CauldronBlock extends Block implements EntityBlock {
                     }
                 }
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
 
         if (held.is(Items.GLASS_BOTTLE)) {
             if (level.isClientSide) {
-                return be.isReady() ? InteractionResult.SUCCESS : InteractionResult.PASS;
+                return be.isReady() ? ItemInteractionResult.SUCCESS : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
             ItemStack brew = be.collectBrew();
             if (brew == null) {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
             if (!player.getAbilities().instabuild) {
                 held.shrink(1);
@@ -130,9 +129,9 @@ public class CauldronBlock extends Block implements EntityBlock {
             if (!player.getInventory().add(brew)) {
                 player.drop(brew, false);
             }
-            return InteractionResult.CONSUME;
+            return ItemInteractionResult.CONSUME;
         }
 
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 }

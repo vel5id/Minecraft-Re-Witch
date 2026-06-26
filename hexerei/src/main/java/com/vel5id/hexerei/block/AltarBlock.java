@@ -5,7 +5,7 @@ import com.vel5id.hexerei.item.ArtefactItem;
 import com.vel5id.hexerei.registry.HexereiBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nullable;
 
@@ -87,18 +87,18 @@ public class AltarBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack held, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof AltarBlockEntity be) {
             if (level.isClientSide) {
                 BlockPos core = be.corePos();
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                        () -> () -> com.vel5id.hexerei.client.AltarScreen.open(core));
-                return InteractionResult.sidedSuccess(true);
+                if (FMLEnvironment.dist == Dist.CLIENT) {
+                    com.vel5id.hexerei.client.AltarScreen.open(core);
+                }
+                return ItemInteractionResult.sidedSuccess(true);
             }
             // Server: artefact place/swap/retrieve on a formed altar, before the existing revalidate path.
             AltarBlockEntity core = be.coreBe();
             if (core != null) {
-                ItemStack held = player.getItemInHand(hand);
                 if (held.getItem() instanceof ArtefactItem) {
                     // Place or swap: store the new artefact (count 1), return the previous one to the player.
                     ItemStack prev = core.setArtefact(held.copyWithCount(1));
@@ -106,12 +106,12 @@ public class AltarBlock extends Block implements EntityBlock {
                     if (!prev.isEmpty()) {
                         giveOrDrop(player, prev);
                     }
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
                 // Offer a spirit-bearing reagent: consume one, free essence (diminishing returns).
                 com.vel5id.hexerei.soul.ReagentDescriptor reagent =
                         com.vel5id.hexerei.soul.ReagentRegistry.get(
-                                net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(held.getItem()));
+                                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(held.getItem()));
                 if (reagent != null) {
                     core.offer(reagent);
                     held.shrink(1);
@@ -121,18 +121,18 @@ public class AltarBlock extends Block implements EntityBlock {
                     }
                     level.playSound(null, pos, net.minecraft.sounds.SoundEvents.SOUL_ESCAPE,
                             net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 1.2f);
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
                 if (held.isEmpty() && player.isShiftKeyDown() && !core.getArtefact().isEmpty()) {
                     // Shift + empty hand retrieves the artefact.
                     giveOrDrop(player, core.setArtefact(ItemStack.EMPTY));
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
             }
             be.revalidateAndUpdate();
-            return InteractionResult.sidedSuccess(false);
+            return ItemInteractionResult.sidedSuccess(false);
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     /** Vanilla give-or-drop: add to the player's inventory, else drop at their feet. */

@@ -102,6 +102,21 @@ public final class RitualRecipes {
         return ALL.isEmpty() ? null : ALL.get(0);
     }
 
+    /**
+     * Resolves a {@link RitualRecipe} from a selected-rite id string (the {@code SELECTED_RITE} data
+     * component), or returns the first recipe as default. The data-component counterpart of
+     * {@link #fromTag(CompoundTag)}; called by {@code RitualChalkItem.getSelectedRecipe(ItemStack)}.
+     *
+     * @param riteId the selected rite id, or {@code null}/empty when none is set
+     */
+    public static RitualRecipe fromId(@Nullable String riteId) {
+        if (riteId != null && !riteId.isEmpty()) {
+            RitualRecipe r = BY_ID.get(riteId);
+            if (r != null) return r;
+        }
+        return ALL.isEmpty() ? null : ALL.get(0);
+    }
+
     public static Optional<RitualRecipe> match(Predicate<BlockPos> isGlyph, BlockPos center, String sacrificeId) {
         for (RitualRecipe r : ALL) {
             if (r.circleSize().isComplete(isGlyph, center) && r.sacrificeId().equals(sacrificeId)) {

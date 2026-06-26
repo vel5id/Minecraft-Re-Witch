@@ -1,6 +1,7 @@
 package com.vel5id.hexerei.power;
 
 import com.vel5id.hexerei.network.HexereiNetwork;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -22,7 +23,8 @@ public class BloodMoonData extends SavedData {
     private long endsAtDay = 0L;
 
     public static BloodMoonData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(BloodMoonData::load, BloodMoonData::new, KEY);
+        return level.getDataStorage().computeIfAbsent(
+            new SavedData.Factory<>(BloodMoonData::new, BloodMoonData::load, null), KEY);
     }
 
     public boolean isActive() {
@@ -72,13 +74,13 @@ public class BloodMoonData extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putBoolean("active", active);
         tag.putLong("endsAtDay", endsAtDay);
         return tag;
     }
 
-    public static BloodMoonData load(CompoundTag tag) {
+    public static BloodMoonData load(CompoundTag tag, HolderLookup.Provider registries) {
         BloodMoonData d = new BloodMoonData();
         d.active = tag.getBoolean("active");
         d.endsAtDay = tag.getLong("endsAtDay");

@@ -10,6 +10,8 @@ import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.power.PowerSource;
 import com.vel5id.hexerei.registry.HexereiBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -25,7 +27,6 @@ import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
@@ -164,8 +165,8 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
             }
             if (be.ticks % com.vel5id.hexerei.ritual.HungeringAltar.PENALTY_INTERVAL == 0L) {
                 float disturbance = hsl.getChunkAt(pos)
-                        .getCapability(com.vel5id.hexerei.soul.HexereiCapabilities.CHUNK_SOUL)
-                        .map(com.vel5id.hexerei.soul.ChunkSoulData::totalDisturbance).orElse(0f);
+                        .getData(com.vel5id.hexerei.soul.HexereiAttachments.CHUNK_SOUL)
+                        .totalDisturbance();
                 com.vel5id.hexerei.ritual.HungeringAltar.applyRegionalPenalty(hsl, pos, disturbance);
             }
         }
@@ -281,7 +282,7 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
 
         Map<Block, PowerSource> table = new HashMap<>();
         for (Map.Entry<String, AltarPowerTable.Entry> e : AltarPowerTable.VANILLA.entrySet()) {
-            Block b = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(e.getKey()));
+            Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(e.getKey()));
             if (b != null && b != Blocks.AIR) {
                 table.put(b, new PowerSource(e.getValue().factor(), e.getValue().limit()));
             }
@@ -526,8 +527,8 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
 
     // ---- NBT ----
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         if (core != null) {
             tag.putInt("CoreX", core.getX());
             tag.putInt("CoreY", core.getY());
@@ -540,7 +541,7 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         tag.putInt("RangeScale", rangeScale);
         tag.putInt("EnhancementLevel", enhancementLevel);
         if (!artefact.isEmpty()) {
-            tag.put("Artefact", artefact.save(new CompoundTag()));
+            tag.put("Artefact", artefact.save(registries));
         }
         // Derived from the artefact but persisted so a chunk-load before onLoad's recompute is still correct.
         tag.putFloat("TaintMul", taintMul);
@@ -554,8 +555,8 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         core = tag.contains("CoreX")
                 ? new BlockPos(tag.getInt("CoreX"), tag.getInt("CoreY"), tag.getInt("CoreZ"))
                 : null;
@@ -565,7 +566,7 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
         rechargeScale = tag.contains("RechargeScale") ? tag.getInt("RechargeScale") : 1;
         rangeScale = tag.contains("RangeScale") ? tag.getInt("RangeScale") : 1;
         enhancementLevel = tag.getInt("EnhancementLevel");
-        artefact = tag.contains("Artefact") ? ItemStack.of(tag.getCompound("Artefact")) : ItemStack.EMPTY;
+        artefact = tag.contains("Artefact") ? ItemStack.parseOptional(registries, tag.getCompound("Artefact")) : ItemStack.EMPTY;
         taintMul = tag.contains("TaintMul") ? tag.getFloat("TaintMul") : 1f;
         effectMul = tag.contains("EffectMul") ? tag.getFloat("EffectMul") : 1f;
         hungering = tag.getBoolean("Hungering");
@@ -593,25 +594,20 @@ public class AltarBlockEntity extends BlockEntity implements IPowerSource {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
-        saveAdditional(tag);
+        saveAdditional(tag, registries);
         return tag;
-    }
-
-    @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        load(tag);
     }
 
     public void clientTick(Level level, BlockPos pos, BlockState state) {
         if (!level.isClientSide) return;
-        net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(
-                net.minecraftforge.api.distmarker.Dist.CLIENT,
-                () -> () -> doClientParticleTick(level, pos));
+        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT) {
+            doClientParticleTick(level, pos);
+        }
     }
 
-    @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
+    @net.neoforged.api.distmarker.OnlyIn(net.neoforged.api.distmarker.Dist.CLIENT)
     private void doClientParticleTick(Level level, BlockPos pos) {
         com.vel5id.hexerei.power.TaintLevel tl =
                 com.vel5id.hexerei.client.ClientTaintCache.getLevel(new net.minecraft.world.level.ChunkPos(pos));

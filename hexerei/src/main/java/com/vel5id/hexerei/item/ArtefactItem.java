@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -34,7 +33,7 @@ public class ArtefactItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         // Archetype label: an amplifier raises taint (taintMul > 1), a purifier dampens it.
         String archetypeKey = def.taintMul() > 1.0f
                 ? "tooltip.hexerei.artefact.amplifier"

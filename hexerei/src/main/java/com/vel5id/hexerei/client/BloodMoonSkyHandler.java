@@ -1,13 +1,13 @@
 package com.vel5id.hexerei.client;
 
 import com.vel5id.hexerei.HexereiMod;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ViewportEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.ViewportEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 /** Tints the sky/fog deep red while a blood moon is active (the visible "blood moon" cue). Client-only. */
-@Mod.EventBusSubscriber(modid = HexereiMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = HexereiMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public final class BloodMoonSkyHandler {
     private BloodMoonSkyHandler() {}
 

@@ -3,6 +3,7 @@ package com.vel5id.hexerei.blockentity;
 import com.vel5id.hexerei.registry.HexereiBlockEntities;
 import com.vel5id.hexerei.ritual.CircleSize;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -66,15 +67,15 @@ public class RitualSigilBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putString(KEY_RITE, boundRite);
         tag.putString(KEY_SIZE, boundSize.name());
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         boundRite = tag.getString(KEY_RITE);
         boundSize = parseSize(tag.getString(KEY_SIZE));
     }
@@ -97,14 +98,9 @@ public class RitualSigilBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
-        saveAdditional(tag);
+        saveAdditional(tag, registries);
         return tag;
-    }
-
-    @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        load(tag);
     }
 }

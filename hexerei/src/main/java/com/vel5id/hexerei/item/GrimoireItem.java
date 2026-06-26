@@ -13,7 +13,7 @@ import vazkii.patchouli.api.PatchouliAPI;
 
 /** The Grimoire: right-click opens the Hexerei guide book. Patchouli renders it client-side from a server-issued open. */
 public class GrimoireItem extends Item {
-    public static final ResourceLocation BOOK_ID = new ResourceLocation(HexereiMod.MODID, "grimoire");
+    public static final ResourceLocation BOOK_ID = ResourceLocation.fromNamespaceAndPath(HexereiMod.MODID, "grimoire");
 
     public GrimoireItem(Properties properties) {
         super(properties.stacksTo(1));

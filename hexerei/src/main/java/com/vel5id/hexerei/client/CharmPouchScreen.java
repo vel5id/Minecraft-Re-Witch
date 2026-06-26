@@ -7,14 +7,14 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /** The Charm Pouch GUI: the 3 charm slots over the player inventory. Standard 176x166 container. */
 @OnlyIn(Dist.CLIENT)
 public class CharmPouchScreen extends AbstractContainerScreen<CharmPouchMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(HexereiMod.MODID, "textures/gui/charm_pouch.png");
+            ResourceLocation.fromNamespaceAndPath(HexereiMod.MODID, "textures/gui/charm_pouch.png");
 
     public CharmPouchScreen(CharmPouchMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -29,7 +29,7 @@ public class CharmPouchScreen extends AbstractContainerScreen<CharmPouchMenu> {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        renderBackground(g);
+        renderBackground(g, mouseX, mouseY, partialTick);
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
     }

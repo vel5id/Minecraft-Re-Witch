@@ -7,7 +7,7 @@ import com.vel5id.hexerei.item.TaglockItem;
 import com.vel5id.hexerei.soul.Bond;
 import com.vel5id.hexerei.soul.Correspondence;
 import com.vel5id.hexerei.soul.Disposition;
-import com.vel5id.hexerei.soul.HexereiCapabilities;
+import com.vel5id.hexerei.soul.HexereiAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -16,8 +16,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.minecraft.world.level.GameType;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +41,7 @@ public class CurseGameTests {
     }
 
     private static Player playerAt(GameTestHelper h, BlockPos rel) {
-        Player player = h.makeMockPlayer();
+        Player player = h.makeMockPlayer(GameType.SURVIVAL);
         BlockPos abs = h.absolutePos(rel);
         player.setPos(abs.getX() + 0.5, abs.getY(), abs.getZ() + 0.5);
         player.setHealth(player.getMaxHealth());
@@ -70,8 +71,8 @@ public class CurseGameTests {
         Player player = playerAt(h, new BlockPos(2, 2, 2));
         // Plant a fresh WEAK/FULL curse into the player's marks
         float initialFear = Curse.initialGrip();
-        player.getCapability(HexereiCapabilities.PLAYER_SOUL).ifPresent(sd ->
-                sd.addMark(curseBond(Correspondence.DEATH, Curse.Strength.FULL, initialFear)));
+        player.getData(HexereiAttachments.PLAYER_SOUL)
+                .addMark(curseBond(Correspondence.DEATH, Curse.Strength.FULL, initialFear));
 
         CurseTickHandler.processPlayer(player);
 
@@ -82,7 +83,7 @@ public class CurseGameTests {
             h.fail("FULL curse should be Weakness II (amp 1); got " + player.getEffect(MobEffects.WEAKNESS).getAmplifier());
         } else {
             // After one tick, fear should have decremented
-            java.util.Optional<com.vel5id.hexerei.soul.PlayerSoulData> psd = player.getCapability(HexereiCapabilities.PLAYER_SOUL).resolve();
+            java.util.Optional<com.vel5id.hexerei.soul.PlayerSoulData> psd = java.util.Optional.of(player.getData(HexereiAttachments.PLAYER_SOUL));
             if (psd.isEmpty() || psd.get().marks().isEmpty()) {
                 h.fail("curse bond should still be present after one tick");
             } else {
@@ -100,8 +101,8 @@ public class CurseGameTests {
     @GameTest(template = "empty", batch = "curse", timeoutTicks = 100)
     public void echoCurseIsWeaker(GameTestHelper h) {
         Player player = playerAt(h, new BlockPos(2, 2, 2));
-        player.getCapability(HexereiCapabilities.PLAYER_SOUL).ifPresent(sd ->
-                sd.addMark(curseBond(Correspondence.DEATH, Curse.Strength.ECHO, Curse.initialGrip())));
+        player.getData(HexereiAttachments.PLAYER_SOUL)
+                .addMark(curseBond(Correspondence.DEATH, Curse.Strength.ECHO, Curse.initialGrip()));
 
         CurseTickHandler.processPlayer(player);
 
@@ -119,13 +120,13 @@ public class CurseGameTests {
     public void curseLiftsWhenSpent(GameTestHelper h) {
         Player player = playerAt(h, new BlockPos(2, 2, 2));
         float fear = 2f; // a curse with 2 ticks left
-        player.getCapability(HexereiCapabilities.PLAYER_SOUL).ifPresent(sd ->
-                sd.addMark(curseBond(Correspondence.DEATH, Curse.Strength.FULL, fear)));
+        player.getData(HexereiAttachments.PLAYER_SOUL)
+                .addMark(curseBond(Correspondence.DEATH, Curse.Strength.FULL, fear));
 
         CurseTickHandler.processPlayer(player); // fear 2 -> 1
         CurseTickHandler.processPlayer(player); // fear 1 -> 0 (spent -> removed)
 
-        java.util.Optional<com.vel5id.hexerei.soul.PlayerSoulData> psd = player.getCapability(HexereiCapabilities.PLAYER_SOUL).resolve();
+        java.util.Optional<com.vel5id.hexerei.soul.PlayerSoulData> psd = java.util.Optional.of(player.getData(HexereiAttachments.PLAYER_SOUL));
         if (psd.isPresent() && !psd.get().marks().isEmpty()) {
             h.fail("curse should be removed once spent");
         } else {

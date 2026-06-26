@@ -4,9 +4,10 @@ import com.vel5id.hexerei.soul.Bond;
 import com.vel5id.hexerei.soul.Correspondence;
 import com.vel5id.hexerei.soul.Disposition;
 import com.vel5id.hexerei.soul.Disturbance;
-import com.vel5id.hexerei.soul.HexereiCapabilities;
+import com.vel5id.hexerei.soul.HexereiAttachments;
 import com.vel5id.hexerei.soul.PlayerSoulData;
 import com.vel5id.hexerei.soul.SealRef;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +53,11 @@ public final class AmuletTickHandler {
     public static void processPlayer(ServerLevel level, Player player) {
         ItemStack pouch = findPouch(player);
         if (pouch.isEmpty()) {
-            player.getCapability(HexereiCapabilities.PLAYER_SOUL).ifPresent(psd -> {
-                if (!psd.amulets().isEmpty()) {
-                    psd.amulets().clear();
-                    psd.setTotalDebt(0f);
-                }
-            });
+            PlayerSoulData psd = player.getData(HexereiAttachments.PLAYER_SOUL);
+            if (!psd.amulets().isEmpty()) {
+                psd.amulets().clear();
+                psd.setTotalDebt(0f);
+            }
             return;
         }
 
@@ -114,17 +114,16 @@ public final class AmuletTickHandler {
         }
 
         // --- reconcile PlayerSoulData with the currently-worn bonds (Модель §3) ---
-        player.getCapability(HexereiCapabilities.PLAYER_SOUL).ifPresent(psd -> {
-            psd.amulets().clear();
-            for (Bond b : worn) {
-                psd.wearAmulet(b.bondId());
-            }
-            float total = 0f;
-            for (Bond b : worn) {
-                total += b.disposition().debt();
-            }
-            psd.setTotalDebt(total);
-        });
+        PlayerSoulData psd = player.getData(HexereiAttachments.PLAYER_SOUL);
+        psd.amulets().clear();
+        for (Bond b : worn) {
+            psd.wearAmulet(b.bondId());
+        }
+        float total = 0f;
+        for (Bond b : worn) {
+            total += b.disposition().debt();
+        }
+        psd.setTotalDebt(total);
     }
 
     private static ItemStack findPouch(Player player) {
@@ -139,7 +138,7 @@ public final class AmuletTickHandler {
     }
 
     private static void applyEffect(ServerLevel level, Player player, SealedAmulet.AmuletEffect fx) {
-        MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(fx.effectId()));
+        Holder<MobEffect> effect = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(fx.effectId())).orElse(null);
         if (effect == null) {
             return;
         }
@@ -154,7 +153,7 @@ public final class AmuletTickHandler {
     }
 
     // ambient, hidden particles, visible icon — mirrors the retired charm feedback rule.
-    private static MobEffectInstance instance(MobEffect effect, SealedAmulet.AmuletEffect fx) {
+    private static MobEffectInstance instance(Holder<MobEffect> effect, SealedAmulet.AmuletEffect fx) {
         return new MobEffectInstance(effect, EFFECT_DURATION, fx.amplifier(), true, false, true);
     }
 }

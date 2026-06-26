@@ -83,6 +83,6 @@ public final class Curse {
     /** The {@code spiritType} for a curse of {@code domain}; an echo appends {@link #ECHO_SUFFIX}. */
     public static ResourceLocation spiritTypeFor(Correspondence domain, Strength s) {
         String base = domain.key() + "_curse";
-        return new ResourceLocation("hexerei", s == Strength.ECHO ? base + ECHO_SUFFIX : base);
+        return ResourceLocation.fromNamespaceAndPath("hexerei", s == Strength.ECHO ? base + ECHO_SUFFIX : base);
     }
 }

@@ -1,9 +1,12 @@
 package com.vel5id.hexerei.item;
 
+import com.vel5id.hexerei.HexereiMod;
 import com.vel5id.hexerei.soul.Bond;
 import com.vel5id.hexerei.soul.Disposition;
-import com.vel5id.hexerei.soul.HexereiCapabilities;
+import com.vel5id.hexerei.soul.HexereiAttachments;
 import com.vel5id.hexerei.soul.PlayerSoulData;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -14,13 +17,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeMod;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Drives curse bonds once per second (server-only, on the 20-tick boundary): each curse {@link Bond} in a
@@ -37,14 +38,18 @@ public final class CurseTickHandler {
 
     private static final int EFFECT_DURATION = 40;
 
-    // Transient-modifier UUIDs per (kind, strength, role). The reach UUID is shared across BLOCK+ENTITY reach
-    // (they are distinct AttributeInstances, so a shared UUID is allowed).
-    private static final UUID CLUMSY_REACH_FULL = UUID.fromString("a1b2c3d4-0001-0f0f-8a0a-000000000001");
-    private static final UUID CLUMSY_REACH_ECHO = UUID.fromString("a1b2c3d4-0001-0f0f-8a0a-000000000002");
-    private static final UUID CLUMSY_GRAV_FULL  = UUID.fromString("a1b2c3d4-0002-0f0f-8a0a-000000000003");
-    private static final UUID CLUMSY_GRAV_ECHO  = UUID.fromString("a1b2c3d4-0002-0f0f-8a0a-000000000004");
-    private static final UUID UNLUCKY_FULL      = UUID.fromString("a1b2c3d4-0003-0f0f-8a0a-000000000005");
-    private static final UUID UNLUCKY_ECHO      = UUID.fromString("a1b2c3d4-0003-0f0f-8a0a-000000000006");
+    // Transient-modifier ids per (kind, strength, role). The reach id is shared across BLOCK+ENTITY reach
+    // (they are distinct AttributeInstances, so a shared id is allowed).
+    private static final ResourceLocation CLUMSY_REACH_FULL = id("curse_clumsy_reach_full");
+    private static final ResourceLocation CLUMSY_REACH_ECHO = id("curse_clumsy_reach_echo");
+    private static final ResourceLocation CLUMSY_GRAV_FULL  = id("curse_clumsy_grav_full");
+    private static final ResourceLocation CLUMSY_GRAV_ECHO  = id("curse_clumsy_grav_echo");
+    private static final ResourceLocation UNLUCKY_FULL      = id("curse_unlucky_full");
+    private static final ResourceLocation UNLUCKY_ECHO      = id("curse_unlucky_echo");
+
+    private static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(HexereiMod.MODID, path);
+    }
 
     public static void tick(ServerLevel level) {
         for (ServerPlayer p : level.players()) {
@@ -54,11 +59,7 @@ public final class CurseTickHandler {
 
     /** Process one player's curse bonds. Exposed so GameTests can drive a mock player directly. */
     public static void processPlayer(Player player) {
-        java.util.Optional<PlayerSoulData> psd = player.getCapability(HexereiCapabilities.PLAYER_SOUL).resolve();
-        if (psd.isEmpty()) {
-            return;
-        }
-        PlayerSoulData sd = psd.get();
+        PlayerSoulData sd = player.getData(HexereiAttachments.PLAYER_SOUL);
 
         List<Bond> original = sd.marks();
         List<Bond> rebuilt = new ArrayList<>();
@@ -86,9 +87,9 @@ public final class CurseTickHandler {
     }
 
     private static void applyEffects(Player player, Set<Curse.CurseEffect> active) {
-        Attribute blockReach = ForgeMod.BLOCK_REACH.get();
-        Attribute entityReach = ForgeMod.ENTITY_REACH.get();
-        Attribute gravity = ForgeMod.ENTITY_GRAVITY.get();
+        Holder<Attribute> blockReach = Attributes.BLOCK_INTERACTION_RANGE;
+        Holder<Attribute> entityReach = Attributes.ENTITY_INTERACTION_RANGE;
+        Holder<Attribute> gravity = Attributes.GRAVITY;
 
         // 1. clear every known curse modifier (no stale modifier survives a lifted curse)
         remove(player, blockReach, CLUMSY_REACH_FULL, CLUMSY_REACH_ECHO);
@@ -102,16 +103,16 @@ public final class CurseTickHandler {
                 case CLUMSY -> {
                     Curse.ClumsyValues v = Curse.clumsy(fx.strength());
                     boolean full = fx.strength() == Curse.Strength.FULL;
-                    UUID reachId = full ? CLUMSY_REACH_FULL : CLUMSY_REACH_ECHO;
-                    UUID gravId = full ? CLUMSY_GRAV_FULL : CLUMSY_GRAV_ECHO;
-                    add(player, blockReach, reachId, "curse_clumsy_reach", v.reachFactor() - 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL);
-                    add(player, entityReach, reachId, "curse_clumsy_reach", v.reachFactor() - 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL);
-                    add(player, gravity, gravId, "curse_clumsy_grav", v.gravityFactor() - 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                    ResourceLocation reachId = full ? CLUMSY_REACH_FULL : CLUMSY_REACH_ECHO;
+                    ResourceLocation gravId = full ? CLUMSY_GRAV_FULL : CLUMSY_GRAV_ECHO;
+                    add(player, blockReach, reachId, v.reachFactor() - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+                    add(player, entityReach, reachId, v.reachFactor() - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+                    add(player, gravity, gravId, v.gravityFactor() - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
                 }
                 case UNLUCKY -> {
                     Curse.UnluckyValues v = Curse.unlucky(fx.strength());
-                    UUID id = fx.strength() == Curse.Strength.FULL ? UNLUCKY_FULL : UNLUCKY_ECHO;
-                    add(player, Attributes.LUCK, id, "curse_unlucky", v.luckAmount(), AttributeModifier.Operation.ADDITION);
+                    ResourceLocation luckId = fx.strength() == Curse.Strength.FULL ? UNLUCKY_FULL : UNLUCKY_ECHO;
+                    add(player, Attributes.LUCK, luckId, v.luckAmount(), AttributeModifier.Operation.ADD_VALUE);
                     player.addEffect(instance(MobEffects.UNLUCK, v.unluckAmp()));
                 }
                 case WEAK -> player.addEffect(instance(MobEffects.WEAKNESS, Curse.weaknessAmp(fx.strength())));
@@ -119,25 +120,25 @@ public final class CurseTickHandler {
         }
     }
 
-    private static void remove(Player player, Attribute attr, UUID... ids) {
+    private static void remove(Player player, Holder<Attribute> attr, ResourceLocation... ids) {
         AttributeInstance inst = player.getAttribute(attr);
         if (inst == null) {
             return;
         }
-        for (UUID id : ids) {
+        for (ResourceLocation id : ids) {
             inst.removeModifier(id);
         }
     }
 
-    private static void add(Player player, Attribute attr, UUID id, String name, double amount, AttributeModifier.Operation op) {
+    private static void add(Player player, Holder<Attribute> attr, ResourceLocation id, double amount, AttributeModifier.Operation op) {
         AttributeInstance inst = player.getAttribute(attr);
         if (inst == null) {
             return;
         }
-        inst.addTransientModifier(new AttributeModifier(id, name, amount, op));
+        inst.addTransientModifier(new AttributeModifier(id, amount, op));
     }
 
-    private static MobEffectInstance instance(MobEffect effect, int amplifier) {
+    private static MobEffectInstance instance(Holder<MobEffect> effect, int amplifier) {
         return new MobEffectInstance(effect, EFFECT_DURATION, amplifier, true, false, true);
     }
 }

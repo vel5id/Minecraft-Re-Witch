@@ -1,10 +1,13 @@
 package com.vel5id.hexerei.block.crop;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
@@ -136,7 +139,7 @@ public class WitchCropBlock extends BushBlock implements BonemealableBlock {
 
     // ---- BonemealableBlock ----
     @Override
-    public boolean isValidBonemealTarget(LevelReader w, BlockPos p, BlockState s, boolean client) {
+    public boolean isValidBonemealTarget(LevelReader w, BlockPos p, BlockState s) {
         return s.getValue(age()) < maxAge;
     }
 
@@ -159,7 +162,13 @@ public class WitchCropBlock extends BushBlock implements BonemealableBlock {
         RandomSource r = level.getRandom();
         boolean mature = state.getValue(age()) >= maxAge;
         ItemStack tool = builder.getOptionalParameter(LootContextParams.TOOL);
-        int fortune = tool != null ? EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool) : 0;
+        int fortune = 0;
+        if (tool != null) {
+            Holder<Enchantment> fortuneEnch = level.registryAccess()
+                    .lookupOrThrow(Registries.ENCHANTMENT)
+                    .getOrThrow(Enchantments.FORTUNE);
+            fortune = EnchantmentHelper.getItemEnchantmentLevel(fortuneEnch, tool);
+        }
         CropDrops.Roll roll = CropDrops.roll(r, mature, fortune, mindrake, snowbell);
         for (int i = 0; i < roll.seeds(); i++) {
             out.add(new ItemStack(seed.get()));

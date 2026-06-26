@@ -1,60 +1,45 @@
 package com.vel5id.hexerei.item;
 
+import com.vel5id.hexerei.registry.HexereiDataComponents;
 import com.vel5id.hexerei.soul.Bond;
 import com.vel5id.hexerei.soul.Correspondence;
 import com.vel5id.hexerei.soul.SealRef;
-import com.mojang.serialization.DataResult;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * A sealed amulet — a {@link Bond} carried in an {@link ItemStack}'s NBT (the {@code SealedBond} of
- * Модель §3). On 1.20.1 Forge there is no {@code DataComponentType}, so the whole record lives under one
- * NBT key, round-tripped through {@link Bond#CODEC} + {@link NbtOps} (the brew-item NBT pattern). The
- * bound spirit's {@link Correspondence} domain decides the amulet's effect and its tooltip/bar colour.
+ * A sealed amulet — a {@link Bond} carried in an {@link ItemStack} (the {@code SealedBond} of Модель §3).
+ * On 1.21.1 the record lives in a typed {@code DataComponentType<Bond>}
+ * ({@link HexereiDataComponents#SEALED_BOND}), codec-backed by {@link Bond#CODEC}. The bound spirit's
+ * {@link Correspondence} domain decides the amulet's effect and its tooltip/bar colour.
  *
  * <p>Obtained only from a sealing rite ({@code SealAmuletRite}); carried in a {@link CharmPouchItem}.
  * The wearing cost (debt accrual + seal grind) is driven server-side by {@link AmuletTickHandler}.
  */
 public class AmuletItem extends Item {
-    private static final String KEY = "hexerei:sealed_bond";
 
     public AmuletItem(Properties properties) {
         super(properties);
     }
 
-    /** Writes a sealed bond into the stack's NBT. */
+    /** Writes a sealed bond into the stack's component. */
     public static void writeBond(ItemStack stack, Bond bond) {
-        Tag encoded = Bond.CODEC.encodeStart(NbtOps.INSTANCE, bond)
-                .result()
-                .orElseThrow(() -> new IllegalStateException("failed to encode bond"));
-        stack.getOrCreateTag().put(KEY, encoded);
+        stack.set(HexereiDataComponents.SEALED_BOND.get(), bond);
     }
 
     /** The sealed bond this amulet carries, or {@code null} if it isn't sealed. */
     @Nullable
     public static Bond readBond(ItemStack stack) {
-        if (!stack.hasTag()) {
-            return null;
-        }
-        Tag raw = stack.getTag().get(KEY);
-        if (raw == null) {
-            return null;
-        }
-        DataResult<Bond> parsed = Bond.CODEC.parse(NbtOps.INSTANCE, raw);
-        return parsed.result().orElse(null);
+        return stack.get(HexereiDataComponents.SEALED_BOND.get());
     }
 
     /** True if the stack carries a sealed bond. */
@@ -63,14 +48,14 @@ public class AmuletItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Bond bond = readBond(stack);
         if (bond == null) {
             return;
         }
         SealedAmulet.AmuletEffect fx = SealedAmulet.effectFor(bond.domain());
         if (fx != null) {
-            MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(fx.effectId()));
+            MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(fx.effectId()));
             if (effect != null) {
                 tooltip.add(Component.translatable(effect.getDescriptionId()).withStyle(ChatFormatting.BLUE));
             }

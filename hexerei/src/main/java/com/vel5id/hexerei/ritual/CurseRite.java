@@ -5,7 +5,7 @@ import com.vel5id.hexerei.item.TaglockItem;
 import com.vel5id.hexerei.soul.Bond;
 import com.vel5id.hexerei.soul.Correspondence;
 import com.vel5id.hexerei.soul.Disposition;
-import com.vel5id.hexerei.soul.HexereiCapabilities;
+import com.vel5id.hexerei.soul.HexereiAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -103,6 +103,6 @@ public final class CurseRite implements Rite {
                 List.of(),
                 List.of(),
                 now, now);
-        player.getCapability(HexereiCapabilities.PLAYER_SOUL).ifPresent(sd -> sd.addMark(curse));
+        player.getData(HexereiAttachments.PLAYER_SOUL).addMark(curse);
     }
 }

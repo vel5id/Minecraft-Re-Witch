@@ -52,7 +52,9 @@ public final class AltarDrain {
         Act act = EssenceSource.breakRelease(bestC.domain, bestC.magnitude, bestC.defilement);
 
         LevelChunk chunk = level.getChunkAt(best);
-        chunk.getCapability(HexereiCapabilities.CHUNK_SOUL).ifPresent(soul -> soul.apply(act));
+        ChunkSoulData soul = chunk.getData(HexereiAttachments.CHUNK_SOUL);
+        soul.apply(act);
+        chunk.setUnsaved(true);
         return act;
     }
 
@@ -66,7 +68,7 @@ public final class AltarDrain {
             return new Consumable(Correspondence.FOREST, 0.15f, 0f, Mode.TO_AIR);
         }
         // witch crops / mushrooms / moss carry their own domain (ReleaseBlocks)
-        ResourceLocation id = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(b);
+        ResourceLocation id = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(b);
         ReleaseBlocks.Release rel = id == null ? null : ReleaseBlocks.get(id);
         if (rel != null) {
             return new Consumable(rel.domain(), rel.magnitude(), rel.defilement(), Mode.TO_AIR);

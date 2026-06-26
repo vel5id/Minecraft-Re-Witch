@@ -15,7 +15,7 @@ class BondCodecTest {
     private static Bond sample(SealRef seal) {
         return new Bond(
                 UUID.fromString("00000000-0000-0000-0000-0000000000aa"),
-                new ResourceLocation("hexerei", "forest_warden"),
+                ResourceLocation.fromNamespaceAndPath("hexerei", "forest_warden"),
                 Correspondence.FOREST,
                 new Disposition(1.5f, 0.6f, 0f, 0.2f),
                 seal,
@@ -27,9 +27,9 @@ class BondCodecTest {
 
     private static Bond roundTrip(Bond bond) {
         JsonElement json = Bond.CODEC.encodeStart(JsonOps.INSTANCE, bond)
-                .getOrThrow(false, e -> fail("encode failed: " + e));
+                .getOrThrow(e -> new AssertionError("encode failed: " + e));
         return Bond.CODEC.parse(JsonOps.INSTANCE, json)
-                .getOrThrow(false, e -> fail("decode failed: " + e));
+                .getOrThrow(e -> new AssertionError("decode failed: " + e));
     }
 
     @Test void roundTrip_sealedBond_preservesEverything() {
@@ -56,7 +56,7 @@ class BondCodecTest {
     @Test void unknownCorrespondence_failsCodec() {
         // a hand-built json with a bogus domain must not silently parse
         JsonElement json = Bond.CODEC.encodeStart(JsonOps.INSTANCE, sample(null))
-                .getOrThrow(false, e -> fail(e));
+                .getOrThrow(e -> new AssertionError(e));
         json.getAsJsonObject().addProperty("domain", "void");
         assertTrue(Bond.CODEC.parse(JsonOps.INSTANCE, json).error().isPresent());
     }

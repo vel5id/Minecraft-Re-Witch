@@ -5,6 +5,7 @@ import com.vel5id.hexerei.power.IPowerSource;
 import com.vel5id.hexerei.power.TaintLevel;
 import com.vel5id.hexerei.registry.HexereiBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -111,7 +112,7 @@ public final class WorldTaintAura {
     /** Applies the {@link TaintPunishment} ladder for {@code tl} to {@code player} (resolving vanilla effect ids). */
     private static void applyLadder(ServerPlayer player, TaintLevel tl) {
         for (TaintPunishment.Effect e : TaintPunishment.effectsFor(tl)) {
-            MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(e.effectId()));
+            Holder<MobEffect> effect = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(e.effectId())).orElse(null);
             if (effect == null) continue;
             // ambient, hidden particles, visible HUD icon — mirrors CharmTickHandler so the player sees why.
             player.addEffect(new MobEffectInstance(

@@ -2,8 +2,9 @@ package com.vel5id.hexerei.ritual;
 
 import com.vel5id.hexerei.blockentity.AltarBlockEntity;
 import com.vel5id.hexerei.power.AltarPowerManager;
+import com.vel5id.hexerei.soul.ChunkSoulData;
 import com.vel5id.hexerei.soul.Correspondence;
-import com.vel5id.hexerei.soul.HexereiCapabilities;
+import com.vel5id.hexerei.soul.HexereiAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -30,8 +31,9 @@ public final class HungeringRite implements Rite {
         });
 
         LevelChunk chunk = level.getChunkAt(center);
-        chunk.getCapability(HexereiCapabilities.CHUNK_SOUL)
-                .ifPresent(soul -> soul.addDisturbance(Correspondence.DEATH, AWAKENING_SCAR));
+        ChunkSoulData soul = chunk.getData(HexereiAttachments.CHUNK_SOUL);
+        soul.addDisturbance(Correspondence.DEATH, AWAKENING_SCAR);
+        chunk.setUnsaved(true);
 
         level.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7f, 0.6f);
         level.sendParticles(ParticleTypes.SOUL,

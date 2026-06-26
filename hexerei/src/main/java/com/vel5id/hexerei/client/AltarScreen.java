@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 /** Read-only screen that displays the altar's current and maximum power. */
 public class AltarScreen extends Screen {
-    private static final ResourceLocation TEX = new ResourceLocation(HexereiMod.MODID, "textures/gui/altar.png");
+    private static final ResourceLocation TEX = ResourceLocation.fromNamespaceAndPath(HexereiMod.MODID, "textures/gui/altar.png");
     private static final int W = 176;
     private static final int H = 88;
 
@@ -33,7 +33,7 @@ public class AltarScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
-        renderBackground(g);
+        renderBackground(g, mouseX, mouseY, partial);
         int left = (width - W) / 2;
         int top = (height - H) / 2;
         g.blit(TEX, left, top, 0, 0, W, H);

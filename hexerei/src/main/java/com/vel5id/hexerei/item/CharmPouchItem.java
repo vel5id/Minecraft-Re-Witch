@@ -1,18 +1,20 @@
 package com.vel5id.hexerei.item;
 
 import com.vel5id.hexerei.menu.CharmPouchMenu;
+import com.vel5id.hexerei.registry.HexereiDataComponents;
 import com.vel5id.hexerei.soul.Bond;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,6 @@ import java.util.List;
  */
 public class CharmPouchItem extends Item {
     public static final int SLOTS = 3;
-    private static final String KEY_ITEMS = "hexerei:Items";
 
     public CharmPouchItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -53,14 +54,23 @@ public class CharmPouchItem extends Item {
     /** Reads the pouch's contained charms into a handler (empty if the pouch has none). */
     public static ItemStackHandler readHandler(ItemStack pouch) {
         ItemStackHandler handler = createHandler();
-        if (pouch.hasTag() && pouch.getTag().contains(KEY_ITEMS)) {
-            handler.deserializeNBT(pouch.getTag().getCompound(KEY_ITEMS));
+        ItemContainerContents contents = pouch.get(HexereiDataComponents.POUCH_CONTENTS.get());
+        if (contents != null) {
+            NonNullList<ItemStack> list = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+            contents.copyInto(list);
+            for (int i = 0; i < SLOTS; i++) {
+                handler.setStackInSlot(i, list.get(i));
+            }
         }
         return handler;
     }
 
     public static void writeHandler(ItemStack pouch, ItemStackHandler handler) {
-        pouch.getOrCreateTag().put(KEY_ITEMS, handler.serializeNBT());
+        List<ItemStack> list = new ArrayList<>(handler.getSlots());
+        for (int i = 0; i < handler.getSlots(); i++) {
+            list.add(handler.getStackInSlot(i));
+        }
+        pouch.set(HexereiDataComponents.POUCH_CONTENTS.get(), ItemContainerContents.fromItems(list));
     }
 
     /** The non-empty charm stacks currently in the pouch. */
@@ -83,7 +93,7 @@ public class CharmPouchItem extends Item {
             boolean offhand = hand == InteractionHand.OFF_HAND;
             MenuProvider provider = new SimpleMenuProvider(
                     (id, inv, p) -> new CharmPouchMenu(id, inv, stack, hand), stack.getHoverName());
-            NetworkHooks.openScreen(serverPlayer, provider, buf -> buf.writeBoolean(offhand));
+            serverPlayer.openMenu(provider, buf -> buf.writeBoolean(offhand));
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }

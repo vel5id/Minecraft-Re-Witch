@@ -7,8 +7,8 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /** A short-lived bubble rising from a boiling brew, tinted by the brew color passed as the velocity RGB. */
 @OnlyIn(Dist.CLIENT)

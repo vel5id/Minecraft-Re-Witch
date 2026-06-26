@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ReleaseBlocksTest {
 
     private static ResourceLocation hex(String p) {
-        return new ResourceLocation("hexerei", p);
+        return ResourceLocation.fromNamespaceAndPath("hexerei", p);
     }
 
     @Test void grownCrop_freesEssenceOfItsDomain() {
@@ -22,7 +22,7 @@ class ReleaseBlocksTest {
     }
 
     @Test void ordinaryBlock_freesNothing() {
-        assertNull(ReleaseBlocks.get(new ResourceLocation("minecraft", "stone")));
+        assertNull(ReleaseBlocks.get(ResourceLocation.fromNamespaceAndPath("minecraft", "stone")));
         assertNull(ReleaseBlocks.get(hex("altar")));
     }
 

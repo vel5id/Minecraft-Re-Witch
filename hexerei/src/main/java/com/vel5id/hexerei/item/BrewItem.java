@@ -4,9 +4,10 @@ import com.vel5id.hexerei.brewing.Brew;
 import com.vel5id.hexerei.brewing.BrewColor;
 import com.vel5id.hexerei.brewing.BrewEffect;
 import com.vel5id.hexerei.brewing.Brews;
+import com.vel5id.hexerei.registry.HexereiDataComponents;
 import com.vel5id.hexerei.registry.HexereiItems;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -27,9 +28,11 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.List;
 
-/** A drinkable brew. Its identity (a {@link Brew} id) lives in NBT; on drink it applies the brew's effects. */
+/**
+ * A drinkable brew. Its identity (a {@link Brew} id) lives in the
+ * {@link HexereiDataComponents#BREW_ID} component; on drink it applies the brew's effects.
+ */
 public class BrewItem extends Item {
-    private static final String BREW_ID = "BrewId";
 
     public BrewItem(Properties properties) {
         super(properties);
@@ -37,14 +40,14 @@ public class BrewItem extends Item {
 
     public static ItemStack of(Brew brew) {
         ItemStack stack = new ItemStack(HexereiItems.BREW.get());
-        stack.getOrCreateTag().putString(BREW_ID, brew.id());
+        stack.set(HexereiDataComponents.BREW_ID.get(), brew.id());
         return stack;
     }
 
     @Nullable
     public static Brew brewOf(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null ? Brews.byId(tag.getString(BREW_ID)) : null;
+        String id = stack.get(HexereiDataComponents.BREW_ID.get());
+        return id != null ? Brews.byId(id) : null;
     }
 
     /** Liquid tint — no longer wired to a render tint; kept for cauldron blend / future GUI use. // FUTURE */
@@ -53,12 +56,10 @@ public class BrewItem extends Item {
         return brew != null ? brew.color() : BrewColor.WATER;
     }
 
-    /** 0 when no/unknown brew NBT, else the 1..N catalog index — drives the per-brew item-model override. */
+    /** 0 when no/unknown brew component, else the 1..N catalog index — drives the per-brew item-model override. */
     public static int modelIndex(ItemStack stack) {
-        if (!stack.hasTag()) {
-            return 0;
-        }
-        return Brews.indexOf(stack.getTag().getString(BREW_ID));
+        String id = stack.get(HexereiDataComponents.BREW_ID.get());
+        return id == null ? 0 : Brews.indexOf(id);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class BrewItem extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack stack) {
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 32;
     }
 
@@ -82,7 +83,7 @@ public class BrewItem extends Item {
         Player player = entity instanceof Player p ? p : null;
         if (brew != null && !level.isClientSide) {
             for (BrewEffect e : brew.effects()) {
-                MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(e.effectId()));
+                Holder<MobEffect> effect = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(e.effectId())).orElse(null);
                 if (effect != null) {
                     entity.addEffect(new MobEffectInstance(effect, e.durationTicks(), e.amplifier()));
                 }
@@ -111,24 +112,24 @@ public class BrewItem extends Item {
 
     /** Lists the brew's effects like a vanilla potion tooltip (name [+ potency] + duration, category-colored). */
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Brew brew = brewOf(stack);
         if (brew == null) {
-            super.appendHoverText(stack, level, tooltip, flag);
+            super.appendHoverText(stack, context, tooltip, flag);
             return;
         }
         for (BrewEffect e : brew.effects()) {
-            MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(e.effectId()));
+            Holder<MobEffect> effect = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(e.effectId())).orElse(null);
             if (effect == null) {
                 continue; // unknown effect id — skip rather than render a broken line
             }
-            MutableComponent line = Component.translatable(effect.getDescriptionId());
+            MutableComponent line = Component.translatable(effect.value().getDescriptionId());
             if (e.amplifier() > 0) {
                 line = Component.translatable("potion.withAmplifier", line,
                         Component.translatable("potion.potency." + e.amplifier()));
             }
             line = Component.translatable("potion.withDuration", line, formatDuration(e.durationTicks()));
-            tooltip.add(line.withStyle(effect.getCategory().getTooltipFormatting()));
+            tooltip.add(line.withStyle(effect.value().getCategory().getTooltipFormatting()));
         }
     }
 

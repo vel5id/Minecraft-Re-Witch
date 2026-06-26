@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ReagentRegistryTest {
 
     private static ResourceLocation hex(String path) {
-        return new ResourceLocation("hexerei", path);
+        return ResourceLocation.fromNamespaceAndPath("hexerei", path);
     }
 
     @Test void knownReagent_resolvesWithDomain() {

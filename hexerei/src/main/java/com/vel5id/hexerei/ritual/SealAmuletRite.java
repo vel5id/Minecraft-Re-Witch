@@ -45,7 +45,7 @@ public final class SealAmuletRite implements Rite {
         long now = level.getGameTime();
         Bond bond = new Bond(
                 UUID.randomUUID(),
-                new ResourceLocation("hexerei", domain.key() + "_warden"),
+                ResourceLocation.fromNamespaceAndPath("hexerei", domain.key() + "_warden"),
                 domain,
                 Disposition.EMPTY,
                 new SealRef(SealedAmulet.FULL_INTEGRITY),

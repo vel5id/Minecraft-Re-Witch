@@ -2,6 +2,7 @@ package com.vel5id.hexerei.item;
 
 import com.vel5id.hexerei.blockentity.RitualSigilBlockEntity;
 import com.vel5id.hexerei.registry.HexereiBlocks;
+import com.vel5id.hexerei.registry.HexereiDataComponents;
 import com.vel5id.hexerei.ritual.LunarPhase;
 import com.vel5id.hexerei.ritual.RitualCircle;
 import com.vel5id.hexerei.ritual.RitualRecipe;
@@ -15,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -111,7 +113,8 @@ public class RitualChalkItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        Level level = context.level();
         RitualRecipe rite = getSelectedRecipe(stack);
         if (rite != null) {
             tooltip.add(Component.translatable("item.hexerei.ritual_chalk.rite",
@@ -136,9 +139,9 @@ public class RitualChalkItem extends Item {
         tooltip.add(Component.translatable("item.hexerei.ritual_chalk.tip3").withStyle(ChatFormatting.GRAY));
     }
 
-    /** Returns the currently selected rite from the item's NBT, or the first recipe as default. */
+    /** Returns the currently selected rite from the item's component, or the first recipe as default. */
     public static RitualRecipe getSelectedRecipe(ItemStack stack) {
-        return RitualRecipes.fromTag(stack.hasTag() ? stack.getOrCreateTag() : null);
+        return RitualRecipes.fromId(stack.getOrDefault(HexereiDataComponents.SELECTED_RITE.get(), ""));
     }
 
     /** Place the small glyph ring around {@code center} where each cell is air over a sturdy block. Returns the count placed. */
@@ -163,7 +166,8 @@ public class RitualChalkItem extends Item {
 
     private static void damage(UseOnContext ctx, @Nullable Player player, InteractionHand hand) {
         if (player != null && !player.getAbilities().instabuild) {
-            ctx.getItemInHand().hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+            ctx.getItemInHand().hurtAndBreak(1, player,
+                    hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         }
     }
 }

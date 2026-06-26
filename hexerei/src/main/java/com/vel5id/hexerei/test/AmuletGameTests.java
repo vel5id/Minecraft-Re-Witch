@@ -9,7 +9,7 @@ import com.vel5id.hexerei.registry.HexereiItems;
 import com.vel5id.hexerei.soul.Bond;
 import com.vel5id.hexerei.soul.Correspondence;
 import com.vel5id.hexerei.soul.Disposition;
-import com.vel5id.hexerei.soul.HexereiCapabilities;
+import com.vel5id.hexerei.soul.HexereiAttachments;
 import com.vel5id.hexerei.soul.Mark;
 import com.vel5id.hexerei.soul.MarkScope;
 import com.vel5id.hexerei.soul.SealRef;
@@ -23,9 +23,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraft.world.level.GameType;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class AmuletGameTests {
         ItemStack stack = new ItemStack(HexereiItems.AMULET.get());
         Bond bond = new Bond(
                 UUID.randomUUID(),
-                new ResourceLocation("hexerei", domain.key() + "_warden"),
+                ResourceLocation.fromNamespaceAndPath("hexerei", domain.key() + "_warden"),
                 domain,
                 Disposition.EMPTY,
                 new SealRef(SealedAmulet.FULL_INTEGRITY),
@@ -61,7 +62,7 @@ public class AmuletGameTests {
     }
 
     private static Player playerAt(GameTestHelper h, BlockPos rel) {
-        Player player = h.makeMockPlayer();
+        Player player = h.makeMockPlayer(GameType.SURVIVAL);
         BlockPos abs = h.absolutePos(rel);
         player.setPos(abs.getX() + 0.5, abs.getY(), abs.getZ() + 0.5);
         player.setHealth(player.getMaxHealth());
@@ -104,7 +105,7 @@ public class AmuletGameTests {
             h.fail("wearing should accrue debt; got " + worn.disposition().debt());
         } else if (worn.seal().integrity() >= SealedAmulet.FULL_INTEGRITY) {
             h.fail("the seal should grind; integrity still " + worn.seal().integrity());
-        } else if (!player.getCapability(HexereiCapabilities.PLAYER_SOUL).map(sd -> sd.amulets().contains(bondId)).orElse(false)) {
+        } else if (!player.getData(HexereiAttachments.PLAYER_SOUL).amulets().contains(bondId)) {
             h.fail("the worn bond should be reconciled into PlayerSoulData.amulets");
         } else {
             h.succeed();
