@@ -8,6 +8,8 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -105,6 +107,63 @@ public class DreamGameTests {
                 "nightmare raises THRESHOLD disturbance");
         helper.assertTrue(p.getEffect(MobEffects.CONFUSION) != null,
                 "nightmare applies Nausea (CONFUSION)");
+        helper.succeed();
+    }
+
+    /**
+     * (3a) Sealing snapshots the inventory and empties it; restoring brings it back verbatim and
+     * discards anything acquired in the dream. Uses a mock Player (no cross-dimension teleport).
+     */
+    @GameTest(template = "empty")
+    public void dream_inventorySeal_roundTrips(GameTestHelper helper) {
+        Player p = playerAt(helper, new BlockPos(2, 2, 2));
+        p.getInventory().setItem(0, new ItemStack(Items.DIAMOND, 3));
+        // Armor slot: Inventory has items[0..35], armor[0..3], offhand[40].
+        // Helmet = armor[3] → flat index 36+3 = 39. (Slot 100 is the old InventoryMenu
+        // container-slot convention and is out of bounds for the raw Inventory API.)
+        p.getInventory().setItem(39, new ItemStack(Items.IRON_HELMET, 1));
+        DreamState st = p.getData(HexereiAttachments.DREAM_STATE);
+
+        DreamInventory.sealInto(p, st);
+        helper.assertTrue(st.sealed(), "seal sets the sealed flag");
+        helper.assertTrue(p.getInventory().isEmpty(), "seal empties the live inventory");
+
+        // Simulate loot picked up inside the dream — it must NOT survive the wake.
+        p.getInventory().setItem(5, new ItemStack(Items.DIRT, 64));
+
+        DreamInventory.restoreFrom(p, st);
+        helper.assertFalse(st.sealed(), "restore unseals");
+        helper.assertTrue(p.getInventory().getItem(0).getItem() == Items.DIAMOND
+                && p.getInventory().getItem(0).getCount() == 3, "diamonds restored verbatim");
+        helper.assertTrue(p.getInventory().getItem(39).getItem() == Items.IRON_HELMET,
+                "armor restored verbatim");
+        helper.assertTrue(p.getInventory().getItem(5).isEmpty(), "dream-acquired loot discarded");
+        helper.succeed();
+    }
+
+    /**
+     * (3a) restoreFrom is a safe no-op when the state is not sealed, and idempotent after a restore —
+     * the property the login-recovery / stale-flag branches rely on so a missed death never doubles
+     * or wipes a normal inventory.
+     */
+    @GameTest(template = "empty")
+    public void dream_restore_isNoOpWhenUnsealed(GameTestHelper helper) {
+        Player p = playerAt(helper, new BlockPos(2, 2, 2));
+        p.getInventory().setItem(0, new ItemStack(Items.EMERALD, 7));
+        DreamState st = p.getData(HexereiAttachments.DREAM_STATE);
+
+        // Not sealed → restore must change nothing.
+        DreamInventory.restoreFrom(p, st);
+        helper.assertTrue(p.getInventory().getItem(0).getItem() == Items.EMERALD
+                && p.getInventory().getItem(0).getCount() == 7, "unsealed restore leaves inventory intact");
+
+        // Seal, restore once (brings items back, unseals), then a second restore is a no-op.
+        DreamInventory.sealInto(p, st);
+        DreamInventory.restoreFrom(p, st);
+        helper.assertFalse(st.sealed(), "first restore unseals");
+        DreamInventory.restoreFrom(p, st);  // idempotent — must not wipe the just-restored inventory
+        helper.assertTrue(p.getInventory().getItem(0).getItem() == Items.EMERALD
+                && p.getInventory().getItem(0).getCount() == 7, "second restore is a no-op");
         helper.succeed();
     }
 }
