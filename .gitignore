@@ -1,6 +1,10 @@
 /data/
 .env
-.claude/
+# .claude/ is local-only EXCEPT the version-controlled deepseek MCP server.
+.claude/*
+!.claude/mcp/
+.claude/mcp/*
+!.claude/mcp/deepseek/
 
 # Hexerei scratch/reference (decompiled source, original jars, portable JDK, vineflower) — large, regenerable
 /hexerei-work/
