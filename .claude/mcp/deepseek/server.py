@@ -38,28 +38,35 @@ def _chat(messages, tools):
 
 
 @mcp.tool()
-def deepseek_task(task: str, base_ref: str = "HEAD", context_files: list = []) -> dict:
+def deepseek_task(task: str, base_ref: str = "HEAD", context_files: list | None = None) -> dict:
     """Run the DeepSeek agent on `task` in a fresh worktree off `base_ref`; return the diff."""
     if not API_KEY:
         return {"status": "error", "error": "DEEPSEEK_API_KEY is not set"}
     root = _repo_root()
     wt = worktree.create(base_ref, root)
-    fs = FsTools(wt["path"])
-    context = ""
-    for rel in context_files:
-        r = fs.read_file(rel)
-        if r["ok"]:
-            context += f"\n### {rel}\n{r['content']}\n"
-    result = run_agent(task, fs, _chat, max_iterations=MAX_ITERS, context=context)
-    return {
-        "status": result["status"],
-        "iterations": result["iterations"],
-        "summary": result["summary"],
-        "worktree_path": wt["path"],
-        "branch": wt["branch"],
-        "changed_files": worktree.changed_files(wt["path"], base_ref),
-        "diff": worktree.diff(wt["path"], base_ref),
-    }
+    try:
+        fs = FsTools(wt["path"])
+        context = ""
+        for rel in (context_files or []):
+            r = fs.read_file(rel)
+            if r["ok"]:
+                context += f"\n### {rel}\n{r['content']}\n"
+        result = run_agent(task, fs, _chat, max_iterations=MAX_ITERS, context=context)
+        files = worktree.changed_files(wt["path"], base_ref)
+        if files:
+            worktree.commit(wt["path"], (f"deepseek: {result['summary'] or task}")[:200])
+        return {
+            "status": result["status"],
+            "iterations": result["iterations"],
+            "summary": result["summary"],
+            "worktree_path": wt["path"],
+            "branch": wt["branch"],
+            "changed_files": files,
+            "diff": worktree.diff(wt["path"], base_ref),
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e),
+                "worktree_path": wt["path"], "branch": wt["branch"], "iterations": 0}
 
 
 @mcp.tool()

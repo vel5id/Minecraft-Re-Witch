@@ -22,3 +22,4 @@ mods/
 
 # Python cache (WARRANTLY tooling)
 __pycache__/
+.claude/mcp/deepseek/.env
