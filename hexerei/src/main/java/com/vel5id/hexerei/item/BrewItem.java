@@ -88,6 +88,11 @@ public class BrewItem extends Item {
                     entity.addEffect(new MobEffectInstance(effect, e.durationTicks(), e.amplifier()));
                 }
             }
+            if (brew.id().equals(Brews.DREAMING_DRAUGHT.id())
+                    && entity instanceof net.minecraft.server.level.ServerPlayer sp
+                    && level instanceof net.minecraft.server.level.ServerLevel sl) {
+                com.vel5id.hexerei.soul.DreamEntry.onDrink(sp, sl);
+            }
         }
         // In creative the brew isn't consumed, so don't hand out a glass bottle (would dupe bottles).
         if (player != null && player.getAbilities().instabuild) {
