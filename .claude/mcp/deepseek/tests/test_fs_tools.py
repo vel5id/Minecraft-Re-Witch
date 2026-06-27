@@ -1,6 +1,7 @@
 # .claude/mcp/deepseek/tests/test_fs_tools.py
 import os
 import pathlib
+import re
 
 import pytest
 
@@ -58,9 +59,6 @@ def test_null_byte_path_is_error_not_exception(tmp_path):
     assert fs.read_file("foo\x00bar")["ok"] is False
 
 
-import re
-
-
 def test_edit_single_occurrence(tmp_path):
     fs = _tools(tmp_path)
     fs.write_file("f.txt", "a b a")
@@ -105,3 +103,21 @@ def test_dispatch_routes_write(tmp_path):
 def test_tool_schemas_shape():
     names = {s["function"]["name"] for s in FsTools.tool_schemas()}
     assert names == {"read_file", "write_file", "edit_file", "list_dir", "glob", "grep"}
+
+
+def test_list_dir_traversal_rejected(tmp_path):
+    assert _tools(tmp_path).list_dir("..")["ok"] is False
+
+
+def test_glob_parent_pattern_no_raise(tmp_path):
+    r = _tools(tmp_path).glob("../*")
+    assert "ok" in r  # must not raise; outside-root matches filtered out
+
+
+def test_grep_traversal_rejected(tmp_path):
+    assert _tools(tmp_path).grep("x", path="..")["ok"] is False
+
+
+def test_edit_zero_occurrence_rejected(tmp_path):
+    fs = _tools(tmp_path); fs.write_file("f.txt", "abc")
+    assert fs.edit_file("f.txt", "z", "X")["ok"] is False

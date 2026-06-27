@@ -1,5 +1,6 @@
 """Root-confined file tools for the DeepSeek agent. No bash, no network."""
 import pathlib
+import re
 
 
 class PathEscape(Exception):
@@ -64,7 +65,11 @@ class FsTools:
 
     def glob(self, pattern: str) -> dict:
         matches = []
-        for c in self.root.glob(pattern):
+        try:
+            candidates = list(self.root.glob(pattern))
+        except (ValueError, OSError) as e:
+            return {"ok": False, "error": str(e)}
+        for c in candidates:
             try:
                 rel = c.resolve().relative_to(self.root)
             except ValueError:
@@ -73,7 +78,6 @@ class FsTools:
         return {"ok": True, "matches": matches}
 
     def grep(self, pattern: str, path: str = ".", max_hits: int = 200) -> dict:
-        import re
         try:
             base = self._resolve(path)
             rx = re.compile(pattern)
@@ -84,6 +88,10 @@ class FsTools:
         files = [base] if base.is_file() else [f for f in base.rglob("*") if f.is_file()]
         hits = []
         for f in files:
+            try:
+                f.resolve().relative_to(self.root)
+            except ValueError:
+                continue  # symlinked outside root via rglob — skip before reading
             try:
                 for i, line in enumerate(f.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
                     if rx.search(line):
