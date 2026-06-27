@@ -16,10 +16,15 @@ public final class HexereiDreamEvents {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        DreamState st = sp.getData(HexereiAttachments.DREAM_STATE);
-        if (!st.dreaming()) return;
-        if (sp.level().dimension().equals(DreamWorld.DREAM) && sp.level().getGameTime() >= st.wakeTick()) {
-            DreamWorld.wake(sp);
+        // getExistingData (not getData): never-dreamed players don't get a default attached every tick.
+        DreamState st = sp.getExistingData(HexereiAttachments.DREAM_STATE).orElse(null);
+        if (st == null || !st.dreaming()) return;
+        if (sp.level().dimension().equals(DreamWorld.DREAM)) {
+            if (sp.level().getGameTime() >= st.wakeTick()) {
+                DreamWorld.wake(sp);
+            }
+        } else {
+            st.clear();   // dreaming flag but not in the dream (e.g. a real death past the cancel) → self-heal
         }
     }
 
