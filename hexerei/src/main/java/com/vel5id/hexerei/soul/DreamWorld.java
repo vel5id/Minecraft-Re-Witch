@@ -44,6 +44,7 @@ public final class DreamWorld {
         if (dest == null) dest = over;
         BlockPos p = target.pos();
         player.teleportTo(dest, p.getX() + 0.5, p.getY(), p.getZ() + 0.5, player.getYRot(), player.getXRot());
+        DreamInventory.restoreFrom(player, st);   // bring the waking inventory back; drop dream loot
         st.clear();
     }
 }

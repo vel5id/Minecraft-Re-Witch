@@ -71,6 +71,7 @@ public final class DreamEntry {
                 DreamWorld.preparePlatform(dream);
                 DreamState st = sp.getData(HexereiAttachments.DREAM_STATE);
                 st.begin(level.dimension(), sp.blockPosition(), level.getGameTime() + DREAM_TICKS);
+                DreamInventory.sealInto(sp, st);   // enter empty-handed; snapshot held in DreamState
                 sp.teleportTo(dream, DreamWorld.ANCHOR.getX() + 0.5, DreamWorld.ANCHOR.getY(),
                         DreamWorld.ANCHOR.getZ() + 0.5, sp.getYRot(), sp.getXRot());
             }
