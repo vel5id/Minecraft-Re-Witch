@@ -36,6 +36,10 @@ public final class HexereiAttachments {
             ATTACHMENT_TYPES.register("chunk_soul", () ->
                     AttachmentType.serializable(ChunkSoulData::new).build());
 
+    public static final java.util.function.Supplier<AttachmentType<DreamState>> DREAM_STATE =
+            ATTACHMENT_TYPES.register("dream_state", () ->
+                    AttachmentType.serializable(DreamState::new).copyOnDeath().build());
+
     /** Wire attachment registration onto the mod event bus; call from the mod constructor. */
     public static void register(IEventBus modBus) {
         ATTACHMENT_TYPES.register(modBus);
