@@ -21,19 +21,47 @@ any waking penalty is applied through the normal `Act` channel, preserving "Stat
   teleport, placeholder islands; (3) procedural island layout/relief from `disturbance`. Only pure cores are
   deepseek-delegable; dimension/teleport/render/procgen are Claude + GameTest.
 
-## Slice 1 — Sleep Brew entry (current)
-Player loop: brew the Sleep Brew (cauldron, a THRESHOLD-domain reagent) → drink → **cross the threshold**:
-spend `SCRY_COST` essence; if you can't afford it you don't cross (the brew fizzles). On crossing,
-`DreamResolver.read(debtN, marksN, disturbance)` resolves the dream; a **nightmare** imposes a `dread`-scaled
-waking penalty applied through a `fear` `Act` (State only through Act). Dominant domain foreshadows the island.
+## Slice 1 — Sleep Brew → dreaming state + omen (FINALIZED 2026-06-28)
+Result of this slice: drinking the Sleep Brew puts the witch into a **dreaming state** (a timed MobEffect set
++ a domain-tinted omen); there is **no dimension yet** (that is Slice 2). Pure cores already built & gate-verified.
 
-- **Delegable pure core (deepseek gate):** `soul/DreamOnset` + `soul/DreamOutcome` — `onDrink(essence,
-  DreamReading) → DreamOutcome(entered, essenceSpent, nightmare, dreadPenalty)`. `SCRY_COST = 1.0f` essence;
-  `dreadPenalty = nightmare ? reading.dread() : 0f` (already [0,1]; the caller turns it into the fear Act).
-- **NOT delegable (Claude + GameTest):** the `Brew` registration + recipe, the drink hook, debiting essence /
-  applying the `Act`, the "dreaming" MobEffect + duration, particles/sound.
-- **Normalization (caller side, integration):** `debtN = clamp01(totalDebt / DEBT_FULL)`,
-  `marksN = clamp01(Σ mark.severity / MARKS_FULL)` — `DEBT_FULL`/`MARKS_FULL` to be set in DESIGN-NOTES `[UNVERIFIED]`.
+### Player loop
+Brew `SLEEP_BREW` in the cauldron from `{mandrake_root, wormwood}` (both THRESHOLD reagents; recipe = exact
+multiset of item ids). Drink → server-side hook runs the dream pipeline:
+1. Read State: `PlayerSoulData`(essence, totalDebt, marks) + the player chunk's `ChunkSoulData` (disturbance).
+2. Normalize → `DreamResolver.read(debtN, marksN, disturbance)` → `DreamReading`.
+3. `DreamOnset.onDrink(essence, reading)` → `DreamOutcome`.
+4. `!entered` (essence < SCRY_COST) → the brew **fizzles**: no effect, fail feedback, bottle returned.
+5. `entered` → `spendEssence(SCRY_COST)`; apply the "dreaming" MobEffect set:
+   - calm: **Night Vision + Slowness** (peaceful seeing); nightmare: **Weakness + Nausea + Slowness** (restless).
+   Duration `DREAM_TICKS`.
+6. Omen feedback: particles / action-bar tinted by `reading.dominantDomain()` (full screen overlay = later).
+7. `nightmare` → BOTH writes to State:
+   - **fear mark:** `psd.addMark(new Bond(THRESHOLD, Disposition(0,0,dreadPenalty,0), seal=null, …))` (CurseRite precedent);
+   - **place disturbance:** `csd.apply(Act{domain: THRESHOLD → dreadPenalty * DISTURB_SCALE, …})` + `chunk.setUnsaved(true)`.
+
+**Article III loop:** nightmare → +disturbance[THRESHOLD] → next dream murkier → more nightmares; plus a personal
+fear mark to tend. No parallel economy (essence + the existing Bond/disturbance State).
+
+### Build map
+- **Done (deepseek, gate-verified):** `soul/DreamReading`, `soul/DreamResolver`, `soul/DreamOnset`, `soul/DreamOutcome`.
+- **Still delegable to deepseek (pure):** `soul/DreamNormalize` — `debtN(totalDebt)` = `clamp01(totalDebt/DEBT_FULL)`,
+  `marksN(List<Bond> marks)` = `clamp01(Σ mark.disposition().fear() / MARKS_FULL)`. (Fear carried by the marks — a
+  nightmare's fear mark feeds straight back into `marksN`, closing the loop; `resentmentFloor()` would read 0 for a
+  fresh mark and break it.) Pure (Bond is a pure record) → JUnit gate.
+- **NOT delegable (Claude + GameTest):** `Brews.SLEEP_BREW` + `BrewRecipes` entry; the `BrewItem.finishUsingItem`
+  hook, kept thin by extracting a server class `soul/DreamEntry.onDrink(ServerPlayer, ServerLevel)` that runs the
+  pipeline (read → resolve → spend essence → effects → mark + chunk Act); the MobEffect sets; particle/sound feedback.
+
+### Balance numbers (→ DESIGN-NOTES, `[UNVERIFIED]` until in-game)
+`SCRY_COST = 1.0f` (set; ~⅓ of one mandrake take). `DEBT_FULL = 10f`, `MARKS_FULL = 5f` (normalization saturation).
+`DISTURB_SCALE = 20f` (a max nightmare adds 20 of 100 THRESHOLD disturbance). `DREAM_TICKS = 600` (30 s).
+
+### Test plan
+- **Unit (pure):** `DreamResolverTest`, `DreamOnsetTest` (green); + new `DreamNormalizeTest` (saturation + clamp corners).
+- **GameTest (in-world):** seed a `ServerPlayer`/chunk and assert — (a) essence < SCRY_COST → no effect, essence unchanged;
+  (b) calm state → essence debited by SCRY_COST, Night Vision present, no new mark; (c) nightmare state (high debt +
+  THRESHOLD disturbance) → a fear mark added, chunk disturbance[THRESHOLD] increased, Nausea present.
 
 ## Player Loop
 - **Trigger** → the witch sleeps in a bed (vanilla night skip). On wake, the night's dream is resolved.
