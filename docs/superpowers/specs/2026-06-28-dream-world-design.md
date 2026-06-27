@@ -174,5 +174,105 @@ low health prevents "dream as a free escape/heal." Deterministic; diegetic (cros
 Island spawn anchor `(0,64,0)`; platform 5×5 barren; `DEATH_WAKE_HEALTH = 4f` (2 hearts); dream duration
 reuses `DreamEntry.DREAM_TICKS = 600`.
 
-### Out of scope (Slice 3+)
-Procedural island terrain from `disturbance`; the 5 outer domain islands ringing the center; client sky/render.
+### Out of scope (Slice 2)
+Procedural island terrain, the outer domain islands, the sealed dream inventory, and client sky/render — all
+moved into Slice 3 below.
+
+---
+
+## Slice 3 — soul-state as a sealed archipelago (FINALIZED 2026-06-28)
+Result: the barren 5×5 platform becomes an **archipelago that *is* the dreamer's overworld chunk soul-state**.
+At entry we already hold the 6-domain `disturbance` map (`csd.disturbanceView()` in `DreamEntry.onDrink`); we
+build islands from it. **THRESHOLD** = the central island (spawn); the five other domains (**FOREST / STONE /
+WATER / DEATH / SKY**) = five islands ringing it at **fixed compass directions**, each sized by *that domain's*
+disturbance. A calm soul → small flat barren islands; a resentful domain → a tall jagged island in its quarter.
+This is the `read` verb made walkable: the witch walks her own unrest and reads which domains the world around
+her resents, and how badly. The dream is **fully interactive but sealed** — nothing material crosses the
+threshold (the `seal` verb as a property of the place).
+
+### Sub-slice decomposition (one doc, four ordered plans)
+| # | Deliverable | Pure core → deepseek JUnit gate | Claude (not gateable) |
+|---|---|---|---|
+| **3a** | **Sealed dream inventory** — enter sealed, wake restores verbatim; crash/logout-safe | *(none — MC `ItemStack`/registry runtime; GameTest + smoke)* | snapshot→persist→clear on entry; restore on **every** wake path; discard dream items |
+| **3b** | **Central THRESHOLD island** from `disturbance[THRESHOLD]`, replacing the flat platform; regen-per-entry | `DreamTerrain` — `radiusFor` + `heightAt` (deterministic dome) | `buildDreamScape` placement, clear-region, anchor, wire into `DreamEntry` |
+| **3c** | **Five outer domain islands**, sized per domain, fixed angles | `DreamLayout.sites(ringR)` → 6 stable sites | per-domain vanilla palette + placement |
+| **3d** | **Dreamlike client sky/fog** tinted by the dominant domain | *(none — visual, manual verify)* | `DimensionSpecialEffects` client registration |
+
+Order: **3a first** (the seal makes interactivity safe before any mineable terrain exists), then terrain 3b/3c,
+then render 3d.
+
+### 3a — Sealed dream inventory (the `seal` verb)
+On a successful crossing the player enters the dream **empty-handed**; the waking inventory is restored verbatim
+on wake. *(Entering empty — bring nothing across the threshold — is the strongest Law fit and the safest against
+dupes; flipping to "enter with a disposable copy" is a one-field change if playtesting wants tools in-dream.)*
+
+- **Storage:** extend `soul/DreamState` with a serialized inventory snapshot (`ListTag invSnapshot`, `boolean
+  sealed`). It already persists with player data and is `copyOnDeath`, so it survives logout/crash.
+- **Entry (`DreamEntry.onDrink`, only on `entered`):** snapshot main+armor+offhand → **`setData` to persist the
+  snapshot FIRST** → then clear the live inventory → teleport. Ordering matters: if anything fails after the
+  snapshot persists, login-recovery still restores. XP is **not** touched (out of scope; flag only).
+- **Restore (every wake path):** `DreamWorld.wake` restores the snapshot, clears any dream-acquired items, clears
+  `sealed`+`invSnapshot`. The **death-wake** path (death cancelled, so vanilla never drops) and the
+  **login-recovery** path must *also* restore — login-recovery restores whenever `sealed` is set, **regardless of
+  dimension**, so a missed death or stale flag never strands the player without their items.
+- **Not deepseek-gateable:** `ItemStack` (de)serialization needs a registry `HolderLookup.Provider`, so this is
+  GameTest + dedicated-server smoke, Claude-side.
+
+### What the terrain reads (forks set by the user)
+Raw **6-axis per-domain `disturbance` map**, read at entry (the same map slice 1 already pulls for the omen).
+`disturbanceN(domain) = clamp01(value / 100)`. No new data path, no persistence — handed straight to
+`buildDreamScape` at entry and discarded.
+
+### Terrain cores (deepseek-delegable, pure)
+- **`soul/DreamTerrain`** — one island's shape, deterministic (seeded by integer coord hash, **no RNG**):
+  - `int radiusFor(float disturbanceN)` → `MIN_R=2` (calm ≈ old platform) … `MAX_R=8` (max), monotonic.
+  - `int heightAt(int dx, int dz, int radius, float disturbanceN)` → `0` outside `radius`, `≥1` inside, a dome
+    whose peak grows with `disturbanceN` (≤ `PEAK_BUMP=10` above base).
+  - **Gate (`DreamTerrainTest`):** `radiusFor` monotonic & bounded `[MIN_R,MAX_R]`; `heightAt`==0 outside radius;
+    `≥1` at center; peak(disturbanceN=1) > peak(disturbanceN=0); determinism (same args → same value).
+- **`soul/DreamLayout`** — `List<IslandSite> sites(int ringRadius)` → 6 `IslandSite(Correspondence domain,int cx,
+  int cz)`: THRESHOLD at `(0,0)`, the five others equidistant (`RING_R=24`) at 72° with a **fixed per-domain
+  angle** (legibility: FOREST is always the same direction).
+  - **Gate (`DreamLayoutTest`):** exactly 6 sites; THRESHOLD at origin; five outer equidistant (±1 rounding);
+    all distinct; per-domain coords stable for a given `ringRadius`; outer islands non-overlapping (chord
+    `2·RING_R·sin36° ≈ 28 > 2·MAX_R`).
+
+### World placement (Claude, not gateable)
+`DreamWorld.buildDreamScape(ServerLevel dream, Map<Correspondence,Float> disturbance)` replaces `preparePlatform`:
+clear the bounding box (`RING_R+MAX_R+2` around origin, base-Y band) to air → for each `DreamLayout` site, place a
+`DreamTerrain` dome with that domain's `disturbanceN` and **vanilla palette** → return the center-top spawn Y.
+`DreamEntry.onDrink` passes the already-read `disturbance` map and spawns the player on the center island top.
+Palettes (reuse vanilla art): THRESHOLD=tuff, FOREST=dirt/moss_block+oak_leaves, STONE=stone/cobbled_deepslate,
+WATER=packed_ice/blue_ice, DEATH=bone_block/soul_soil, SKY=calcite/quartz_block.
+
+### 3d — Client sky/render (Claude, manual verify)
+Register a `DimensionSpecialEffects` for `hexerei:dream` client-side (gated by `Dist.CLIENT`): no sun/moon, void
+sky, fog color tinted by the **dominant domain** of the reading. Not deepseek-gateable (visual); verified by the
+smoke procedure with a screenshot, not a GameTest.
+
+### Constitution verdict
+Litmus **PASSES** — the `read` verb over the chunk record, now also the `seal` verb (nothing material crosses the
+threshold). Cost = `essence` (slice 1; no new currency). **Transient**: regenerated and cleared each entry.
+**Barren**: no loot/mob/ore. **No parallel economy by construction**: the sealed inventory makes extraction
+*impossible*, not merely discouraged. **Legible**: terrain encodes disturbance — an instrument, not decoration;
+the render presents the reading, it is not a mechanic posing as content. Deterministic; diegetic; feeds Art. III
+(accrued disturbance-debt made walkable → deepens understanding).
+
+### Known limitation (flagged, not fixed here)
+The dream region is shared and rebuilt per entry → **one dreamer at a time** is assumed; concurrent dreamers
+overwrite each other's archipelago. A per-player coordinate offset (UUID-hash stride) or per-player instance is
+future work.
+
+### Balance `[UNVERIFIED]`
+`MIN_R=2`, `MAX_R=8`, `PEAK_BUMP=10`, `RING_R=24`, base Y=60 (domes rise toward the `ANCHOR` y=64 spawn band),
+`disturbanceN = clamp01(value/100)`, clear-box radius `RING_R+MAX_R+2 = 34`. Vanilla palettes as above.
+
+### Testing
+- **Unit (deepseek gates):** `DreamTerrainTest`, `DreamLayoutTest` (assertions above).
+- **GameTest:** sealed-inventory round-trip in a single arena where feasible (snapshot→clear→restore on a
+  same-dimension mock), plus the existing dream cases.
+- **Dedicated-server SMOKE (authoritative for cross-dimension + visual):** drink → archipelago matches the
+  chunk's disturbance (disturbed domain = bigger island in its quarter); mine in-dream then wake → real inventory
+  intact, dream loot gone; death-in-dream and logout-in-dream → woken with inventory restored; the dream sky
+  reads dreamlike. Cross-dimension teleport/inventory is unreliable in the shared GameTest world (altar-scan
+  rationale), so smoke is the real gate.
