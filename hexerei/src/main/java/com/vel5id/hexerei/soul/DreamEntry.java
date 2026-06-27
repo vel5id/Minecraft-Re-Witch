@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public final class DreamEntry {
     private static final ResourceLocation NIGHTMARE_SPIRIT =
             ResourceLocation.fromNamespaceAndPath(HexereiMod.MODID, "nightmare");
 
-    public static void onDrink(ServerPlayer player, ServerLevel level) {
+    public static void onDrink(Player player, ServerLevel level) {
         PlayerSoulData psd = player.getData(HexereiAttachments.PLAYER_SOUL);
         LevelChunk chunk = level.getChunkAt(player.blockPosition());
         ChunkSoulData csd = chunk.getData(HexereiAttachments.CHUNK_SOUL);
@@ -57,9 +58,12 @@ public final class DreamEntry {
 
         level.sendParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 1.0, player.getZ(),
                 24, 0.3, 0.5, 0.3, 0.05);
-        player.displayClientMessage(
-                Component.translatable(outcome.nightmare() ? "dream.hexerei.nightmare" : "dream.hexerei.entered"),
-                true);
+        // Null-safe: MockPlayer (GameTests) has no connection; real ServerPlayer sends the action-bar message.
+        if (player instanceof ServerPlayer sp) {
+            sp.displayClientMessage(
+                    Component.translatable(outcome.nightmare() ? "dream.hexerei.nightmare" : "dream.hexerei.entered"),
+                    true);
+        }
 
         if (outcome.nightmare()) {
             long now = level.getGameTime();
@@ -72,7 +76,7 @@ public final class DreamEntry {
         }
     }
 
-    private static void applyDreamingEffects(ServerPlayer p, boolean nightmare) {
+    private static void applyDreamingEffects(Player p, boolean nightmare) {
         if (nightmare) {
             p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, DREAM_TICKS, 0));
             p.addEffect(new MobEffectInstance(MobEffects.CONFUSION, DREAM_TICKS, 0));        // nausea
