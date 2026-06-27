@@ -19,13 +19,14 @@ class FsTools:
     def read_file(self, path: str, max_bytes: int = 65536) -> dict:
         try:
             p = self._resolve(path)
-            data = p.read_text(encoding="utf-8", errors="replace")
+            with p.open("rb") as fh:
+                raw = fh.read(max_bytes + 1)
         except PathEscape as e:
             return {"ok": False, "error": f"path escapes root: {e}"}
-        except (OSError, UnicodeError) as e:
+        except (OSError, ValueError) as e:
             return {"ok": False, "error": str(e)}
-        truncated = len(data) > max_bytes
-        return {"ok": True, "content": data[:max_bytes], "truncated": truncated}
+        truncated = len(raw) > max_bytes
+        return {"ok": True, "content": raw[:max_bytes].decode("utf-8", errors="replace"), "truncated": truncated}
 
     def write_file(self, path: str, content: str) -> dict:
         try:
@@ -34,6 +35,6 @@ class FsTools:
             p.write_text(content, encoding="utf-8")
         except PathEscape as e:
             return {"ok": False, "error": f"path escapes root: {e}"}
-        except OSError as e:
+        except (OSError, ValueError) as e:
             return {"ok": False, "error": str(e)}
         return {"ok": True, "path": path}

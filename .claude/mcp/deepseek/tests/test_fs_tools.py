@@ -51,3 +51,8 @@ def test_read_cap_truncates(tmp_path):
     assert r["ok"] is True
     assert len(r["content"]) == 10
     assert r["truncated"] is True
+
+
+def test_null_byte_path_is_error_not_exception(tmp_path):
+    fs = _tools(tmp_path)
+    assert fs.read_file("foo\x00bar")["ok"] is False
