@@ -32,6 +32,7 @@ public final class HexereiMod {
         com.vel5id.hexerei.soul.HexereiAttachments.register(modBus);     // soul-data attachments (vector core)
         modBus.addListener(HexereiNetwork::register);                    // payload registration (mod bus)
         NeoForge.EVENT_BUS.register(HexereiLevelEvents.class);           // game-bus world events
+        NeoForge.EVENT_BUS.register(HexereiDreamEvents.class);            // dream wake state machine
         LOGGER.info("Hexerei loading");
     }
 }
