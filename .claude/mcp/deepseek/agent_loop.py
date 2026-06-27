@@ -35,11 +35,14 @@ def run_agent(task: str, fs, chat, *, max_iterations: int = 40, context: str = "
             continue
         messages.append({"role": "assistant", "content": resp.get("content"),
                          "tool_calls": [_to_openai_tool_call(tc) for tc in tcs]})
+        finish_call = next((tc for tc in tcs if tc["name"] == "finish"), None)
         for tc in tcs:
             if tc["name"] == "finish":
-                return {"status": "completed", "iterations": i,
-                        "summary": tc.get("arguments", {}).get("summary", "")}
+                continue
             result = fs.dispatch(tc["name"], tc.get("arguments", {}))
             messages.append({"role": "tool", "tool_call_id": tc["id"],
                              "content": json.dumps(result)})
+        if finish_call is not None:
+            return {"status": "completed", "iterations": i,
+                    "summary": finish_call.get("arguments", {}).get("summary", "")}
     return {"status": "max_iterations", "iterations": max_iterations, "summary": ""}

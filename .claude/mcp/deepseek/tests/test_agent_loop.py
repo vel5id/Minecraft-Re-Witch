@@ -25,6 +25,7 @@ def test_loop_dispatches_then_finishes(tmp_path):
     assert result["status"] == "completed"
     assert result["summary"] == "wrote out.txt"
     assert (tmp_path / "out.txt").read_text() == "done"
+    assert result["iterations"] == 2
 
 
 def test_loop_hits_max_iterations(tmp_path):
