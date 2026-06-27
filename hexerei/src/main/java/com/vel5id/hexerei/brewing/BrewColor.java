@@ -23,6 +23,19 @@ public final class BrewColor {
         return ((int) (r / n) << 16) | ((int) (g / n) << 8) | (int) (b / n);
     }
 
+    /** Dilute a brew color by adding {@code waterParts} of water;
+     *  {@code waterParts == 0} returns the color unchanged.
+     *  @throws IllegalArgumentException if waterParts < 0 */
+    public static int dilute(int color, int waterParts) {
+        if (waterParts < 0) {
+            throw new IllegalArgumentException("waterParts must be non-negative");
+        }
+        if (waterParts == 0) {
+            return color;
+        }
+        return blend(List.of(color, WATER), List.of(1, waterParts));
+    }
+
     /** Weighted average-blend of 0xRRGGBB colors with integer weights;
      *  empty list or total weight zero -> water. */
     public static int blend(List<Integer> colors, List<Integer> weights) {
