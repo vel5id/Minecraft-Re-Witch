@@ -117,3 +117,62 @@ None for the pure core. (Deferred: overlay texture + sleep/nightmare sounds + la
 - The dream **dimension or overlay** presentation (client render, dimension reg, packet) — GUI/visual.
 - The **bed-sleep trigger** event + applying the essence/`Act` waking cost — needs MC events + GameTest.
 - These follow via `mc-mod-implement` + GameTests; only the deterministic read-core is gate-able now.
+
+---
+
+## Slice 2 — `hexerei:dream` dimension + teleport (FINALIZED 2026-06-28)
+Result: a successful crossing (the slice-1 `entered` path) now **teleports** the witch into a custom
+`hexerei:dream` dimension — a barren central THRESHOLD island — and she is **returned** to the overworld
+on waking. The dream becomes a place, still transient and costed (no parallel economy).
+
+### Dimension mechanism — approach A (datapack void + code platform)
+Register `hexerei:dream` declaratively: a `dimension_type` (no skylight, fixed dim time, dreamlike) + a
+`dimension` whose generator is **void/empty** (no terrain). The central island is a small **barren**
+platform the mod places in code at a fixed anchor on first entry — NOT worldgen, NOT loot/mobs. Slice 3
+swaps the platform-placer for a `disturbance`-driven island generator; the dimension JSON stays.
+
+### State machine
+- **Entry** (extend `DreamEntry`, only on `outcome.entered()`): save return state → ensure the island
+  platform exists at the anchor → `player.teleportTo(dreamLevel, anchorSpawn)`. The fizzle path and the
+  slice-1 nightmare writes (mark + disturbance, on-drink) are unchanged.
+- **Wake — trigger 1 (timer):** a server `PlayerTickEvent` — when `level.getGameTime() >= DreamState.wakeTick`
+  while the player is in `hexerei:dream`, return them. The timer is the stored `wakeTick`, NOT a vanilla
+  effect, so it can't be cut short by milk and doesn't depend on the slice-1 effect *set*.
+- **Wake — trigger 2 (death):** `LivingDeathEvent` (or the damage hook) — if a player in `hexerei:dream`
+  would die, **cancel** it and wake them: teleport back + set health to `DEATH_WAKE_HEALTH` (≈ 2 hearts).
+  Not a free escape/heal.
+- **Return:** teleport to the saved `(returnDim, returnPos)`; clear `dreaming`. On **login** while `dreaming`
+  → if in `hexerei:dream` past `wakeTick`, wake normally; if NOT in `hexerei:dream` (a real death slipped
+  past the handler, or a stale flag), just clear `dreaming` so the player is never stranded mid-state.
+
+### State storage
+New per-player attachment `soul/DreamState` (NeoForge `AttachmentType`, serializable, registered in
+`HexereiAttachments`): `{ ResourceKey<Level> returnDim, BlockPos returnPos, long wakeTick, boolean dreaming }`.
+`wakeTick = entryGameTime + DREAM_TICKS`. The death-wake handler runs before a real death; the login
+recovery above clears any stale `dreaming` so a missed death never strands the player.
+
+### Constitution verdict
+Litmus PASSES: the dimension is a **transient projection** (always returned), entry costs `essence`, the
+island is barren (no loot/mob/ore economy), it IS the THRESHOLD reading (Law made geography). Death-wake at
+low health prevents "dream as a free escape/heal." Deterministic; diegetic (crossing the threshold).
+
+### Build map
+- **deepseek-delegable (pure):** `soul/DreamReturn` — `resolveTarget(DreamState, fallbackDim, fallbackPos)`:
+  return the saved `(dim,pos)` if present/valid, else the fallback (overworld spawn). Pure → JUnit gate.
+- **NOT delegable (Claude):** the `hexerei:dream` datapack JSON (`dimension_type` + `dimension`), the
+  `DreamState` attachment, extending `DreamEntry` with save-return + platform-place + teleport, the wake
+  tick/effect watcher, the `LivingDeathEvent` wake handler, the login-recovery handler.
+
+### Testing
+- **Unit (deepseek gate):** `DreamReturnTest` — saved target returned; missing/invalid → fallback.
+- **Dedicated-server SMOKE test (authoritative), NOT GameTest:** drink → assert player now in `hexerei:dream`
+  on the platform with `DreamState.dreaming==true` and return state saved; effect-expiry → back at return pos;
+  death-in-dream → woken (alive, low health), not dead. Cross-dimension teleport is unreliable in the shared
+  multi-arena GameTest world (same rationale as the altar power scan), so a smoke test is the real gate.
+
+### Balance `[UNVERIFIED]`
+Island spawn anchor `(0,64,0)`; platform 5×5 barren; `DEATH_WAKE_HEALTH = 4f` (2 hearts); dream duration
+reuses `DreamEntry.DREAM_TICKS = 600`.
+
+### Out of scope (Slice 3+)
+Procedural island terrain from `disturbance`; the 5 outer domain islands ringing the center; client sky/render.
