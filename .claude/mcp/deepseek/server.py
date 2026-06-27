@@ -40,6 +40,22 @@ def _chat(messages, tools):
     return deepseek_client.chat(messages, tools, api_key=API_KEY, model=MODEL, base_url=BASE_URL)
 
 
+def _derive_status(gate_configured: bool, ran: bool, passed) -> str:
+    """Map a verify-gate outcome to a caller-facing status.
+
+    A gate that could not EXECUTE (`ran=False`) is its own `gate_error` state — never
+    `verify_failed` (the gate ran and the code failed) and never `verified`. Conflating them
+    would let a harness/environment problem (e.g. a non-executable `./gradlew`, a missing binary,
+    a malformed command) masquerade as a code verdict, or let the agent's untrustworthy
+    self-report stand in for a real gate.
+    """
+    if not gate_configured:
+        return "unverified"      # no gate — caller must treat as amber
+    if not ran:
+        return "gate_error"      # gate could not execute — NOT a code verdict; fix the command/env
+    return "verified" if passed else "verify_failed"
+
+
 @mcp.tool()
 def deepseek_task(task: str, base_ref: str = "HEAD", verify_command: list | str | None = None,
                   verify_cwd: str = ".", verify_env: dict | None = None,
@@ -60,7 +76,13 @@ def deepseek_task(task: str, base_ref: str = "HEAD", verify_command: list | str 
 
     `verify_command` is an arg LIST (or a shlex-split string) run with no shell. `verify_cwd` is
     relative to the worktree root; `verify_env` is merged over the environment (e.g. JAVA_HOME).
-    When `verify_command` is None there is no gate → status is "unverified" (treat as amber).
+
+    Status values: "verified" (gate ran green — accept), "verify_failed" (gate ran and the code
+    failed — read the excerpt/diff), "unverified" (no `verify_command` — amber), "gate_error" (the
+    gate could NOT execute — a command/env problem, NOT a code verdict; fix it and re-delegate,
+    do not trust the agent's self-report), "error" (the delegation itself threw). A non-executable
+    script entry point (e.g. a fresh-worktree mode-644 `./gradlew`) is auto-run via its interpreter
+    rather than failing the gate.
     """
     if not API_KEY:
         return {"status": "error", "error": "DEEPSEEK_API_KEY is not set"}
@@ -93,6 +115,11 @@ def deepseek_task(task: str, base_ref: str = "HEAD", verify_command: list | str 
             gate = {"gate_configured": True, **v}
             if v["passed"]:
                 break
+            if not v["ran"]:
+                # The gate could not execute (bad command, missing/non-runnable entry point, bad
+                # env) — a harness/caller problem the agent cannot fix by iterating. Stop now
+                # instead of burning rounds feeding back an error the model never caused.
+                break
             brief = (task + "\n\n--- The automated verification FAILED on your previous attempt. "
                      "Output excerpt:\n" + v["excerpt"] +
                      "\nFix the implementation so the verification passes. "
@@ -103,12 +130,7 @@ def deepseek_task(task: str, base_ref: str = "HEAD", verify_command: list | str 
             worktree.commit(wt["path"], (f"deepseek: {result['summary'] or task}")[:200])
         test_changed, _ = testfiles.partition(files)
 
-        if not verify_command:
-            status = "unverified"          # no gate — caller must treat as amber
-        elif gate.get("passed"):
-            status = "verified"            # green gate — accept without reading the diff
-        else:
-            status = "verify_failed"       # red after max_rounds — caller reads the excerpt/diff
+        status = _derive_status(bool(verify_command), gate.get("ran", False), gate.get("passed"))
 
         return {
             "status": status,
