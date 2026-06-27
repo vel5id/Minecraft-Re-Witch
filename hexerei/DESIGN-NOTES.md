@@ -503,7 +503,7 @@ The moon now modulates every rite, and a rare **blood moon** event raises the st
 ## Known `[UNVERIFIED]`
 - All lunar/blood-moon constants are first-pass (per CLAUDE.md), tuned by playtest.
 
-### Dream World — Slice 1 (Sleep Brew entry)
+## Dream World — Slice 1 (Sleep Brew entry)
 - `DreamOnset.SCRY_COST = 1.0f` essence to cross the threshold (~⅓ of one mandrake take). [UNVERIFIED]
 - `DreamNormalize.DEBT_FULL = 10f`, `MARKS_FULL = 5f` — normalization saturation. [UNVERIFIED]
 - `DreamEntry.DREAM_TICKS = 600` (30 s) dreaming MobEffect duration. [UNVERIFIED]
