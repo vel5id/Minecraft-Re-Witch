@@ -6,6 +6,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,5 +46,48 @@ class DreamStateRoundTripTest {
         a.begin(NETHER, new BlockPos(1, 2, 3), 99L);
         a.clear();
         assertFalse(roundTrip(a).dreaming());
+    }
+
+    private static ListTag sampleSnapshot() {
+        // Two synthetic inventory entries — shaped like Inventory#save output (a "Slot" byte),
+        // but using plain NBT so no Minecraft registry/bootstrap is needed in a pure unit test.
+        ListTag list = new ListTag();
+        CompoundTag a = new CompoundTag();
+        a.putByte("Slot", (byte) 0);
+        a.putString("id", "minecraft:diamond");
+        a.putByte("Count", (byte) 3);
+        list.add(a);
+        CompoundTag b = new CompoundTag();
+        b.putByte("Slot", (byte) 100);
+        b.putString("id", "minecraft:iron_helmet");
+        b.putByte("Count", (byte) 1);
+        list.add(b);
+        return list;
+    }
+
+    @Test void sealedSnapshotRoundTripsExactly() {
+        DreamState a = new DreamState();
+        a.begin(NETHER, new BlockPos(1, 2, 3), 42L);
+        a.seal(sampleSnapshot());
+        DreamState b = roundTrip(a);
+        assertTrue(b.sealed(), "sealed flag must survive the round-trip");
+        assertEquals(sampleSnapshot(), b.invSnapshot(), "snapshot NBT must survive verbatim");
+    }
+
+    @Test void unsealDropsSnapshotAndFlag() {
+        DreamState a = new DreamState();
+        a.seal(sampleSnapshot());
+        a.unseal();
+        assertFalse(a.sealed());
+        assertTrue(a.invSnapshot().isEmpty(), "unseal drops the snapshot");
+        DreamState b = roundTrip(a);
+        assertFalse(b.sealed(), "an unsealed state round-trips unsealed");
+        assertTrue(b.invSnapshot().isEmpty());
+    }
+
+    @Test void freshStateIsUnsealedWithEmptySnapshot() {
+        DreamState s = new DreamState();
+        assertFalse(s.sealed());
+        assertTrue(s.invSnapshot().isEmpty());
     }
 }
