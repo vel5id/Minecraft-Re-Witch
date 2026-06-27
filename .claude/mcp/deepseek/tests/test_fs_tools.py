@@ -56,3 +56,52 @@ def test_read_cap_truncates(tmp_path):
 def test_null_byte_path_is_error_not_exception(tmp_path):
     fs = _tools(tmp_path)
     assert fs.read_file("foo\x00bar")["ok"] is False
+
+
+import re
+
+
+def test_edit_single_occurrence(tmp_path):
+    fs = _tools(tmp_path)
+    fs.write_file("f.txt", "a b a")
+    assert fs.edit_file("f.txt", "b", "B")["ok"] is True
+    assert fs.read_file("f.txt")["content"] == "a B a"
+
+
+def test_edit_rejects_ambiguous(tmp_path):
+    fs = _tools(tmp_path)
+    fs.write_file("f.txt", "a a")
+    r = fs.edit_file("f.txt", "a", "X")
+    assert r["ok"] is False  # 2 occurrences
+
+
+def test_list_and_glob(tmp_path):
+    fs = _tools(tmp_path)
+    fs.write_file("src/one.java", "x")
+    fs.write_file("src/two.java", "y")
+    names = {e["name"] for e in fs.list_dir("src")["entries"]}
+    assert names == {"one.java", "two.java"}
+    assert sorted(fs.glob("src/*.java")["matches"]) == ["src/one.java", "src/two.java"]
+
+
+def test_grep(tmp_path):
+    fs = _tools(tmp_path)
+    fs.write_file("a.txt", "alpha\nbeta\n")
+    hits = fs.grep("be", ".")["hits"]
+    assert any(h["text"].strip() == "beta" for h in hits)
+
+
+def test_dispatch_unknown_tool(tmp_path):
+    r = _tools(tmp_path).dispatch("rm_rf", {})
+    assert r["ok"] is False
+
+
+def test_dispatch_routes_write(tmp_path):
+    fs = _tools(tmp_path)
+    assert fs.dispatch("write_file", {"path": "x.txt", "content": "hi"})["ok"] is True
+    assert fs.read_file("x.txt")["content"] == "hi"
+
+
+def test_tool_schemas_shape():
+    names = {s["function"]["name"] for s in FsTools.tool_schemas()}
+    assert names == {"read_file", "write_file", "edit_file", "list_dir", "glob", "grep"}
