@@ -10,6 +10,31 @@ A dream **writes nothing to State** — it reads accumulated State and presents 
 nightmares → waking cost → pressure to settle the ledger) *and* deepens understanding. No parallel economy;
 any waking penalty is applied through the normal `Act` channel, preserving "State only through Act".
 
+## Confirmed framing (2026-06-28, brainstorm)
+- **Factions = `Correspondence` domains.** The dream world is a dimension of islands: **THRESHOLD = the
+  central island** (the threshold / the in-between), the other five (FOREST/STONE/WATER/DEATH/SKY) ring it.
+  An island IS a domain made geography — its terrain/mood = that domain's `disturbance`; what stands on it =
+  the player's `Bond`s rooted in that domain. This keeps the dimension Law-conformant (the dictionary of the
+  Law made land), NOT a content-pack with a parallel faction/reputation economy.
+- **Entry = a Sleep Brew (зелье сна), not a bed.** Drinking it crosses the threshold into the dream.
+- **Build order (slices):** (1) Sleep-Brew entry → dreaming state [THIS SLICE]; (2) dimension skeleton +
+  teleport, placeholder islands; (3) procedural island layout/relief from `disturbance`. Only pure cores are
+  deepseek-delegable; dimension/teleport/render/procgen are Claude + GameTest.
+
+## Slice 1 — Sleep Brew entry (current)
+Player loop: brew the Sleep Brew (cauldron, a THRESHOLD-domain reagent) → drink → **cross the threshold**:
+spend `SCRY_COST` essence; if you can't afford it you don't cross (the brew fizzles). On crossing,
+`DreamResolver.read(debtN, marksN, disturbance)` resolves the dream; a **nightmare** imposes a `dread`-scaled
+waking penalty applied through a `fear` `Act` (State only through Act). Dominant domain foreshadows the island.
+
+- **Delegable pure core (deepseek gate):** `soul/DreamOnset` + `soul/DreamOutcome` — `onDrink(essence,
+  DreamReading) → DreamOutcome(entered, essenceSpent, nightmare, dreadPenalty)`. `SCRY_COST = 1.0f` essence;
+  `dreadPenalty = nightmare ? reading.dread() : 0f` (already [0,1]; the caller turns it into the fear Act).
+- **NOT delegable (Claude + GameTest):** the `Brew` registration + recipe, the drink hook, debiting essence /
+  applying the `Act`, the "dreaming" MobEffect + duration, particles/sound.
+- **Normalization (caller side, integration):** `debtN = clamp01(totalDebt / DEBT_FULL)`,
+  `marksN = clamp01(Σ mark.severity / MARKS_FULL)` — `DEBT_FULL`/`MARKS_FULL` to be set in DESIGN-NOTES `[UNVERIFIED]`.
+
 ## Player Loop
 - **Trigger** → the witch sleeps in a bed (vanilla night skip). On wake, the night's dream is resolved.
 - **Cost** → scrying the dream spends a little `essence` (shared currency); a **nightmare** (born of high
