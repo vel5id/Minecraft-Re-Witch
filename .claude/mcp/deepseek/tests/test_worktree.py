@@ -49,3 +49,22 @@ def test_commit_then_cleanup_deletes_branch(tmp_path):
     listed = subprocess.run(["git", "-C", root, "branch", "--list", wt["branch"]],
                             capture_output=True, text=True).stdout
     assert wt["branch"] not in listed  # branch deleted
+
+
+def test_diff_against_base_sha_survives_commit(tmp_path):
+    """Regression for the empty-diff bug: diffing the pinned base_sha must stay correct after a commit."""
+    import pathlib
+    root = _init_repo(tmp_path)
+    wt = worktree.create("HEAD", root)
+    base = wt["base_sha"]
+    assert base  # create resolved and returned the concrete SHA
+    (pathlib.Path(wt["path"]) / "README.md").write_text("hello\nworld\n")
+    assert worktree.commit(wt["path"], "ds: change")["ok"] is True
+
+    # After the commit, the symbolic "HEAD" would diff empty; the pinned SHA still shows the change.
+    assert worktree.diff(wt["path"], base).find("+world") != -1
+    assert worktree.changed_files(wt["path"], base) == ["README.md"]
+    assert "README.md" in worktree.diff_stat(wt["path"], base)
+    assert worktree.diff(wt["path"], "HEAD") == ""  # confirms why base_sha is needed
+
+    worktree.cleanup(wt["path"])

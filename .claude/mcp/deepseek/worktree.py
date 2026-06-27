@@ -11,19 +11,28 @@ def _git(*args) -> str:
 
 def create(base_ref: str, repo_root: str, *, prefix: str = "ds") -> dict:
     import shutil
+    # Resolve base_ref to a concrete SHA up front. The worktree's HEAD moves once the agent's
+    # work is committed, so diffing against the symbolic "HEAD" later yields an EMPTY diff;
+    # pin the immutable SHA so diff/changed_files stay correct after the commit.
+    base_sha = _git("-C", repo_root, "rev-parse", base_ref).strip()
     branch = f"{prefix}/{uuid.uuid4().hex[:8]}"
     path = tempfile.mkdtemp(prefix="ds-wt-")
     try:
-        _git("-C", repo_root, "worktree", "add", path, "-b", branch, base_ref)
+        _git("-C", repo_root, "worktree", "add", path, "-b", branch, base_sha)
     except subprocess.CalledProcessError:
         shutil.rmtree(path, ignore_errors=True)
         raise
-    return {"path": path, "branch": branch}
+    return {"path": path, "branch": branch, "base_sha": base_sha}
 
 
 def diff(path: str, base_ref: str) -> str:
     _git("-C", path, "add", "-A")
     return _git("-C", path, "diff", "--cached", base_ref)
+
+
+def diff_stat(path: str, base_ref: str) -> str:
+    _git("-C", path, "add", "-A")
+    return _git("-C", path, "diff", "--cached", "--stat", base_ref)
 
 
 def changed_files(path: str, base_ref: str) -> list[str]:
