@@ -65,6 +65,17 @@ public final class DreamEntry {
                     true);
         }
 
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
+            net.minecraft.server.level.ServerLevel dream = sp.getServer().getLevel(DreamWorld.DREAM);
+            if (dream != null) {
+                DreamWorld.preparePlatform(dream);
+                DreamState st = sp.getData(HexereiAttachments.DREAM_STATE);
+                st.begin(level.dimension(), sp.blockPosition(), level.getGameTime() + DREAM_TICKS);
+                sp.teleportTo(dream, DreamWorld.ANCHOR.getX() + 0.5, DreamWorld.ANCHOR.getY(),
+                        DreamWorld.ANCHOR.getZ() + 0.5, sp.getYRot(), sp.getXRot());
+            }
+        }
+
         if (outcome.nightmare()) {
             long now = level.getGameTime();
             Bond fearMark = new Bond(UUID.randomUUID(), NIGHTMARE_SPIRIT, Correspondence.THRESHOLD,

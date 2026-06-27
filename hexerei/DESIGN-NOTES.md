@@ -508,3 +508,8 @@ The moon now modulates every rite, and a rare **blood moon** event raises the st
 - `DreamNormalize.DEBT_FULL = 10f`, `MARKS_FULL = 5f` — normalization saturation. [UNVERIFIED]
 - `DreamEntry.DREAM_TICKS = 600` (30 s) dreaming MobEffect duration. [UNVERIFIED]
 - `DreamEntry.DISTURB_SCALE = 20f` — a max nightmare adds 20 of 100 THRESHOLD disturbance. [UNVERIFIED]
+
+### Dream World — Slice 2 (dimension + teleport)
+- `DreamWorld.ANCHOR = (0,64,0)`, 5×5 stone platform at y=63 — barren central THRESHOLD island. [UNVERIFIED]
+- `DreamWorld.DEATH_WAKE_HEALTH = 4f` (2 hearts) on a death-wake. [UNVERIFIED]
+- Dream duration reuses `DreamEntry.DREAM_TICKS = 600` (wakeTick = entry gameTime + 600). [UNVERIFIED]
