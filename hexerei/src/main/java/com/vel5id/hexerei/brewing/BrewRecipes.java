@@ -15,7 +15,8 @@ public final class BrewRecipes {
             new BrewRecipe(List.of("hexerei:icy_needle", "hexerei:artichoke"), Brews.WITCHS_SIGHT),
             new BrewRecipe(List.of("hexerei:mandrake_root", "hexerei:wolfsbane"), Brews.BLOODWORT_TONIC),
             new BrewRecipe(List.of("hexerei:artichoke", "hexerei:wormwood"), Brews.HAGS_SWIFTNESS),
-            new BrewRecipe(List.of("hexerei:belladonna_flower", "hexerei:icy_needle"), Brews.WITHERING_BILE));
+            new BrewRecipe(List.of("hexerei:belladonna_flower", "hexerei:icy_needle"), Brews.WITHERING_BILE),
+            new BrewRecipe(List.of("hexerei:mandrake_root", "hexerei:wormwood"), Brews.DREAMING_DRAUGHT));
 
     /** Per-ingredient liquid tint, blended while brewing (before a recipe matches). */
     public static final Map<String, Integer> INGREDIENT_COLORS = Map.of(

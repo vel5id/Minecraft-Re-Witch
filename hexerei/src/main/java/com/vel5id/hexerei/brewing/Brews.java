@@ -38,6 +38,11 @@ public final class Brews {
             List.of(new BrewEffect("minecraft:poison", 1, 200),
                     new BrewEffect("minecraft:wither", 0, 100)));
 
+    /** Entry to the dream: empty static effects — DreamEntry applies the dynamic calm/nightmare set on drink. */
+    public static final Brew DREAMING_DRAUGHT = new Brew(
+            "dreaming_draught", "brew.hexerei.dreaming_draught", 0x3A2A6E, 50,
+            List.of());
+
     public static final Map<String, Brew> BY_ID = build();
 
     private static Map<String, Brew> build() {
@@ -48,6 +53,7 @@ public final class Brews {
         m.put(BLOODWORT_TONIC.id(), BLOODWORT_TONIC);
         m.put(HAGS_SWIFTNESS.id(), HAGS_SWIFTNESS);
         m.put(WITHERING_BILE.id(), WITHERING_BILE);
+        m.put(DREAMING_DRAUGHT.id(), DREAMING_DRAUGHT);
         return m;
     }
 
