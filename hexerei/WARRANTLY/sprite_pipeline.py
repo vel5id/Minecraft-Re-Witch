@@ -141,6 +141,17 @@ def background_to_alpha(rgb, mode="auto", tol=34, warm_protect=True, fill_holes=
             warm = (f[:, :, 0] - f[:, :, 2]) > 12  # R > B => warm (plant shadow), keep
             alpha = np.where(warm, np.maximum(alpha, 0.6), alpha)
 
+    # Per-pixel "is this the key color?" — bg pockets trapped between thin parts of a
+    # filigree subject (sandwort stems) are key-colored even when NOT border-connected;
+    # they must stay transparent instead of being revived as interior shadow.
+    Rf, Gf, Bf = f[:, :, 0], f[:, :, 1], f[:, :, 2]
+    if is_magenta_key(bg):
+        key_colored = (Rf > 150) & (Gf < 110) & (Bf > 80) & ((Rf - Gf) > 70) & ((Bf - Gf) > 20)
+    elif is_green_key(bg):
+        key_colored = (Gf > 150) & ((Gf - Rf) > 70) & ((Gf - Bf) > 70)
+    else:
+        key_colored = np.zeros(rgb.shape[:2], bool)
+
     bgmask = alpha < 0.5
     if protect_interior:
         # keep as background ONLY low-alpha regions connected to the frame border
@@ -148,15 +159,44 @@ def background_to_alpha(rgb, mode="auto", tol=34, warm_protect=True, fill_holes=
         border = set(lbl[0, :]) | set(lbl[-1, :]) | set(lbl[:, 0]) | set(lbl[:, -1])
         border.discard(0)
         true_bg = np.isin(lbl, list(border))
-        alpha = np.where(bgmask & ~true_bg, 1.0, alpha)   # interior pockets -> opaque
+        # revive interior pockets to opaque EXCEPT key-colored ones (trapped background)
+        alpha = np.where(bgmask & ~true_bg & ~key_colored, 1.0, alpha)
         if fill_holes:
             solid = _fill_holes(alpha >= 0.5)
             alpha = np.where(solid, np.maximum(alpha, 0.5), alpha)
         alpha[true_bg] = 0.0
+        alpha[key_colored] = 0.0                          # kill all key-colored pixels (incl. trapped pockets)
     else:
         # line-glyph mode: any bg-colored pixel is background, enclosed loops included
         alpha[bgmask] = 0.0
     return (np.clip(alpha, 0, 1) * 255).astype(np.uint8), mode, bg
+
+
+def strip_dark_outline(alpha, rgb, dark_thr=70, sat_thr=42, max_peel=10):
+    """Peel the model-baked black keyline off the SILHOUETTE only.
+
+    FLUX/SD image models trace the subject with a dark outline that vanilla MC
+    textures don't have. We erode the silhouette inward one ring at a time,
+    dropping boundary pixels that are dark AND near-neutral (low saturation) —
+    i.e. the black keyline. We STOP at the first non-dark / saturated ring, so:
+      * saturated dark art (dark-purple bell flowers) survives (sat >= sat_thr),
+      * genuinely-black berries survive because they are interior, never on the
+        boundary once the thin outline ring is gone.
+    Operates on the raw (pre-downscale) alpha so a multi-px ring is removed cleanly.
+    """
+    a = alpha.copy()
+    f = rgb.astype(np.float32)
+    luma = f @ np.array([0.299, 0.587, 0.114], np.float32)
+    sat = f.max(2) - f.min(2)
+    neutral_dark = (luma < dark_thr) & (sat < sat_thr)
+    for _ in range(max_peel):
+        op = a > 0
+        boundary = op & _binary_dilation(~op, 1)
+        peel = boundary & neutral_dark
+        if not peel.any():
+            break
+        a[peel] = 0
+    return a
 
 
 def despill(rgb, alpha, bg):
@@ -165,6 +205,20 @@ def despill(rgb, alpha, bg):
     a = (alpha.astype(np.float32) / 255.0)[:, :, None]
     out = np.where(a > 0, (f - (1 - a) * bg) / np.where(a > 0, a, 1), 0)
     return np.clip(out, 0, 255).astype(np.uint8)
+
+
+def is_magenta_key(c):
+    """True for the magenta/pink key family. FLUX often bakes a deep rose-magenta
+    (e.g. [232,8,128]) instead of pure #FF00FF, so we test HUE (R and B both well
+    above G) rather than requiring B>180 — otherwise the rose key's pink fringe is
+    never decontaminated and thin light subjects (sandwort) read as a pink billboard."""
+    R, G, B = float(c[0]), float(c[1]), float(c[2])
+    return R > 150 and G < 110 and B > 80 and (R - G) > 70 and (B - G) > 20
+
+
+def is_green_key(c):
+    R, G, B = float(c[0]), float(c[1]), float(c[2])
+    return G > 150 and (G - R) > 70 and (G - B) > 70
 
 
 def decontaminate_edges(rgba, key, strength=1.0):
@@ -176,11 +230,11 @@ def decontaminate_edges(rgba, key, strength=1.0):
     op = a > 0
     edge = op & _binary_dilation(~op, 1)          # opaque pixels touching transparency
     R, G, B = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
-    if key[0] > 180 and key[2] > 180 and key[1] < 110:        # magenta: kill R&B excess over G
+    if is_magenta_key(key):                                   # magenta/rose: kill R&B excess over G
         excess = np.clip(np.minimum(R, B) - G, 0, None) * strength
         arr[:, :, 0] = np.where(edge, R - excess, R)
         arr[:, :, 2] = np.where(edge, B - excess, B)
-    elif key[1] > 180:                                        # green: kill G excess
+    elif is_green_key(key):                                    # green: kill G excess
         excess = np.clip(G - np.maximum(R, B), 0, None) * strength
         arr[:, :, 1] = np.where(edge, G - excess, G)
     return Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
@@ -235,10 +289,13 @@ def premult_downscale_fit(rgb, alpha, bbox, box=32, hard=True, hard_thr=128, mar
 
 # ----------------------------------------------------------------------------- end-to-end
 def process(input_path, output_path, box=32, soft=False, mode="auto",
-            tol=34, drop_strays=True, warm_protect=True, anchor="center", protect_interior=True):
+            tol=34, drop_strays=True, warm_protect=True, anchor="center", protect_interior=True,
+            deoutline=False):
     rgb = np.array(Image.open(input_path).convert("RGB"))
     alpha, used_mode, bg = background_to_alpha(rgb, mode, tol, warm_protect,
                                                protect_interior=protect_interior)
+    if deoutline:
+        alpha = strip_dark_outline(alpha, rgb)
     clean_rgb = despill(rgb, alpha, bg)
     bbox = content_bbox(alpha, drop_strays)
     sprite = premult_downscale_fit(clean_rgb, alpha, bbox, box=box, hard=not soft, anchor=anchor)

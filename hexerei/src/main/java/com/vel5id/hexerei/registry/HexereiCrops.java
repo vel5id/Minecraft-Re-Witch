@@ -1,6 +1,7 @@
 package com.vel5id.hexerei.registry;
 
 import com.vel5id.hexerei.block.crop.MistletoeBlock;
+import com.vel5id.hexerei.block.crop.TallWitchCropBlock;
 import com.vel5id.hexerei.block.crop.WitchCropBlock;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
@@ -53,13 +54,26 @@ public final class HexereiCrops {
     private static DeferredHolder<Block, Block> crop(String name, int maxAge, boolean water, boolean big,
             boolean mindrake, boolean snowbell, boolean wormwood,
             @Nullable Supplier<Item> produce, @Nullable Supplier<Item> bonus) {
+        return crop(name, maxAge, water, big, mindrake, snowbell, wormwood, produce, bonus, false);
+    }
+
+    /** tall=true uses TallWitchCropBlock: the mature upward segment is a distinct TOP state with its
+     *  own texture (hops: lower bine + cone-top). Requires wormwood=true for the self-stacking growth. */
+    private static DeferredHolder<Block, Block> crop(String name, int maxAge, boolean water, boolean big,
+            boolean mindrake, boolean snowbell, boolean wormwood,
+            @Nullable Supplier<Item> produce, @Nullable Supplier<Item> bonus, boolean tall) {
         Supplier<Item> seedSup = () -> seedFor(name).get();
         Supplier<Item> produceSup = produce != null ? produce : seedSup; // mindrake/garlic: produce == seed
         DeferredHolder<Block, Block> block = HexereiBlocks.BLOCKS.register(name,
-                () -> new WitchCropBlock(maxAge, water, big, mindrake, snowbell, wormwood,
-                        seedSup, produceSup, bonus, cropProps()));
+                () -> tall
+                        ? new TallWitchCropBlock(maxAge, water, big, mindrake, snowbell, wormwood,
+                                seedSup, produceSup, bonus, cropProps())
+                        : new WitchCropBlock(maxAge, water, big, mindrake, snowbell, wormwood,
+                                seedSup, produceSup, bonus, cropProps()));
         DeferredHolder<Item, Item> seed = HexereiItems.ITEMS.register(seedName(name),
-                () -> new ItemNameBlockItem(block.get(), new Item.Properties()));
+                () -> water
+                        ? new com.vel5id.hexerei.item.WaterCropSeedItem(block.get(), new Item.Properties())
+                        : new ItemNameBlockItem(block.get(), new Item.Properties()));
         SEED_BY_CROP.put(name, seed);
         CROP_BLOCKS.add(block);
         SEED_ITEMS.add(seed);
@@ -94,7 +108,7 @@ public final class HexereiCrops {
             () -> HexereiItems.CELANDINE.get(), null);
     // hops: reuses the wormwood "tall/self-stacking" behaviour (wormwood=true) — mature bottom grows an upper segment.
     public static final DeferredHolder<Block, Block> HOPS = crop("hops", 4, false, true, false, false, true,
-            () -> HexereiItems.HOPS.get(), null);
+            () -> HexereiItems.HOPS.get(), null, true); // tall: lower-bine bottom + cone-top upper segment
     // sandwort: big=false ⇒ bonemeal gives +1 per use (slow, hardy desert herb).
     public static final DeferredHolder<Block, Block> SANDWORT = crop("sandwort", 4, false, false, false, false, false,
             () -> HexereiItems.SANDWORT.get(), null);

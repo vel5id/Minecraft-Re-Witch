@@ -140,9 +140,15 @@ public class WitchCropBlock extends BushBlock implements BonemealableBlock {
         } else if (wormwood) {
             BlockPos up = pos.above();
             if (level.isEmptyBlock(up) && !(level.getBlockState(pos.below()).getBlock() instanceof WitchCropBlock)) {
-                level.setBlock(up, defaultBlockState(), 3);
+                level.setBlock(up, upperBlockState(), 3);
             }
         }
+    }
+
+    /** State placed as the mature upward (second) segment. Base = a plain copy; a tall crop with a
+     *  distinct top texture (e.g. hops) overrides this to mark the segment so its model differs. */
+    protected BlockState upperBlockState() {
+        return defaultBlockState();
     }
 
     // ---- BonemealableBlock ----

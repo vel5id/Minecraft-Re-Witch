@@ -1,19 +1,34 @@
 {
   "variants": {
-    "age=0": {
+    "age=0,top=false": {
       "model": "hexerei:block/hops_stage_0"
     },
-    "age=1": {
+    "age=0,top=true": {
+      "model": "hexerei:block/hops_top"
+    },
+    "age=1,top=false": {
       "model": "hexerei:block/hops_stage_1"
     },
-    "age=2": {
+    "age=1,top=true": {
+      "model": "hexerei:block/hops_top"
+    },
+    "age=2,top=false": {
       "model": "hexerei:block/hops_stage_2"
     },
-    "age=3": {
+    "age=2,top=true": {
+      "model": "hexerei:block/hops_top"
+    },
+    "age=3,top=false": {
       "model": "hexerei:block/hops_stage_3"
     },
-    "age=4": {
+    "age=3,top=true": {
+      "model": "hexerei:block/hops_top"
+    },
+    "age=4,top=false": {
       "model": "hexerei:block/hops_stage_4"
+    },
+    "age=4,top=true": {
+      "model": "hexerei:block/hops_top"
     }
   }
 }

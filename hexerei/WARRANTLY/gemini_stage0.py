@@ -171,7 +171,10 @@ def request_image_openrouter(model, prompt, api_key):
     body = json.dumps({
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
-        "modalities": ["image", "text"],
+        # image-only: FLUX image models (e.g. black-forest-labs/flux.2-klein-4b) reject
+        # ["image","text"] with 404 "no endpoints support … image, text". Asking just
+        # ["image"] is the common denominator — Gemini/GPT image models honor it too.
+        "modalities": ["image"],
     }).encode()
     req = urllib.request.Request(API_URL, data=body, headers={
         "Authorization": f"Bearer {api_key}",
@@ -224,6 +227,10 @@ def generate_images(prompt, model=None):
     Google uses the free AI Studio key (GEMINI_API_KEY); OpenRouter uses OPENROUTER_API_KEY.
     """
     backend = os.environ.get("IMAGE_BACKEND", "openrouter").lower()
+    if backend in ("flux", "local"):
+        import flux_backend
+        imgs, err = flux_backend.generate(prompt, n=1, negative=NEGATIVE)
+        return imgs, err, os.environ.get("LOCAL_MODEL", "qwen-image")
     if backend == "google":
         key = os.environ.get("GEMINI_API_KEY")
         if not key:
